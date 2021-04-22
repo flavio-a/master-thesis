@@ -1,0 +1,3 @@
+[submodule "latex-flaviopkg"]
+	path = latex-flaviopkg
+	url = https://github.com/flavio-a/latex-flaviopkg.git

@@ -1,0 +1,73 @@
+%\documentclass[12pt,a4paper,twoside]{book}
+\documentclass[12pt,a4paper]{book}
+
+% includes
+\usepackage[inner=2cm,outer=2cm,top=3cm,bottom=3cm]{geometry}
+%\usepackage[inner=2cm,outer=3cm,twoside,top=3cm,bottom=3cm]{geometry}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{indentfirst}
+\usepackage[nottoc]{tocbibind}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usepackage[backend=bibtex,citestyle=alphabetic,style=numeric]{biblatex}
+\usepackage{pdfpages}
+\usepackage{latex-flaviopkg/flaviopkg}
+
+% Epigraphs
+\makeatletter
+\newenvironment{epigraph}[2][2em]
+{\setlength{\@tempdima}{#1}%
+	\def\chapquote@author{#2}%
+	\parshape 1 \@tempdima \dimexpr\textwidth-2\@tempdima\relax%
+	\itshape}
+{\par\normalfont\hfill--\ \chapquote@author\hspace*{\@tempdima}\par\bigskip}
+\makeatother
+% ======================== Package for syntax highlight ===========================
+\usepackage{csquotes}
+
+\graphicspath{{images/}}
+\setlength{\parindent}{0.5cm}     % paragraph indentation
+\linespread{1.2}                % space between lines
+
+\addbibresource{bibliography/tot.bib}
+
+% Commands for this thesis only
+\newcommand{\chapteru}[1]{\chapter*{#1}
+	\addcontentsline{toc}{chapter}{#1}%
+	\markboth{\uppercase{#1}}{\uppercase{#1}}%
+}
+\newcommand{\sectionu}[1]{\phantomsection%
+	\section*{#1}%
+	\addcontentsline{toc}{section}{#1}%
+}
+
+\begin{document}
+	% macros (global)
+	\input{front/macros}
+	
+	% front-matter
+	\pagenumbering{gobble}
+	
+	\input{front/cover}
+	\cleardoublepage
+
+	\input{front/abstract}
+
+	% table of contents
+	\tableofcontents
+
+	% chapters
+	\setcounter{page}{1}
+	\pagenumbering{arabic}
+
+	\input{chapters/introduction}
+	\input{chapters/background}
+
+	\input{chapters/chapter1}
+
+	\input{chapters/conclusions}
+
+	\printbibliography
+	\addcontentsline{toc}{chapter}{Bibliography}
+\end{document}

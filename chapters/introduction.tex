@@ -1,0 +1,29 @@
+\chapteru{Introduction}
+
+Thesis introduction. Things needed to understand the thesis that aren't strictly related to the thesis subject.
+
+\sectionu{Abstract interpretation}
+Abstract interpretation framework. Introduced for both over- and under-approximations, but used only for the former.
+
+\sectionu{Under-approximations}
+Hard to use abst interp for under-approx, overview of related work.
+
+\sectionu{Contributions}
+Brief description of the thesis subjects, highlighting new contributions/approaches. Chapters overview.
+
+\sectionu{Old introduction}
+\todo{The opening of the introduction may be something like this}
+I linguaggi funzionali hanno alcune caratteristiche per cui sembrano molto interessanti per programmi paralleli. La trasparenza referenziale garantisce che il risultato di un programma non dipende dall'ordine in cui vengono valutate alcune sottoespressioni, permettendo quindi di eseguirle anche in parallelo. Anche l'assenza di side-effects è molto utile, perché impone al programmatore di controllare esplicitamente le comunicazioni, rendendo più difficile introdurre errori di sincronizzazione.
+Haskell si propone come linguaggio funzionale puro ed è quindi adatto per verificare il reale impatto di queste caratteristiche nella pratica.
+
+In questa tesi studierò come scrivere programmi paralleli in Haskell, introducendo alcune librerie e confrontandole, cercando così di dare una panoramica il più ampio possibile. Mi concentrerò esclusivamente su programmi paralleli ma non concorrenti, ovvero che utilizzano più processori per accelerare l'esecuzione, ma eseguono un solo compito alla volta. Questo significa che la parte del programma che esegue l'elaborazione non deve interagire con l'esterno, perché si può supporre che tutte queste interazioni avvengano all'inizio del programma, in modo sequenziale e prima che inizi la vera elaborazione. Questo non sarebbe possibile in caso di programmi concorrenti dato che i compiti da eseguire potrebbero arrivare in momenti diversi, durante l'esecuzione di compiti arrivati in precedenza, mentre in caso di un programma non concorrente si può assumere che questo venga avviato solo una volta ricevuto l'input.
+
+L'assunzione che ci sia un solo compito è fondamentale per garantire una proprietà molto utile dei programmi: il determinismo. Un programma deterministico termina nello stesso modo in ogni esecuzione. Questo è facile da garantire per programmi sequenziali, ma è in generale falso in ambiente parallelo. Tuttavia il determinismo ha molte implicazioni importanti (per esempio rende molto meno problematiche le deadlock) ed è quindi bene che le librerie di parallelismo lo garantiscano quando possibile.
+
+Oltre allo studio teorico dei vari paradigmi ho voluto provare le loro implementazioni con dei benchmark. Nel farlo ho voluto valutare due aspetti, i tempi di esecuzione e l'impatto linguistico, ovvero quanto è necessario modificare il codice sequenziale per introdurre il parallelismo. Ho scelto di considerare anche questo secondo aspetto perché la semplicità d'uso è un punto fondamentale soprattutto in caso di programmi paralleli, ma che spesso viene sottovalutato in letteratura per concentrarsi solo sulle prestazioni. Per farlo ho preso alcuni benchmark di programmi sequenziali di GHC, il compilatore di Haskell, e li ho parallelizzati con le librerie studiate, per poi misurarne i tempi di esecuzione. Dato che ho dovuto scrivere le versioni parallele mi sono reso conto di quali siano state le difficoltà principali con i vari approcci, e ho cercato di riportarli nel modo più preciso possibile nella sezione sull'impatto linguistico del capitolo dedicato ai benchmark, facendo però attenzione a distinguere tra difficoltà causate dalla libreria e problemi intrinsechi del singolo programma.
+
+La tesi è divisa in quattro capitoli.
+Nel primo introduco alcuni concetti di Haskell non collegati direttamente al parallelismo che però sono necessari per capire i dettagli del funzionamento degli strumenti e delle librerie studiate.
+Nel secondo descrivo i quattro paradigmi studiati, scendendo nei dettagli delle implementazioni utilizzate.
+Nel terzo dimostro che tutte le implementazioni presentate sono deterministiche.
+Nel quarto descrivo i benchmark che ho eseguito per provare le implementazioni.
