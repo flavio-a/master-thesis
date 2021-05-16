@@ -1,0 +1,261 @@
+\chapter{Integers}
+\todo{Change chapter name}
+In this section we present some negative results about under-approximation domains for integers in the abstract interpretation framework.
+
+\section{Things}
+Results that doesn't involve non-emptying.
+
+\subsection{Sum completeness}
+The concept of complete abstraction for a function is very important in over-approximating abstract interpretation because it correspond to analyses without false alarms. However, we can't hope to have it in an under-approximation settings, as shown in the following result.
+
+\begin{prop}\label{ch3:th:sum-complete-trivial}
+	Let $\pow(Z) (\alpha, \id) A$ be an under-approximating Galois Insertion. If $A$ is complete for the concrete sum then it's trivial.
+\end{prop}
+This means that while in over-approximation completeness is, though hard, a property that can be achieved for some basic constructs of a programming language, in under-approximation is totally out of reach. Of course it is possible to weaken the requirements of completeness to get a definition that better suits under-approximation, and we'll try to do so in the next section.
+
+\begin{proof}
+	Let $+^{\flat}$ be the complete abstraction of $+$.
+	Let us distinguish two cases.
+
+	If all singletons $\{ n \}$ are representable in $A$ then, by union closure of $A$ we get that $A \supseteq \pow(\setZ)$, that in turn entails $A = \pow(\setZ)$ since it's also a subset.
+
+	Otherwise, there exists an integer $\bar{n}$ such that $\alpha(\{ \bar{n} \}) = \emptyset$. Consider then an arbitrary set of integers $S \subseteq \setZ$.
+	\begin{align*}
+		\alpha(S) &= \alpha((S - \{ \bar{n} \}) + \{ \bar{n} \} ) \\
+		&= \alpha(S - \{ \bar{n} \}) +^{\flat} \alpha(\{ \bar{n} \}) \\
+		&= \alpha(S - \{ \bar{n} \}) +^{\flat} \emptyset \\
+		&\subseteq \alpha(S - \{ \bar{n} \}) + \emptyset = \emptyset
+	\end{align*}
+	where the second line follows by completeness of $+^{\flat}$ and the third by correctness of $+^{\flat}$. This means that any set $S$ is abstracted to $\emptyset$, so $A = \{ \emptyset \}$.
+\end{proof}
+
+%\subsectionu{Booleans completeness}
+%Any approx domain $A$ is complete for all boolean conditions.
+%\begin{prop}
+%	Let $\pZop (\alpha, \gamma) A$ be a GI, and let $\text{b} \subseteq \setZ$ a boolean condition on one integer (represented as the set of integers that satisfy it). Then $A$ is complete for
+%	\[
+%	\denot{\text{b}} = \lambda S . S \cap \text{b}
+%	\]
+%\end{prop}
+%\begin{proof}
+%	The thesis is asking that, for any $S \subseteq \setZ$
+%	\[
+%	\alpha \circ \denot{\text{b}} S = \alpha \circ \denot{\text{b}} \circ \gamma \circ \alpha(S)
+%	\]
+%	Recalling that, since $\pZop$ is opposite, intersections correspond to abstract joins and that $\alpha$ preserves joins (since it's the lower adjoint of a GC) we have
+%	\begin{align*}
+%		\alpha \circ \denot{\text{b}} \circ \gamma \circ \alpha(S) &= \alpha \bigg(\gamma(\alpha(S)) \cap b \bigg) \\
+%		&= \alpha \bigg(\gamma(\alpha(S)) \bigg) \sqcup \alpha(b) \\
+%		&= \alpha(S) \sqcup \alpha(\text{b}) \\
+%		&= \alpha(S \cap \text{b}) \\
+%		&= \alpha \circ \denot{\text{b}}(S)
+%	\end{align*}
+%	where the third line follows from the fact that in any GC $\alpha \circ \gamma \circ \alpha = \alpha$.
+%\end{proof}
+%
+%However this result is not as nice as it seems. In overapprox, completeness for a boolean implies representability, but this is not true in under approx:
+%\begin{example}
+%	Let $A$ be the abstract domain of remainder classes modulo $p$. Then no boolean of the form $x \bowtie n$ is representable in $A$.
+%	
+%	However all these booleans are complete (as stated in the previous proposition): indeed $\denot{x \bowtie n} S \subseteq (x \bowtie n)$ and so $\alpha(\denot{x \bowtie n} S) \succeq \alpha(x \bowtie n) = \top$, hence $\lambda a . \top$ is a complete abstraction for all these booleans.
+%\end{example}
+
+\subsection{Non relational domains}
+
+An important notion for abstract domains is that of being non-relational, that intuitively means that the domain can't capture relations between different variables. There are many formalizations of such a concept in the literature\todo{add references}, but we stick to a simple one, to highlight our point without being cluttered by formalism.
+
+Given a set of variables $\text{Vars}$ and, for each one of these variables $x$, a concrete domain $C_x$, a concrete domain for the set of variables is
+\[
+\pow(C) = \pow\left(\prod\limits_{x \in \text{Vars}} C_x \right)
+\]
+An element of the cartesian product $C$ is a function that maps each variable $x$ into a value in its domain $C_x$, so it's exactly a state of a program that operates on the set of variables $\text{Vars}$ can be in. The power set of that product is hence a concrete domain whose elements are set of possible states of such a program.
+
+\begin{definition}[Non relational domain]
+	An abstract domain $A$ for concrete domain $\pow(C)$ is \textit{non relational} if it can be decomposed as
+	\[
+	A = \prod\limits_{x \in \text{Vars}} A_x
+	\]
+	that is a product of one abstract domain for each variable, where for each variable $x$ there is a Galois Insertion $\pow(C_x) (\alpha_x, \id) A_x$ between the concrete domain for that variable and $A_x$.
+\end{definition}
+
+An under-approximation, non relational domain is essentially trivial.
+\begin{prop}\label{ch3:th:underapprox-non-rel}
+	Let $\pow(C) (\alpha, \gamma) A$ be an under-approximating Galois Connection, and assume $A$ is non relational. Then, for all but one variable, the abstract domain $A_x$ is \textit{almost} trivial, that is it contains at most one value other than $\emptyset$.
+	\[
+	\forall x \in \text{Vars} \setminus \{ y \} \ .\ A_x = \{ \emptyset, S_x \}
+	\]
+\end{prop}
+\begin{proof}
+	Assume that for two distinct variables $y$ and $z$ the domain $A$ can track two different sets $S_y, S_y'$ and $S_z, S_z'$ other than $\emptyset$.
+	Since $A$ in closed by union\todo{add lemma reference} %(lemma \ref{th:underapprox-union-closure})
+	so are $A_y$ and $A_z$, hence we can assume $S_y \subset S_y'$ and $S_z \subset S_z'$ (otherwise replace $S_y'$ with $S_y' \cup S_y$ and similarly for $S_z$).
+	
+	Then again by union closure of $A$ it should also be the case that
+	\[
+	S_y \times S_z' \cup S_y' \times S_z
+	\]
+	is in the abstract domain $A$, where we're omitting other variables to simplify the notation. But this is not the product of two subsets of $C_y$ and $C_z$. This can be quickly seen in figure \ref{ch3:fig:rel-domain}: the union is the red area, that clearly isn't a rectangle (a product of sets for $y$ and $z$).
+
+	Formally, consider $v_y \in S_y$, $v_y' \in S_y' \setminus S_y$, $v_z \in S_z$ and $v_z' \in S_z' \setminus S_z$. We have that $(v_y', v_z) \in S_y' \times S_z$ and $(v_y, v_z') \in S_y \times S_z$ but $(v_y', v_z') \notin S_y \times S_z' \cup S_y' \times S_z$, so this can't be the product of two subsets of $C_y$ and $C_z$.
+\end{proof}
+\begin{figure}[!th]
+	\centering{
+		{
+			\fontsize{11pt}{13pt}\selectfont
+			\def\svgwidth{3.5in}
+			\input{images/drawing.pdf_tex}
+		}
+		\caption{Intuition of the proof of proposition \ref{ch3:th:underapprox-non-rel}}
+		\label{ch3:fig:rel-domain}
+	}
+\end{figure}
+
+\section{Non emptyingness}
+Completeness is a concept tailored to proving correctness: we use completeness to avoid false alarms while we over-approximate the set of possible values. In bug catching, an alternative, weaker definition may be enough
+\begin{definition}[Non emptying]\label{ch3:def:non-emptying}
+	Let $C (\alpha, \gamma) A$ be an under-approximating Galois Connection, $f : C \rightarrow C$ a monotone function on $C$ and $f^{\flat} = \alpha \circ f \circ \gamma$ it's best correct approximation in $A$.
+	We say that $f$ is \textit{non emptying} (in $A$) if, for any concrete value $c$, if both $\alpha(c) \neq \top$ and $\alpha(f(c)) \neq \bot$ then also $f^{\flat}(\alpha(c)) \neq \bot$.
+\end{definition}
+
+Unlike completeness, this definition doesn't mean that the analysis will find the best possible result the abstraction can, but just that if it can find something ($\alpha(f(c)) \neq \bot$) then it will find at least one of the possible results ($f^{\flat}(\alpha(c)) \neq \bot$).
+The rationale behind this definition is the fact that, as anticipated in the introduction, recovery from $\top$ is quite common while recovery from $\bot$ is very hard. This definition just prevents the analysis to fall into $\bot$ because of imprecision of abstracted functions.
+
+Clearly this definition is weaker than completeness, that is if $A$ is complete for $f$ then $f$ is non emptying in $A$, but the converse is not true.
+However, even this weaker notion allows to prove some results on $A$ under some assumptions.
+
+For the reminder of this section, we assume there is an under-approximating Galois Insertion $\pow(C) (\alpha, \id) A$. Moreover, we say an element $S \in \pow(C)$ is \textit{representable} if it belongs to $A$, or equivalently if $\alpha(S) = S$.
+
+\begin{definition}\label{ch3:def:repr-with-set}
+	Let $S \subseteq C$ be a subset of $C$. We say that $d \in C$ is \textit{representable with $S$} if $S \cup \{ d \}$ is representable. We call $R(S)$ the set of elements of $C$ representable with $S$, ie.
+	\[
+	R(S) = \{ d \in C \svert \alpha(\{ d \} \cup S) = (\{ d \} \cup S) \}
+	\]
+\end{definition}
+For the sake of brevity, we write $R$ for $R(\emptyset)$, the set of representable elements of $C$, and $R(c)$ for $R(\{ c \})$ where $c \in C$ is any concrete value.
+
+We now present a lemma about non emptying functions that makes reasoning about such functions easier. This lemma is weaker than the definition, but is nevertheless one of the main tools we use when considering non emptying functions.
+
+\begin{lemma}\label{ch3:th:f-non-repr-pair}
+	Let $f: C \rightarrow C$ be non emptying, $c \in R$ and the pair $\{ c, \bar{c} \}$ be not representable, ie. $\bar{c} \notin R(c)$. If $f(\bar{c}) \in R$ then also $f(c) \in R$.
+\end{lemma}
+\begin{proof}
+	Since $\{ c, \bar{c} \} \supseteq \{ c \}$ we have
+	\[
+	\alpha(\{ c, \bar{c} \}) \supseteq \alpha(\{ c \}) = \{ c \}
+	\]
+	where the equality follows because $c \in R$ is representable. Since by correctness
+	\[
+	\alpha(\{ c, \bar{c} \}) \subseteq \{ c, \bar{c} \}
+	\]
+	and $\alpha(\{ c, \bar{c} \})$ can't be the pair $\{ c, \bar{c} \}$ because this is not representable and hence not in the image of $\alpha$, it should be the case that $\alpha(\{ c, \bar{c} \}) = \{ c \}$.
+	
+	Now
+	\[
+	\alpha(f(\{ c, \bar{c} \})) = \alpha(\{ f(c), f(\bar{c}) \}) \supseteq \alpha(\{ f(\bar{c}) \}) = \{ f(\bar{c}) \}
+	\]
+	where the last equality follows by the hypothesis that $f(\bar{c}) \in R$.
+	This in particular means that $\alpha(f(\{ c, \bar{c} \})) \neq \emptyset$, and together with the fact that $\alpha(\{ c, \bar{c} \}) = \{ c \} \neq \emptyset$, since $f$ is non emptying we get that
+	\[
+	f^{\flat}(\alpha(\{ c, \bar{c} \})) \neq \emptyset
+	\]
+	
+	From this we find
+	\begin{align*}
+		\emptyset &\neq f^{\flat}(\alpha(\{ c, \bar{c} \})) \\
+		&= f^{\flat}(\{ c \}) \\
+		&= \alpha \circ f(\{ c \}) \\
+		&= \alpha(\{ f(c) \})
+	\end{align*}
+	Again by correctness we have $\alpha(\{ f(c) \}) \subseteq \{ f(c)\}$, and since this can't be empty it should be exactly $\alpha(\{ f(c) \}) = \{ f(c) \}$, that is $f(c) \in R$.
+\end{proof}
+
+The goal of this lemma is to use non emptying functions to get new representable elements, as this will be our main tool to prove non existence of under-approximating abstract domains.
+
+We now apply this definition on integer domains to get two similar results. We apply it in two different situations, on the infinite domain $\pow(\setZ)$ and on the finite $\pow([-N; N])$ of machine integers.
+
+\subsubsection{Infinite domain}
+In this subsection we focus on the infinite concrete domain $\pow(\setZ)$. We assume that an abstract domain $A$, to be feasible for analyses, must be at most countable.
+
+We first present a simple cardinality estimate that will be useful in the proof of the following result. The goal of this lemma is to show that some sets must be ``small" (in some sense, in this case finite), so we can find a contradiction showing that one of these sets is actually ``big". This line of reasoning is the main tool we use to prove non existence of abstract domain with some properties.
+
+\begin{lemma}\label{ch3:th:R-S-bound-integer-inf}
+	For any fixed subset $S \subseteq \setZ$, $R(S)$ is at most finite.
+\end{lemma}
+\begin{proof}
+	By union closure of the abstract domain\todo{add ref}, any set $S \cup T$ for $T \subseteq R(S)$ is representable too, since it can be expressed as the union of representable sets:
+	\[
+	S \cup T = \bigcup\limits_{x \in T} (S \cup \{ x \})
+	\]
+	and $S \cup \{ x \}$ is representable since $x \in R(s)$.
+
+	The number of those sets is the cardinality of $\pow(R(S))$, and since $A$ is at most countable the set $R(S)$ can't be infinite.
+\end{proof}
+
+We now present the first result that shows that requiring some functions to be non emptying makes impossible to create an abstract domain. The main idea is to define an infinite sequence of representable elements, that is in contradiction with the previous lemma that says that $R = R(\emptyset)$ is at most finite.
+In order to define such a sequence, we want to use lemma \ref{ch3:th:f-non-repr-pair}: we start from an initial representable $n_0$ and from a value $\bar{n}$ not representable with it, then find a non-emptying $f$ that maps $\bar{n}$ into $n_0$, so that $f(\bar{n})$ is representable and we can then apply the lemma to get the new representable element $f(n_0)$. We then iterate this procedure, changing $f$, to build the infinite sequence.
+
+\begin{prop}\label{ch3:th:ne-sum-nonexsistence-inf}
+	Let $\pow(\setZ) (\alpha, \id) A$ be an under-approximating Galois Insertion, and assume that there is an integer $n_0$ that is representable. Then it can't be the case that all the functions of the form $f_n(x) = x + n$ are non emptying in $A$.
+\end{prop}
+
+\begin{proof}
+	Assume by contradiction that all $f_n$ are non emptying in $A$.
+	By hypothesis, $n_0 \in R$, and $R(n_0)$ is at most finite by lemma \ref{ch3:th:R-S-bound-integer-inf}. Since $\setZ$ is infinite, this means there exists an $\bar{n} \in \setZ \setminus R(n_0)$, that is an element such that the pair $\{ n_0, \bar{n} \}$ is not representable.
+
+	Let $d = n_0 - \bar{n}$ and consider $f_d$. We assumed it to be non emptying, so we can apply lemma \ref{ch3:th:f-non-repr-pair}: $n_0$ is representable while the pair $\{ n_0, \bar{n} \}$, and 
+	\[
+	f_d(\bar{n}) = \bar{n} + d = \bar{n} + n_0 - \bar{n} = n_0
+	\]
+	so it's representable. Hence also $f_d(n_0) = n_0 + d$ is representable.
+	
+	Following this idea, we can prove by induction on $t$ that $n_0 + t d$ is representable for all $t$. The base step $t = 0$ is the hypothesis that $n_0$ is representable.
+	For the inductive step, assume $n_0 + (t - 1) d$ is representable, and consider $f_{t d}$. We assumed this non emptying, so we can apply again lemma \ref{ch3:th:f-non-repr-pair} to the pair $\{ n_0, \bar{n} \}$:
+	\[
+	f_{t d}(\bar{n}) = \bar{n} + t d = \bar{n} + n_0 - \bar{n} + (t - 1) d = n_0 + (t - 1) d
+	\]
+	that is representable by inductive hypothesis. So we get that $f_{t d}(n_0) = n_0 + t d$ is representable too, that is exactly the inductive step.
+
+	So we got that $\{ n_0 + t d \svert t \in \setN \} \subseteq R$, that is impossible since $R$ must be finite by lemma \ref{ch3:th:R-S-bound-integer-inf}.
+\end{proof}
+
+\subsubsection{Finite domain}
+Now we move to a slightly different setting: we assume as concrete domain $\pow([-N; N])$, the powerset of a finite, symmetric interval for some large integer value $N$, and we assume all operations are performed ``in machine arithmetic", that is whenever the result is greater than $N$ we ``wrap back" to $-N$. This correspond to apply the function $n \mapsto n \% (2N + 1) - N$, but we'll try to avoid as much as possible to write it in formula since it clutters the notation a lot.
+Again, we make an assumption on the size of the abstract domain for the analysis to be feasible: we assume the size of $A$ is a polynomial in $N$.
+
+In this section we'll use asymptotic notation for some quantities. For this to be completely formal we would have to assume a sequence of abstract domain $A_N$, each for the concrete domain $\pow([-N; N])$, ordered by inclusion. Then define a sequence of values for each quantity we want to estimate, and take the limit of this sequence for $N$ going to infinity. However we do believe that also all these formal details would clutter both statements and proofs, making hard to get insight on meanings. For this reason, we avoid all this, just (ab)using the intuitive meaning associated with the notation.
+
+\begin{lemma}\label{ch3:th:R-S-bound-integer-fin}
+	For any fixed subset $S \subseteq \setZ$, $\lvert R(S) \rvert = O(\log(N))$.
+\end{lemma}
+\begin{proof}
+	As in the proof of \ref{ch3:th:R-S-bound-integer-inf}, by union closure any set $S \cup T$ for $T \subseteq R(S)$ is representable too. We then have
+	\[
+	\poly(N) = \abs{A} \ge \abs{\pow(R(S))} = 2^{\abs{R(S)}} 
+	\]
+	so, taking log at both sides, $\abs{R(S))} = O(\log(N))$.
+\end{proof}
+
+The following proposition follows the proof line of proposition \ref{ch3:th:ne-sum-nonexsistence-inf}: we define a sequence of representable elements, that are too much since, by the previous lemma, $R$ is quite small.
+
+\begin{prop}\label{ch3:th:ne-sum-nonexsistence-fin}
+	Let $\pow([-N; N]) (\alpha, \id) A$ be an under-approximating Galois Insertion, and assume that there is an integer $n_0$ that is representable. Then it can't be the case that all the functions of the form $f_n(x) = ((x + n) \% (2N + 1)) - N$ are non emptying in $A$.
+\end{prop}
+\begin{proof}
+	Without loss of generality, we can assume $n_0 \ge 0$. If this were not the case, we can just ``rotate" the interval mapping each integer $n \mapsto (n + N) \% (2N + 1) - N$ so that this becomes true.
+
+	Let $r = \abs{R(n_0)}$. By the previous lemma \ref{ch3:th:R-S-bound-integer-fin} we know that $r = O(\log(N))$. Fix an element $\bar{n} \notin R(n_0)$ not representable with $n_0$ such that
+	\[
+	d = n_0 - \bar{n} \le r + 1
+	\]
+	This element should exists because otherwise all elements in the interval $[n_0 - r - 1; n_0 - 1]$ would be representable with $n_0$, that is impossible since they are $r + 1 = \abs{R(n_0)} + 1$.
+
+	Following the proof of proposition \ref{ch3:th:ne-sum-nonexsistence-inf}, we can show by induction that for all $t \ge 0$ the value $(n_0 + t d) \% (2N + 1) - N$ is representable. However, all these values are different from one another for
+	\[
+	0 \le t < \frac{2N + 1}{d}
+	\]
+	and we also know that
+	\[
+	\frac{2N + 1}{d} > \frac{2N}{r + 1} = \frac{N}{O(\log(N))}
+	\]
+	But this is a contradiction since all these values are representable while $\abs{R} = O(\log(N))$ by lemma \ref{ch3:th:R-S-bound-integer-fin}.
+\end{proof}

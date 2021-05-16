@@ -1,0 +1,400 @@
+\chapter{Generalizations}
+\todo{Change chapter name}
+In the previous chapter we presented some results about integer domains. In this one, we would like to explore how much of the previous results can be generalized to arbitrary domains.
+
+In this chapter we assume an infinite set $C$ of values and use as concrete domain $\pow(C)$. We also assume an under-approximating Galois Insertion $\pow(C) (\alpha, id) A$.
+
+% TO DELETE?
+
+As notation, we use $c, d$ for elements of $C$, $\bar{c}$ to denote some element of $C$ for which some pair $\{ c, \bar{c} \}$ is not representable (the specific pair is often clear from the context). We say an element of $\pow(C)$ (ie. a subset of $C$) is \textit{representable} if it belongs to $A$, or equivalently if $\alpha$ is the identity on it. It is worth noting that with this notation
+\[
+f^{\flat} = \alpha \circ f \circ \gamma = \alpha \circ f
+\]
+but they have ``different types": $\alpha \circ f$ is a function from $\pow(C)$ to $A$ and so can be applied to arbitrary elements of $\pow(C)$, while $f^{\flat}$ is from $A$ in itself, so it should always be applied to elements of $A$. This will be enforced putting and $\alpha$ in front of $\alpha \circ f$ whenever it's used as $f^{\flat}$.
+
+Moreover, we often confuse a function from $C$ in itself and its additive extension, so if we say $f: C \rightarrow C$ is non emptying we actually mean that its additive extension
+\begin{align*}
+	f: \pow(C) &\rightarrow \pow(C)	\\
+	S & \mapsto \{ f(c) \svert c \in S \}
+\end{align*}
+is non emptying.
+% CHECK WHAT TO KEEP
+
+First we remark that definitions \ref{ch3:def:non-emptying} of non emptying functions, \ref{ch3:def:repr-with-set} of elements representable with a set and lemmas \ref{ch3:th:f-non-repr-pair} and \ref{ch3:th:R-S-bound-integer-inf} are fully general and doesn't depend on the specific integer domain we used in the previous chapter. Hence we start from these to build results independent of the concrete domain.
+
+The first new concept we introduce is that of highly onto function family. Our results for integers are all based on the fact that the abstract domain must be non emptying for a certain family of functions (in that specific case, adding a constant). We see now that a requirement like this can be moved to arbitrary concrete domains and is in fact a necessary condition.
+
+\begin{definition}[Highly onto function family]\label{ch4:def:highly-onto-func-family}
+	Given a family $F$ of functions from $C$ in itself and an element $c \in C$, let
+	\[
+	P(c) = \{ d \in C \svert \exists f_d \in F\ .\ f_d(d) = c \}
+	\]
+	the set of elements of $C$ for which there exists a function $f_d$ that maps that element to $c$ (possible preimages of $c$).
+
+	We say that the family $F$ is \textit{highly onto} (or \textit{highly surjective}) if, for any possible choice of $c \in C$, $P(c)$ is infinite.
+\end{definition}
+
+Clearly the family of functions that add a constant are highly onto, and actually satisfies a stronger property: for any possible choice of $c$ \textit{all} possible choices of $d$ (that are infinitely many) have a function $f_d(x) = x + c - d$ such that $f_d(d) = c$, that is $P(c) = \setZ$. We used this property in the proof in order to apply lemma \ref{ch3:th:f-non-repr-pair}: we took an element $\bar{n}$ not representable with $n_0$ and used said function in order to get $f(\bar{n}) = n_0 \in R$, hence being able to apply the lemma to get $f(n_0) \in R$. The point is that at the beginning the only representable element we know of is $n_0$, so our only hope to show $f(\bar{n}) = \in R$ is to show that $f(\bar{n}) = n_0$.
+
+The requirement that we're able to do that for all possible $c$ is needed because first we fix the function family we're interested in analysing, then we can pick the abstract domain. Thinking of this as a game, player one fixes the function family and wants to show that there are no abstract domain able to analyse them, so player 2 thinks of a counterexample suited for that family. In fact, if there is even a single $c$ for which the condition doesn't hold, player 2 can actually construct such counterexample, as showed in the following proposition.
+\begin{prop}
+	For any fixed family $F$ of functions from $C$ in itself that is not highly onto, there exists an abstract domain $A_F$ such that:
+	\begin{itemize}
+		\item $A_F$ is finite
+		\item all functions $f \in F$ are non emptying in $A_F$
+	\end{itemize}
+\end{prop}
+\begin{proof}
+	Since $F$ is not highly onto, there exists $c_0 \in C$ such that $P(c_0)$ is finite. We then define $A_F$ as follows.
+	
+	The only element of $C$ representable on its own is $c_0$ itself, ie. $R = \{ c_0 \}$.
+	A pair of elements of $C$ is representable if and only if one of its elements is $c_0$ and the other is in $P(c_0)$. This also means that $R(c_0) = P(c_0)$.
+	Subsets of $C$ with at least three elements are representable if and only if they are unions of representable pairs.
+
+	Putting all together
+	\[
+	A_F = \{ \emptyset, \{ c_0 \} \} \cup \{ \{ c_0 \} \cup T \svert T \subseteq P(c_0) \}
+	\]
+
+	$A_F$ is a Moore family with respect to $\pow(C)^{\op}$ (it contains the maximal element, that is $\emptyset$, and is closed by union, that is meet in the opposite powerset), hence $A_F$ is a correct under-approximation abstract domain.
+
+	Since $R(c_0) = P(c_0)$ is finite, we get that $A_F$ is finite too:
+	\[
+	\abs{A_F} = 2 + 2^{\abs{P(c_0)}}
+	\]
+
+	Now we want to show that any $f$ in $F$ is non emptying in $A_F$.
+	We first observe that a subset $S \subseteq C$ is such that $\alpha(S) \neq \emptyset$ if and only if $c_0 \in S$. Suppose that $c_0 \in S$, then
+	\[
+	\alpha(S) \supseteq \alpha(\{ c_0 \}) = \{ c_0 \} \supset \emptyset
+	\]
+	Conversely, suppose that $\alpha(S) \neq \emptyset$. Since all elements of $A_F$ but the empty set contains $c_0$, by correctness we have
+	\[
+	c_0 \in \alpha(S) \subseteq S
+	\]
+
+	So fix now $S \subseteq C$ an element of the concrete domain. If $\alpha(S) = \emptyset$ then the non emptying condition is vacuously true, so assume $\alpha(S) \neq \emptyset$, or equivalently that $c_0 \in S$.
+	Consider now $\alpha(f(S))$. If this is empty again the non emptying condition is vacuously true, so assume it is not. Again, this holds if and only if $c_0 \in f(S)$, that can be rewritten as $\exists d \in S\ .\ f(d) = c_0$. But by definition of $A_F$ we know this is equivalent to $d \in P(c_0) = R(c_0)$.
+	Hence
+	\begin{align*}
+		&S \supseteq \{ c_0, d \} \\
+		\implies& \alpha(S) \supseteq \alpha(\{ c_0, d \}) = \{ c_0, d \} \\
+		\implies& f(\alpha(S)) \supseteq f(\{ c_0, d \}) \supseteq \{ f(d) \} = \{ c_0 \} \\
+		\implies& f^{\flat}(\alpha(S)) = \alpha(f(\alpha(S))) \supseteq \alpha(\{ c_0 \}) = \{ c_0 \}
+	\end{align*}
+	Lines are motivated respectively by: monotonicity of $\alpha$ and representability of $\{ c_0, d \}$; monotonicity of $f$ and the fact that $f(d) = c_0$; monotonicity of $\alpha$ and representability of $\{ c_0 \}$. Also note that the implication chain above holds even if $d = c_0$.
+	The last line implies $f^{\flat}(\alpha(S)) \neq \emptyset$, so $f$ is non emptying in $A_F$.
+\end{proof}
+
+We now show a simple example of the construction used in the proof
+\begin{example}
+	Fix the pair of functions $f(x) = x - 1$ and $g(x) = x - 2$ on $\setZ$, and let us build an under-approximating abstract domain for which these functions are non emptying. Following the proof of the previous proposition, we need an integer $n_0$ such that only a finite amount of integers can be mapped into it using either $f$ or $g$. Clearly any integer is fine, so let us fix $n_0 = 0$.
+
+	The set $P(0)$ of integers that can be mapped into $0$ is simply $P(0) = \{ 1, 2 \}$. The abstract domain is then
+	\[
+	A_F = \{ \emptyset, \{ 0 \}, \{ 0, 1 \}, \{ 0, 2 \}, \{ 0, 1, 2 \} \}
+	\]
+	Both $f$ and $g$ are non emptying in $A_F$. A set $S$ isn't abstracted to $\emptyset$ if and only if it contains $0$, so fix one that does.
+	For $f(S)$ not to be abstracted to $\emptyset$ we need also it to contain $0$, that means $1 \in S$. So
+	\begin{align*}
+		f^{\flat}(\alpha(S)) &= \alpha(f(\alpha(S))) \\
+		&\supseteq \alpha(f(\alpha(\{ 0, 1 \}))) \\
+		&= \alpha(f(\{ 0, 1 \})) \\
+		&= \alpha(\{ -1, 0 \}) = \{ 0 \}
+	\end{align*}
+	The check for $g$ is analogous.
+\end{example}
+
+This proposition gives us one limit of approaches based on non emptying functions to show non existence of under-approximating abstract domains: whatever we do, we must fix enough functions to have high ontoness. This in particular means those approaches are ill suited to prove results where we focus on a single function.
+
+In the following sections, we present two impossibility results. They share the same general structure: we fix a function family $F$ with some properties, assume that they are all non emptying in the abstract domain and that $R$ isn't empty. We need this last assumption in order to use lemma \ref{ch3:th:f-non-repr-pair}: if $R$ is empty we can't prove $f(\bar{c}) \in R$.
+
+\section{First result}
+\todo{change section name}
+This first result is somehow more ``local", in the sense that we require each function in $F$ to satisfy some properties ``on its own", independently from other functions in $F$.
+
+One of the (possible) conditions on $f$ is acyclicness:
+\begin{definition}[Acyclic function]
+	Given a function $f$ from $C$ in itself we say that it's \textit{acyclic} if, for any finite sequence $c_0, c_1, \dots c_n$ of elements of $C$ of any length, it doesn't happen that
+	\[
+	f(c_0) = c_1, f(c_1) = c_2, \dots f(c_n) = c_0
+	\]
+	
+	Is this holds for all sequences of length at least $2$, we say $f$ is \textit{almost acyclic}.
+\end{definition}
+Acyclicness is quite restrictive because it also considers sequences of length $1$, that means that $f$ can't have fixpoints. Almost acyclicness is useful exactly for this, but it's not enough on its own, as we'll argue after the proof.
+
+\begin{theorem}\label{ch4:th:non-empt-res-local}
+	Let $F$ be a family of functions from $C$ in itself such that
+	\begin{itemize}
+		\item $F$ is highly onto
+		\item all functions $f \in F$ are either injective or acyclic
+	\end{itemize}
+	Assume also that $R$ isn't empty. Then $A$ can't be non emptying for all $f \in F$.
+\end{theorem}
+The proof of this theorem is quite involved. It starts from $c_0 \in R$, that exists because $R$ is not empty, and iteratively creates a sequence $c_n$ of representable elements. This yields a contradiction since $R$ should be finite.
+
+\begin{figure*}[ht]
+	\centering
+	\begin{tikzpicture}
+		\tikzset{vertex/.style = {shape=circle,fill,inner sep=1pt}}
+		\tikzset{func/.style = {->,> = latex'}}
+		
+		% vertices \bar{c}
+		\node[vertex,label=left:$\bar{c}$] (bc1) at (0,1){};
+		\node[vertex,label=left:$\bar{c}$] (bc2) at (0,0.5){};
+		\node at (0,0.1){$\vdots$};
+		\node[vertex,label=left:$\bar{c}$] (bc3) at (0,-0.5){};
+		\node[vertex,label=left:$\bar{c}$] (bc4) at (0,-1){};
+		
+		% vertices cn
+		\node[vertex,label=above:$c_0$] (c0) at (1,0){};
+		\node[vertex,label=above:$c_1$] (c1) at (2,0){};
+		\node[vertex,label=above:$c_2$] (c2) at (3,0){};
+		\node (c2dots) at (4,0){$\dots$};
+		\node[vertex,label=above:$c_n$] (cn) at (5,0){};
+		\node (cndots) at (6,0){$\dots$};
+		
+		%edges \bar{c} -> c_0
+		\draw[func] (bc1) to (c0);
+		\draw[func] (bc2) to (c0);
+		\draw[func] (bc3) to (c0);
+		\draw[func] (bc4) to (c0);
+		% edge c0 -> c1 -> ...
+		\draw[func] (c0) to (c1);
+		\draw[func] (c1) to (c2);
+		\draw[func] (c2) to (c2dots);
+		\draw[func] (c2dots) to (cn);
+		\draw[func] (cn) to (cndots);
+	\end{tikzpicture}
+	\caption{Graphical representation of the ``final" $f$}
+	\label{ch4:fig:final-f-sketch}
+\end{figure*}
+
+The main idea is to ``pick" a suitable $f$ in $F$ and define the sequence as the iterates $c_{n+1} = f(c_n)$, as sketched in figure \ref{ch4:fig:final-f-sketch}. The initial set of $\bar{c}$ mapped to $c_0$ is required to be able to apply lemma \ref{ch3:th:f-non-repr-pair}.
+The issue with this idea is that we don't have enough information on the sequence to pick such an $f$ at the beginning, so we actually bring along a (huge) list of candidate $f$ that all coincides on a prefix of the sequence. At step $n$, we pick a new element of the sequence among the possible images of $c_{n-1}$ through all candidate $f$ we have at that point, and discard all those that doesn't match the choice.
+
+Actually, instead of directly consider functions, we represent them with elements $\bar{c}$ of $C$. Each element represent a function $f_{\bar{c}}$ that satisfies $f_{\bar{c}}(\bar{c}) = c_0$. Note that this function exists for ``enough" (that is, infinitely many) $\bar{c}$ because of the high ontoness hypothesis. We call $E_n$ the set of $\bar{c}$ that represent functions that are ``valid" for the prefix up to $n$, ie. they map $c_{i}$ to $c_{i+1}$ for $0 \le i \le n - 1$. The core of the proof is an induction that proves that $E_n$ always contains ``enough" (in this case, infinitely many) elements and that the newly chosen $c_n$ is different from all the others.
+
+\begin{proof}
+	Assume by contradiction that $A$ is non emptying for all $f \in F$. By hypothesis, $R$ isn't empty and thus we can take a $c_0 \in R$. We then construct recursively a sequence of representable elements $c_n$.
+
+	Given an element $c \in C$, let
+	\[
+	NR(c) = C \setminus R(c) = \{ \bar{c} \in C \svert \{ c, \bar{c} \} \text{ is not representable} \}
+	\]
+
+	Since $F$ is an highly onto family, for an infinite amount of $\bar{c}$ there exists $f_{\bar{c}}$ such that $f_{\bar{c}}(\bar{c}) = c_0$.
+
+	To ease presentation, we define here $E_n$, a set of element of $C$ that depends on the sequence $c_n$ we'll construct in the proof. Do note that the definition of $E_n$ only depends on elements of the sequence up to $c_n$.
+	\begin{align*}
+		E_n = \{\bar{c} \in C \svert & \forall\ 0 \le i \le n \ .\ \bar{c} \in NR(c_i), \\
+		& f_{\bar{c}}(\bar{c}) = c_0, \\
+		& \forall\ 0 \le i \le n - 1 \ .\ f_{\bar{c}}(c_i) = c_{i + 1} \}
+	\end{align*}
+	In the light of the introduction above, the first line is needed to apply lemma \ref{ch3:th:f-non-repr-pair} and get that $f_{\bar{c}}(c_n)$ is representable. The second one means that $\bar{c}$ actually represents $f_{\bar{c}}$, and the last is the requirement that $f_{\bar{c}}$ coincides on the prefix of the sequence up to $c_n$
+
+	We observe that the sequence $E_n$ can also be defined inductively by
+	\begin{align*}
+		E_0 &= \{ \bar{c} \in C \svert \bar{c} \in NR(c_0), f_{\bar{c}}(\bar{c}) = c_0 \} \\
+		&= NR(c_0) \cap P(c_0)
+	\end{align*}
+	\begin{align*}
+		E_{n+1} &= \{\ \bar{c} \in E_n \svert \bar{c} \in NR(c_{n+1}), f_{\bar{c}}(c_n) = c_{n+1} \} \\
+		&= NR(c_{n+1}) \cap \{\ \bar{c} \in E_n \svert f_{\bar{c}}(c_n) = c_{n+1} \} \addtocounter{equation}{1}\tag{\theequation} \label{ch4:eq:En-relation}
+	\end{align*}
+	$E_0$ is the intersection of $NR(c_0)$ and the set of $\bar{c}$ for which there exists $f_{\bar{c}}$. Using lemma \ref{ch3:th:R-S-bound-integer-inf} to say $R(c_0)$ is finite and recalling that $P(c_0)$ is infinite (by high ontoness), is easy to observe that
+	\begin{align*}
+		E_0 = P(c_0) \cap NR(c_0) = P(c_0) \setminus (C \setminus NR(c_0)) = P(c_0) \setminus R(c_0)
+	\end{align*}
+	is infinite too.
+
+	We then prove by induction on $n$ the following three statements: first $c_n$ is representable, ie. $c_n \in R$; second $E_n$ is infinite; third $c_n$ is different from all $c_i$ for $0 \le i \le n - 1$.
+	
+	We've already proved base case for $n = 0$, so we assume the three hypothesis hold for $n$ and prove them for $n + 1$.
+	Consider the set
+	\[
+	\{ f_{\bar{c}}(c_n) \svert \bar{c} \in E_n \}
+	\]
+	of candidate $c_{n+1}$.
+	Since $c_n \in R$, $\bar{c} \in E_n \subseteq NR(c_n)$ and $f_{\bar{c}}(\bar{c}) = c_0 \in R$ (by inductive hypotheses) we can apply lemma \ref{ch3:th:f-non-repr-pair} to get $f_{\bar{c}}(c_n) \in R$ too, hence that set is a subset of $R$. Since $R$ is finite also that set must be.
+	By inductive hypothesis we know $E_n$ is infinite, so there must exists an element $c_{n+1}$ in that set such that an infinite amount of $\bar{c} \in E_n$ satisfies $f_{\bar{c}}(c_n) = c_{n+1}$. We observe that, as shown above, $c_{n+1} \in R$. Moreover we chose $c_{n+1}$ such that
+	\[
+	\{\ \bar{c} \in E_n \svert f_{\bar{c}}(c_n) = c_{n+1} \}
+	\]
+	is infinite, so we get
+	\[
+	\{\ \bar{c} \in E_n \svert f_{\bar{c}}(c_n) = c_{n+1} \} \cap NR(c_{n+1}) = \{\ \bar{c} \in E_n \svert f_{\bar{c}}(c_n) = c_{n+1} \} \setminus R(c_{n+1})
+	\]
+	is infinite too because $R(c_{n+1})$ is finite. But this, by equation \eqref{ch4:eq:En-relation} above, is exactly $E_{n+1}$.
+	
+	We only have to show that $c_{n+1} \neq c_i$ for all $0 \le i \le n$. Assume by contradiction that this is not the case: for some $0 \le j \le n$ it holds $c_{n+1} = c_j$.
+	If $f_{\bar{c}}$ is acyclic this is a contradiction because it would create the cycle
+	\[
+	f_{\bar{c}}(c_j) = c_{j+1}, \dots, f_{\bar{c}}(c_n) = c_{n+1} = c_j
+	\]
+	If instead $f_{\bar{c}}$ is injective, let us distinguish two cases. If $j = 0$ we get $f_{\bar{c}}(c_n) = c_{n+1} = c_0 = f_{\bar{c}}(\bar{c})$, that would imply $c_n = \bar{c}$, but the former is representable and the latter is not. If otherwise $j > 0$ we get $f_{\bar{c}}(c_n) = c_{n+1} = c_j = f_{\bar{c}}(c_{j-1})$, that would imply $c_n = c_{j-1}$, that is not the case by inductive hypothesis.
+
+	This concludes the inductive proof.
+	
+	By the induction above we have that all $c_n$, that are an infinite amount, are elements of $R$ and are all distinct. This yields the desired contradiction because $R$ is finite.
+\end{proof}
+
+Intuitively, if we were able to find the ``final" $f$ from the beginning, it would look like figure \ref{ch4:fig:final-f-sketch}: some $\bar{c}$, those for which that $f$ is $f_{\bar{c}}$, are mapped to $c_0$, and from there it just maps each $c_n$ to $c_{n+1}$. Do note that this is just an intuitive description: in fact, such an $f$ may not even exists (this correspond to the limit of $E_n$ being empty), but is indeed useful to visualize the proof.
+
+An interesting observation about the proof is that we used injectivity or acyclicness of $f$ only to show that $c_{n+1} \neq c_i$, so any other condition that allows us to do so is a fine alternative to those two. In particular, we can require almost acyclicness to functions in $F$ if we're also able to guarantee that $f_{\bar{c}}(c_n) = c_{n+1} \neq c_n$. A possible condition is
+\[
+\forall c \in C. f(c) \neq c \implies f(f(c)) \neq f(c)
+\]
+This condition is enough since all $c_n$ are the image of something through $f_{\bar{c}}$: for $n = 0$, $f_{\bar{c}}(\bar{c})= c_0 \neq \bar{c}$, and for $n > 0$, $f_{\bar{c}}(c_{n-1}) = c_n \neq c_{n-1}$.
+This condition could be restated as follows: any non-fixpoint of $f$ can't be mapped to a fixpoint, that is
+\[
+f(C \setminus \fix(f)) \subseteq C \setminus \fix(f)
+\]
+This condition is still restrictive, but is less so than acyclicness, that prevents fixpoints to exist at all.
+The theorem above could hence be changed considering an highly onto family $F$ of functions such that any function $f \in F$ is either injective or both almost acyclic and satisfying $f(C \setminus \fix(f)) \subseteq C \setminus \fix(f)$.
+\todo{almost acyclicness is implied (equiv?) to extensiveness wrt some partial order}
+
+A simple example of such a family of functions are constant sums over integers.
+\begin{example}
+We take $C = \setZ$ and
+\[
+F = \{ \lambda x. x + n \svert n \in \setZ \}
+\]
+The family is highly onto (actually $P(c) = \setZ$ for all $c$) and all these functions are injective, so it meets the hypothesis of the theorem.
+\end{example}
+
+Even though we've already proved that no abstract domain can be non emptying for all functions in this family $F$ in proposition \ref{ch3:th:ne-sum-nonexsistence-inf} in the previous chapter, it's important to note that this proof isn't a generalization of the proof of that proposition. In this proof, we iterate a single $f$ to build the entire sequence, while in that one we change the function every time, mapping the non representable $\bar{n}$ to the newly found representable $n_0 + t d$ to get that the image of $n_0$ through that function is representable too, as sketched in figure \ref{ch4:fig:ne-sum-inf-sketch}.
+
+\begin{figure*}[ht]
+	\centering
+	\begin{tikzpicture}
+		\tikzset{vertex/.style = {shape=circle,fill,inner sep=1pt}}
+		\tikzset{func/.style = {->,> = latex'}}
+
+		% nodes cn
+		\node[label=above:$\bar{n}$] (bnt) at (0, 2){};
+		\node (bnb) at (0, -2){};
+		\draw (bnt) to (bnb);
+
+		\node[label=above:$n_0$] (n0t) at (2, 2){};
+		\node (n0b) at (2, -2){};
+		\draw (n0t) -- (n0b);
+
+		\node[label=above:$n_0+d$] (n1t) at (4, 2){};
+		\node (n1b) at (4, -2){};
+		\draw (n1t) -- (n1b);
+
+		\node[label=above:$n_0+2d$] (n2t) at (6, 2){};
+		\node (n2b) at (6, -2){};
+		\draw (n2t) -- (n2b);
+
+		\node[label=above:$n_0+3d$] (n3t) at (8, 2){};
+		\node (n3b) at (8, -2){};
+		\draw (n3t) -- (n3b);
+
+		\node[label=above:$n_0+4d$] (n4t) at (10, 2){};
+		\node (n4b) at (10, -2){};
+		\draw (n4t) -- (n4b);
+
+		% f_0
+		\node[label=left:$f_d$] at (0, 1.5){};
+		\draw[func] (0, 1.5) to [bend left=10] (2, 1.5);
+		\draw[func] (2, 1.5) to [bend left=10] (4, 1.5);
+
+		% f_1
+		\node[label=left:$f_{2d}$] at (0, 0.5){};
+		\draw[func] (0, 0.5) to [bend left=10] (4, 0.5);
+		\draw[func] (2, 0.5) to [bend left=10] (6, 0.5);
+
+		% f_2
+		\node[label=left:$f_{3d}$] at (0, -0.5){};
+		\draw[func] (0, -0.47) to [bend left=10] (6, -0.47);
+		\draw[func] (2, -0.53) to [bend left=10] (8, -0.53);
+
+		% f_3
+		\node[label=left:$f_{4d}$] at (0, -1.5){};
+		\draw[func] (0, -1.47) to [bend left=10] (8, -1.47);
+		\draw[func] (2, -1.53) to [bend left=10] (10, -1.53);
+	\end{tikzpicture}
+	\caption{Graphical representation of the proof of proposition \ref{ch3:th:ne-sum-nonexsistence-inf}}
+	\label{ch4:fig:ne-sum-inf-sketch}
+\end{figure*}
+
+\subsection{Second result}
+The second result we propose is instead more ``global", in the sense that it requires conditions on $F$ as a whole, and not on each $f$ on its own.
+
+\begin{theorem}\label{ch4:th:non-empt-res-global}
+	Let $F$ be a family of functions from $C$ in itself such that
+	\begin{itemize}
+		\item $F$ is highly onto
+		\item for all pair of elements $c, d \in C$ there exists at most a finite amount of $f \in F$ such that $f(d) = c$
+		\item for all pair of an element $c \in C$ and a function $f \in F$, there exists at most a finite amount of elements $d \in C$ such that $f(d) = c$
+	\end{itemize}
+	Assume also that $R$ isn't empty. Then $A$ can't be non emptying for all $f \in F$.
+\end{theorem}
+
+The idea of the proof is that all these finiteness requirements makes it impossible to build enough $\bar{c}$ for which there exists $f_{\bar{c}}$ that maps them into $c_0$ (ie. $\bar{c} \in P(c_0)$), contradicting the hypothesis that $F$ is highly onto. This may seem a little contradictory on its own (after all it is us that are requiring $F$ to satisfy all those conditions), but actually it is not because the proof also involves finiteness of $R$ and $R(c_0)$, that are enforced by the abstract domain. In fact we'll present an example of function family that meets those requirements.
+
+The actual proof follows this idea in the opposite direction: starts from the (infinite) set $P(c_0)$ of $\bar{c}$ and propagates its infiniteness down to $R$, thus getting the contradiction.
+
+\begin{proof}
+	Assume by contradiction that $A$ is non emptying for all $f \in F$. By hypothesis, $R$ isn't empty and thus we can take a $c_0 \in R$.
+	
+	Since $F$ is an highly onto family, $P(c_0)$ is infinite. Using lemma \ref{ch3:th:R-S-bound-integer-inf} to say that $R(c_0)$ is finite we can say that
+	\begin{align*}
+		E &= \{ \bar{c} \in C \svert \bar{c} \notin R(c_0), \exists f_{\bar{c}} \in F\ .\ f_{\bar{c}}(\bar{c}) = c_0 \} \\
+		&= P(c_0) \setminus R(c_0)
+	\end{align*}
+	is infinite.
+
+	Now fix a function $f \in F$, and let $J(f)$ be the set of $\bar{c}$ for which $f$ is exactly $f_{\bar{c}}$:
+	\[
+	J(f) = \{ \bar{c} \in C \svert f = f_{\bar{c}} \}
+	\]
+	Hence for all $\bar{c} \in J(f)$ we have $f(\bar{c}) = c_0$. By the third condition on $F$, this can be true for at most a finite amount of $\bar{c}$, that is $J(f)$ is finite.
+
+	Now let $G$ be the set of functions in $F$ that are $f_{\bar{c}}$ for some $\bar{c} \in E$:
+	\[
+	G = \{ f \in F \svert \exists \bar{c} \in E\ .\ f = f_{\bar{c}} \}
+	\]
+	Clearly
+	\[
+	E = \bigcup\limits_{f \in G} J(f)
+	\]
+	But we know that $E$ is infinite while all $J(f)$ are finite, so $G$ must be infinite too.
+
+	By lemma \ref{ch3:th:f-non-repr-pair}, for all $\bar{c} \in E$ we have $f_{\bar{c}}(c_0)$ is representable. This can be equivalently restated saying that for all $f \in G$, $f(c_0)$ is representable.
+	So consider the set $I$ of all possible images of $c_0$ through functions in $G$:
+	\[
+	I = \{ f(c_0) \svert f \in G \}	
+	\]
+	This set is a subset of $R$ because all its elements are representable.
+	
+	Clearly
+	\[
+	G = \bigcup\limits_{d \in I} \{ f \in G \svert f(c_0) = d \}
+	\]
+	But we know that $G$ is infinite and, for any $d \in C$, by the second condition on $F$ we have that
+	\[
+	\{ f \in F \svert f(c_0) = d \}
+	\]
+	is finite, and this is a superset of $\{ f \in G \svert f(c_0) = d \}$. So $I$ must be infinite too.
+	
+	However, this yields the desired contradiction: $I$ is infinite and is a subset of $R$, that is finite.
+\end{proof}
+
+An example of such a family of functions are constant integer divisions.
+\begin{example}
+	We take $C = \setZ \setminus \{ 0 \}$ and
+	\[
+	F = \{ \lambda x. \lfloor x / n \rfloor \svert n \in \setZ \setminus \{ 0 \}\}
+	\]
+	The family is highly onto, since $P(c) \supseteq \{ ct \svert t \in \setZ \}$ (we can map $ct$ to $c$ with $\lambda x. \lfloor x / t \rfloor$).
+	Fixed $c, d \in \setZ$, we have that $\lfloor d / n \rfloor = c$ if and only if $d / (c+1) < n \le d / c$, so for a finite amount of integers.
+	Fixed $c, n \in \setZ$ we have that $\lfloor d / n \rfloor = c$ if and only if $c n \le d < c (n + 1)$, so again for a finite amount of integers.
+	Hence this family meets the hypothesis of the theorem.
+\end{example}
+
+%Another example is the set of $\text{drop}_n$ functions, that taken a finite list of element
+%\todo{problems with the empty list. Can we fix them saying there's a list that isn't empty that is repr? Nope, this can't be fixed because we loose hp 2, that should be valid for all possible images of $c_0$ through $f_{\bar{c}}$}
