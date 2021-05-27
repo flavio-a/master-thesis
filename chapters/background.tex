@@ -1,9 +1,352 @@
-\chapteru{Background}
+\chapter{Background}
 
+Things needed to understand the thesis that aren't strictly related to the thesis subject.
 Split in as many sections as I feel like, one for each macro-topic I need.
 
-\sectionu{Notation}
-Notation.
+\section{Notation}
+$C (\alpha, \gamma) A$ means a Galois Connection (GC) between $C$ and $A$.
 
-\sectionu{Galois connections}
-GC and GI related facts.
+If $S$ is a poset, $S^{\op}$ is the poset with the opposite ordering. So for instance $\pow(C)^{\op}$ is the powerset of $C$ ordered by containment $\supseteq$, and hence $\emptyset$ is the greatest element ($\top$) of the set.
+
+Unless otherwise specified, a Galois Insertion (GI) is always specified with the ``small" set on the right, ie. if $C (\alpha, \gamma) A$ is a GI then $\alpha \circ \gamma = \id_A$.
+
+Given a GC $C (\alpha, \gamma) A$, an element $c \in C$ is \textit{representable} in $A$ if $\gamma(\alpha(c)) = c$.
+
+%Given $\pZop (\gamma, \alpha) A$ a GI, we call $n^{\flat}$ the only abstract element (if any) such that $\gamma(n^{\flat}) = \{ n \}$. We say $n^{\flat} \notin A$ if there is no such element in $A$.
+
+Recall that in a GI $\gamma$ and $\alpha$ map concrete top in abstract top and vice versa.
+
+A GI is the same as assuming $A \subseteq C$, and we'll do this. With this notation, $f^{\#}$ is the same as $\alpha \circ f$, but is conceptually different.
+
+Given a function $f : C \rightarrow D$ we use the same symbol also to denote its additive extension $f: \pow(C) \rightarrow \pow(D)$.
+
+Meaning of $\infexists$.
+
+\section{Partially ordered sets}
+\begin{definition}[Partial order]
+	Given a set $S$, a partial order $\preceq$ on $S$ is a relation on it that, for all $a$, $b$ and $c$ in $S$ it satisfies
+	\begin{itemize}
+		\labelitem{reflexivity} $a \preceq a$
+		\labelitem{antisymmetry} if both $a \preceq b$ and $b \preceq a$ then $a = b$
+		\labelitem{transitivity} if both $a \preceq b$ and $b \preceq c$ then also $a \preceq c$
+	\end{itemize}
+
+	We say that the pair $(S, \preceq)$ is a partially ordered set, or a \textit{poset} for short, and we usually write only the carrier set $S$ when the ordering is clear from the context.
+\end{definition}
+
+\todo{Do I really have to write these?}
+\begin{definition}[Opposite ordering]
+\end{definition}
+
+\begin{definition}[Glb and lub]
+\end{definition}
+
+\begin{definition}[Monotone function]
+\end{definition}
+
+Given a set $S$ and a poset $T$, we can consider the set of functions from $S$ to $T$. This has a natural structure of poset too.
+\begin{definition}
+	Given two functions $f, g: S \rightarrow T$, we say that $f \preceq g$ if for all elements $a \in S$ we have
+	\[
+	f(a) \preceq g(a)
+	\]
+\end{definition}
+It's easy to show that this relation among functions is a partial order too whenever the ordering on $T$ is such.
+
+\section{Galois connections}
+\todo{add references for this whole section}
+The main mathematical tool we use to study abstract interpretations are Galois connections, and the special case of Galois insertions.
+
+\begin{definition}[Galois connection]\label{ch2:def:gc}
+	Let $C$ and $A$ be two partially ordered sets, and $\alpha : C \rightarrow A$, $\gamma : A \rightarrow C$ be a pair of monotone functions between the two.
+	
+	We say $C (\alpha, \gamma) A$ is a Galois connection if, for any choice of $c \in C$ and $a \in A$ we have
+	\[
+	\alpha(c) \preceq a \iff c \preceq \gamma(a)
+	\]
+\end{definition}
+
+For our goals, we will call $C$ the \textit{concrete domain}, $A$ the \textit{abstract domain}, $\alpha$ the \textit{abstraction function} and $\gamma$ the \textit{concretization function}. The two functions $\alpha$ and $\gamma$ are also called \textit{adjoints}\footnote{Actually the term ``adjoint" come from Category Theory, because Galois connections are adjunctions between the two poset seen as categories. However this notion is way outside the scope of this thesis, so we prefer not to introduce it at all.}.
+
+In program analysis we give the following intuitive meaning to those. $C$ is the domain of concrete states, $A$ the set of abstract properties we're interested in, $\alpha$ the function that maps a concrete state in the most precise abstract property that describes it and $\gamma$ a function that maps an abstract property in the biggest concrete state it describes.
+
+\begin{example}[Intervals]
+	We can now formalize the intuitive example \ref{intr:ex:intervals} of intervals we introduced in the previous chapter.
+	$C$ is the set of possible values of the variable \code{x}. Since this is an integer values, elements of $C$ are subsets of $\setZ$, so $C = \pow(\setZ)$, with the ordering given by set inclusion. $A$ is the set of abstract properties we track in our analysis, so in our example the set of interval to which \code{x} may belongs. This means $A = \Int$.
+	$\alpha$ is the function that allows us to abstract a set of possible values of \code{x} into the best possible abstract property:
+	\begin{align*}
+		\alpha(S) &= [\min(S); \max(S)]
+	\end{align*}
+	with the conventions that $\min(\emptyset) = +\infty$, $\min(\emptyset) = -\infty$, the minimum of a lower-unbound set is $-\infty$ and the maximum of an upper-unbound set is $+\infty$. This abstraction function is exactly what we expect: no smaller interval can describe the set $S$, since $\min(S)$ and $\max(S)$ are elements of $S$ and so must also be in the interval. Conversely, this is a correct abstraction of $S$ since all its elements are between $\min(S)$ and $\max(S)$, so are in the interval too.
+	
+	$\gamma$ is the function that does the inverse operation: given an interval $[n, m]$, thought as a formal writing that describes the property that the value of \code{x} is between $n$ and $m$, gives us its ``meaning", that is the largest subset of $\setZ$ that matches that property:
+	\[
+	\gamma([n, m]) = \{ x \in \setZ \svert n \le x \le m \}
+	\]
+	The set $\{ x \in \setZ \svert n \le x \le m \}$ is exactly what is commonly represented with $[n; m]$: $\gamma$ is simply translating the formal writing (or, in our context, an abstract property) to a semantic set of values.
+
+	Of course this definition of $\gamma$ is incomplete, the full, formal one is the following:
+	\begin{align*}
+		\gamma([n, m]) &= \{ x \in \setZ \svert n \le x \le m \} \\
+		\gamma([-\infty, m]) &= \{ x \in \setZ \svert x \le m \} \\
+		\gamma([n, +\infty]) &= \{ x \in \setZ \svert n \le x \} \\
+		\gamma([-\infty, +\infty]) &= \setZ \\
+		\gamma([+\infty, -\infty]) &= \emptyset
+	\end{align*}
+
+	Showing that $\pow(\setZ) (\alpha, \gamma) \Int$ is a Galois connection is just a straightforward check. Fixed $S \in \pow(\setZ)$ and the interval $[n, m] \in \Int$ (for simplicity, we assume both $n$ and $m$ finite) we have
+	\begin{align*}
+		& \alpha(S) \preceq [n, m] \\
+		\iff &[\min(S); \max(S)] \preceq [n, m] \\
+		\iff &n \le \min(S),\, \max(S) \le m \\
+		\iff &\forall x \in S\ .\ n \le x,\, x \le m \\
+		\iff &S \subseteq \{ x \in \setZ \svert n \le x \le m \} \\
+		\iff &S \subseteq \gamma([n, m])
+	\end{align*}
+\end{example}
+
+We recall here two properties of Galois connection that we'll be useful in this thesis.
+
+\begin{prop}\label{ch2:th:gc-extensive-charact}
+	Let $C$ and $A$ be two partially ordered sets, and $\alpha : C \rightarrow A$, $\gamma : A \rightarrow C$ be a pair of monotone functions between the two.
+	
+	Then $C (\alpha, \gamma) A$ is a Galois connection if and only if both $\id_C \preceq \gamma \circ \alpha$ and $\alpha \circ \gamma \preceq \id_A$.
+\end{prop}
+%\begin{proof}
+%	Supponiamo che $(\alpha, \gamma)$ sia una connessione di Galois.
+%	Preso $x \in C$ si ha $\alpha(x) \preceq \alpha(x)$, da cui utilizzando che $(\alpha, \gamma)$ è una connessione di Galois si ottiene $x \preceq \gamma(\alpha(x))$, quindi $\gamma \circ \alpha$ è estensiva.
+%	Analogamente, preso $a \in A$ si ha $\gamma(a) \preceq \gamma(a)$, da cui si ottiene $\alpha(\gamma(a)) \preceq a$, ovvero $\alpha \circ \gamma$ è intensiva.
+%	
+%	Viceversa, suppongo che $\alpha \circ \gamma$ sia intensiva, $\gamma \circ \alpha$ estensiva e che le due funzioni siano monotone. Siano allora $x \in C$, $a \in A$.
+%	Se $\alpha(x) \preceq a$, dalla monotonia di $\gamma$ si ottiene $\gamma(\alpha(x)) \preceq \gamma(a)$. Applicando ora l'estensività di $\gamma \circ \alpha$ si trova $x \preceq \gamma(\alpha(x)) \preceq \gamma(a)$.
+%	Se invece $x \preceq \gamma(a)$, dalla monotonia di $\alpha$ si ottiene $\alpha(x) \preceq \alpha(\gamma(a))$, da cui segue per l'intensività di $\alpha \circ \gamma$ che $\alpha(x) \preceq a$.
+%	Quindi $(\alpha, \gamma)$ è una connessione di Galois.
+%\end{proof}
+
+%Vediamo un'ulteriore proprietà delle connessioni di Galois che garantirà un'ipotesi che intuitivamente vorremo chiedere all'interpretazione astratta.
+%\begin{prop}\label{th:galois-conn-best-approx}
+%	Sia $C (\alpha, \gamma) A$ una connessione di Galois.
+%	Allora
+%	\begin{align*}
+%		\alpha(x) &= \min \{ a \in A \svert x \preceq \gamma(a) \} \\
+%		\gamma(a) &= \max \{ x \in C \svert \alpha(x) \preceq a \}
+%	\end{align*}
+%\end{prop}
+%\begin{proof}
+%	Sia $x \in C$. Allora $a \in A$ è tale che $x \preceq \gamma(a)$ se e solo se $\alpha(x) \preceq a$ dato che $(\alpha, \gamma)$ è una connessione di Galois, quindi
+%	\[
+%	\{ a \in A \svert x \preceq \gamma(a) \} = \{ a \in A \svert \alpha(x) \preceq a \}
+%	\]
+%	L'insieme $\{ a \in A \svert \alpha(x) \preceq a \}$ ha minimo $\alpha(x)$, quindi
+%	\[
+%	\alpha(x) = \min \{ a \in A \svert x \preceq \gamma(a) \}
+%	\]
+%	
+%	Il caso di $\gamma(a)$ è analogo.
+%\end{proof}
+%
+%Una conseguenza molto semplice ma interessante di questa proposizione è che, fissata una delle due aggiunte, l'altra è unica.
+%
+%Dal punto di vista dell'interpretazione astratta, questo teorema invece afferma che $\alpha(x)$ (che come vedremo sarà l'astrazione di $x$) può essere interpretato come l'elemento astratto tale che la sua concretizzazione approssimi correttamente $x$ e tale che sia minimo, ovvero che produca il minimo errore di approssimazione possibile.
+%
+%Vediamo ora che richiedendo più struttura ai due insiemi tra cui si vuole costruire una connessione di Galois ci basta una delle due aggiunte per definire univocamente l'altra con quella formula.
+%\begin{prop}\label{th:galois-connection-from-inf-preserving-functions}
+%	Siano $L_C$, $L_A$ due reticoli completi, e sia $\alpha : L_C \rightarrow L_A$ un omomorfismo di semireticoli completi superiori.
+%	Allora, detta
+%	\[
+%	\gamma(a) = \sup \{ x \in L_C \svert \alpha(x) \preceq a \}
+%	\]
+%	vale che $L_C (\alpha, \gamma) L_A$ è una connessione di Galois.
+%	
+%	Viceversa, se $\gamma : L_A \rightarrow L_C$ è un omomorfismo di semireticoli completi inferiori, detta
+%	\[
+%	\alpha(x) = \inf \{ a \in L_A \svert x \preceq \gamma(a) \}
+%	\]
+%	si ha che $L_C (\alpha, \gamma) L_A$ è una connessione di Galois.
+%\end{prop}
+%\begin{proof}
+%	Suppongo di avere $\alpha$, la dimostrazione nel caso di $\gamma$ è analoga.
+%	Per prima cosa osservo che, presi $a, b \in L_A$ tali che $a \preceq b$ vale
+%	\[
+%	\{ x \in L_C \svert \alpha(x) \preceq a \} \subseteq \{ x \in L_C \svert \alpha(x) \preceq b \}
+%	\]
+%	da cui
+%	\[
+%	\gamma(a) = \sup \{ x \in L_C \svert \alpha(x) \preceq a \} \preceq \sup \{ x \in L_C \svert \alpha(x) \preceq b \} = \gamma(b)
+%	\]
+%	quindi $\gamma$ è monotona.
+%	
+%	Siano ora $x \in L_C$ ed $a \in L_A$.
+%	Suppongo $\alpha(x) \preceq a$. Allora $x \in \{ y \in L_C \svert \alpha(y) \preceq a \}$, quindi
+%	\[
+%	x \preceq \sup \{ y \in L_C \svert \alpha(y) \preceq a \} = \gamma(a)
+%	\]
+%	Viceversa suppongo $x \preceq \gamma(a)$. Allora $x \preceq \sup \{ y \in L_C \svert \alpha(y) \preceq a \}$, da cui per la monotonia di $\alpha$
+%	\[
+%	\alpha(x) \preceq \alpha(\sup \{ y \in L_C \svert \alpha(y) \preceq a \}) = \sup (\alpha (\{ y \in L_C \svert \alpha(y) \preceq a \}))
+%	\]
+%	dove la seconda uguaglianza segue dal fatto che $\alpha$ sia un omomorfismo di semireticoli completi superiori. Continuando la catena di uguaglianze
+%	\[
+%	\sup (\alpha (\{ y \in L_C \svert \alpha(y) \preceq a \})) = \sup (\{ \alpha (y) \svert \alpha(y) \preceq a \}) \preceq a
+%	\]
+%	dove l'ultima disuguaglianza segue perché $a$ è un maggiorante dell'insieme. Mettendo insieme si trova
+%	\[
+%	\alpha(x) \preceq a
+%	\]
+%	
+%	Quindi $(\alpha, \gamma)$ è una connessione di Galois.
+%\end{proof}
+
+\begin{prop}\label{ch2:th:gc-adjoints-preserve-glb-lub}
+	Let $C (\alpha, \gamma) A$ be a Galois connection. Then $\gamma$ preserves greatest lower bounds and $\alpha$ preserves least upper bounds.
+\end{prop}
+%\begin{proof}
+%	Dimostro che $\gamma$ preserva gli $\inf$, la dimostrazione per $\alpha$ è analoga.
+%	
+%	Sia $\{ a_i \}$ un sottoinsieme di elementi di $A$ tali che esiste $a = \inf \{ a_i \} \in A$.
+%	Dato che per ogni $a_i$ vale $a \preceq a_i$ e $\gamma$ è monotona si ha che $\gamma(a) \preceq \gamma(a_i)$, quindi $\gamma(a)$ è un minorante di $\{ \gamma(a_i) \}$.
+%	Considero un generico elemento $x \in C$ tale che $x \preceq \gamma(a_i)$ per tutti gli $a_i$. Allora vale che $\alpha(x) \preceq a_i$ per tutti gli $a_i$, e quindi anche $\alpha(x) \preceq \inf \{ a_i \} = a$. Da questo segue $x \preceq \gamma(a)$.
+%	Quindi $\gamma(a)$ è il massimo dei minoranti, ovvero $\gamma(\inf\{ a_i \}) = \inf\{ \gamma(a_i) \}$.
+%\end{proof}
+In particular, this means that $\gamma$ maps $\top_A$ in $\top_C$ (because they are glb of the empty set) and dually $\alpha$ maps $\bot_C$ in $\bot_A$.
+
+%Vediamo ora che i due concetti di connessione di Galois e operatore di chiusura sono strettamente legati, nel senso che si può passare da uno all'altro.
+%
+%\begin{prop}\label{th:closure-op-to-galois-conn}
+%	Sia $S$ un insieme parzialmente ordinato, e sia $\rho : S \rightarrow S$ un operatore di chiusura. Allora $S (\rho, \id_S) \rho(S)$ è una connessione di Galois.
+%\end{prop}
+%\begin{proof}
+%	Chiaramente $id_S$ è monotona, e $\rho$ lo è perché è un operatore di chiusura. Per dimostrare che $(\rho, id_S)$ è una connessione di Galois basta quindi verificare che per ogni $x \in S$ e $a \in \rho(S)$, valga
+%	\[
+%	\rho(x) \preceq a \iff x \preceq id_S(a)
+%	\]
+%	Se $x \preceq a$ per monotonia di $\rho$ ho $\rho(x) \preceq \rho(a) = a$, dove l'ultima uguaglianza segue perché $\rho$ è idempotente ed $a \in \rho(S)$.
+%	Viceversa, dato che $\rho$ è estensiva si ha che $x \preceq \rho(x)$, quindi se $\rho(x) \preceq a$ per transitività $x \preceq a = id_S(a)$.
+%\end{proof}
+%
+%\begin{prop}\label{th:galois-conn-to-closure-op}
+%	Sia $S (\alpha, \gamma) T$ una connessione di Galois. Allora $\gamma \circ \alpha : S \rightarrow S$ è un operatore di chiusura.
+%\end{prop}
+%\begin{proof}
+%	Per la definizione di connessione di Galois, $\alpha$ e $\gamma$ sono monotone, quindi lo è anche la loro composizione.
+%	La proposizione \ref{th:galois-conn-extensive} dimostra che $\gamma \circ \alpha$ è estensiva.
+%	Da questo e dalla monotonia di $\alpha$ segue anche che $\alpha(x) \preceq \alpha(\gamma(\alpha(x)))$
+%	Inoltre da quella proposizione segue che $\alpha(\gamma(\alpha(x))) \preceq \alpha(x)$ perché $\alpha \circ \gamma$ è intensiva. Combinando le due relazioni si ha $\alpha(\gamma(\alpha(x))) = \alpha(x)$, da cui segue l'idempotenza di $\gamma \circ \alpha$.
+%\end{proof}
+%
+%\begin{remark}
+%	Notare che in generale le costruzioni presentate
+%	nelle due proposizioni precedente 
+%	%	di una connessione di Galois da un'operatore di chiusura superiore e di un operatore di chiusura da una connessione di Galois
+%	non sono inverse, nel senso che applicandone una e poi l'altra non si torna in entrambi i casi al punto di partenza.
+%	Partendo da una connessione di Galois $(\alpha, \gamma)$, costruendo l'operatore di chiusura $\gamma \circ \alpha$ e poi ritornando alla connessione di Galois $(\gamma \circ \alpha, id_S)$ non si ritrova la connessione di partenza perché in generale $\gamma(\alpha(S)) \ncong T$.
+%	Tuttavia partendo da un operatore di chiusura $\rho$ si costruisce la connessione di Galois $(\rho, id_S)$, da cui si ricostruisce l'operatore di chiusura $id_S \circ \rho = \rho$ da cui si era partiti.
+%\end{remark}
+%
+%``Sistemeremo" questo problema nella prossima sottosezione, ma per ora continuiamo a studiare alcune proprietà di stabilità delle connessioni di Galois.\todo{Cose tipo composizione, prodotto e sollevamento sullo spazio di funzioni}
+%
+%Data una connessione di Galois tra reticoli completi possiamo sollevarla all'insieme delle parti iniziali (set of down-closed subsets). Dimostrazione sul tablet sollevando il dominio astratto, sollevare il dominio concreto dovrebbe essere analogo.\todo{}
+%
+%Riassumiamo per comodità le proprietà di una connessione di Galois nella seguente proposizione:
+%\begin{prop}\label{prop:galois-conn-props}
+%	Sia $C (\alpha, \gamma) A$ una connessione di Galois. Allora
+%	\begin{enumerate}
+%		\item $\gamma \circ \alpha$ è un operatore di chiusura superiore
+%		\item $\alpha \circ \gamma $ è un operatore di chiusura inferiore
+%		\item $\alpha \circ \gamma \circ \alpha = \alpha$ e $\gamma \circ \alpha \circ \gamma = \gamma$
+%		\item $\alpha(x) = \min\{ a \in A \svert x \preceq \gamma(a) \}$
+%		\item $\gamma(a) = \max\{ x \in C \svert \alpha(x) \preceq a \}$
+%		\item $\gamma$ preserva gli $\inf$ e $\alpha$ preserva i $\sup$
+%	\end{enumerate}
+%\end{prop}
+
+In a Galois connection it may very well happen that two abstract elements have the same concretization, as shown in the following example:
+\begin{example}[Product abstraction]
+	Consider two concrete domains, for instance two copies of $\pow(\setZ)$ that describes the possible states of two different variables \code{x} and \code{y} that appear in the program.
+	Then consider the Galois connection $\pow(\setZ) (\alpha, \gamma) \Int$, and suppose we want to use it to abstract both variables. If we abstract separately both the element of $\pow(\setZ_x)$ and that of $\pow(\setZ_y)$ (where subscripts indicates the variable the domain refers to), we get a pair of intervals, one for \code{x} and one for \code{y}, that is an element of $\Int_x \times \Int_y$. It's easy to check that this abstraction function defines a Galois connection between $\pow(\setZ_x \times \setZ_y)$ and $\Int_x \times \Int_y$.
+	
+	However, this abstraction has redundant elements: consider
+	\begin{align*}
+		(\bot, [n, m])
+	\end{align*}
+	\[ ([n, m], \bot) \]
+	\[ (\bot, \bot) \]
+	where $\bot = [+\infty, -\infty]$ describes the empty interval. All these elements are concretized in the concrete $\emptyset \in \pow(\setZ_x \times \setZ_y)$.
+\end{example}
+
+We would like not to have those since they are different elements of the abstract domain that describes the same property. In analogy with logic, this is the same kind of redundancy as the possibility to describe the empty set in the following three different ways:
+\[
+\{ (x, y) \svert x \in \emptyset, n \le y \le m \}
+\]
+\[
+\{ (x, y) \svert n \le x \le m, y \in \emptyset \}
+\]
+\[
+\{ (x, y) \svert x \in \emptyset, y \in \emptyset \}
+\]
+
+In order to avoid this issue, we require $\gamma$ to be injective, so that no two different abstract elements can be concretized into the same concrete element, ie. they describe the same property. This turns out to give rise to an interesting definition, that of Galois insertion
+
+\begin{definition}[Galois insertion]\label{ch2:def:gi}
+	Let $C (\alpha, \gamma) A$ be a Galois connection. We say this is a \textit{Galois insertion} if $\alpha \circ \gamma = \id_A$.
+\end{definition}
+
+This definition isn't the one we required, but is equivalent, as shown in the following characterization of Galois insertions:
+\begin{prop}\label{ch2:th:gi-charact}
+	Let $C (\alpha, \gamma) A$ be a Galois connection. Then the following are equivalent:
+	\begin{enumerate}[label={(\arabic*)}]
+		\item $C (\alpha, \gamma) A$ is a Galois insertion (ie. $\alpha \circ \gamma = \id_A$)
+		\item $\alpha$ is surjective
+		\item $\gamma$ is injective
+	\end{enumerate}
+\end{prop}
+
+By this proposition, since $\gamma$ is injective, we have a bijection between $A$ and $\gamma(A)$. By the definition of Galois insertion we have $\alpha \circ \gamma = \id_A$, hence $\alpha$ is the inverse of $\gamma$ when restricted to $\gamma(A)$. Since both functions are monotone this defines an isomorphism of poset between $A$ and $\gamma(A) \subseteq C$.
+
+Using this isomorphism, whenever we consider a Galois insertion we identify $A$ and its image, so that $A$ becomes a subset of $C$ and $\gamma = \id_A$. In this case, by proposition \ref{ch2:th:gc-extensive-charact} we have $\id_C \preceq \gamma \circ \alpha = \alpha$, corresponding to the intuitive idea that $\alpha$ must abstract a set of states in something bigger in order to over-approximate it.
+
+Do note that this identification simplifies notation, but introduces a pitfall: reasoning as above we may be tempted to say that also $\alpha = \alpha \circ \gamma \preceq \id_A$, always by proposition \ref{ch2:th:gc-extensive-charact}, so concluding that $\id \preceq \alpha \preceq \id$ and hence $\alpha = \id$. However here we're neglecting the fact that $\gamma = \id_A$, not the identity on the whole set $C$, and actually $\gamma$ is defined only on elements $A \subseteq C$. This means that the above relation is indeed correct, but only for elements of $A$, as pointed out by the fact that $\alpha \preceq \id_A$ and not $\id_C$. This is a problem that arise in general with this notation: two functions that looks the same are actually different because of their domain, that isn't specified. We'll make sure to always clarify the domain whenever it's not uniquely determined by the context.
+
+\subsection{Under-approximation Galois connections}
+%The definition of Galois connection is not symmetric, in a way that can be seen from two different points of view. On the one hand we can say it's asymmetric in the two domains: if we swap concrete and abstract domain what we get is no longer a Galois connection. On the other hand, the definition puts $\gamma$ above and $\alpha$ below: in fact the two are also called upper and lower adjoints. This asymmetry in the two adjoints favours one specific direction, that is over-approximations.
+%
+%We say that the two asymmetries are actually the same because if we \textit{both} swap the two domains \textit{and} change the upper and lower adjoint definition, we get again a Galois connection
+
+The definition of Galois connection is not symmetric, in the sense that the definition puts $\gamma$ above and $\alpha$ below: in fact the two are also called upper and lower adjoints respectively. This asymmetry in the two adjoints favours one specific direction, that is over-approximations, and is not suited to describe under-approximations. For this reason we introduce the notion of
+\begin{definition}[Under-approximation Galois connection]\ref{ch2:def:under-gc}
+	Let $C$ and $A$ be two partially ordered sets, and $\alpha : C \rightarrow A$, $\gamma : A \rightarrow C$ be a pair of monotone functions between the two.
+	
+	We say $C (\alpha, \gamma) A$ is an under-approximation Galois connection if, for any choice of $c \in C$ and $a \in A$ we have
+	\[
+	a \preceq \alpha(c) \iff \gamma(a) \preceq c
+	\]
+\end{definition}
+
+This definition is as that of Galois connection (\ref{ch2:def:gc}) but the fact that here $\alpha$ is above and $\gamma$ below.\todo{Example of under-approx GC} With this definition, we could easily prove results analogous to propositions \ref{ch2:th:gc-extensive-charact}, \ref{ch2:th:gc-adjoints-preserve-glb-lub} and give an analogous definition of under-approximation Galois insertion.
+Instead of doing this explicitly, we just observe that an under-approximation Galois connection $C (\alpha, \gamma) A$ is just a Galois connection between opposite domain $C^{\op} (\alpha, \gamma) A^\op$ to get as corollaries of those propositions analogous results where we just reverse inequalities:
+\begin{prop}
+	Let $C$ and $A$ be two partially ordered sets, and $\alpha : C \rightarrow A$, $\gamma : A \rightarrow C$ be a pair of monotone functions between the two.
+	
+	Then $C (\alpha, \gamma) A$ is an under-approximation Galois connection if and only if both $\gamma \circ \alpha \preceq \id_C$ and $\id_A \preceq \alpha \circ \gamma$.
+\end{prop}
+
+\begin{prop}
+	Let $C (\alpha, \gamma) A$ be an under-approximation Galois connection. Then $\gamma$ preserves least upper bounds and $\alpha$ preserves greatest lower bounds.
+\end{prop}
+
+This second proposition has an interesting corollary for under-approximation Galois connection. Of course it's dual holds for ``normal" Galois connection, but in the under-approximation case is much more important:
+\begin{corollary}\label{ch2:th:under-gc-union-closure}
+	Let $\pow(C) (\alpha, \gamma) A$ be an under-approximation Galois connection. If $a, a' \in A$ then
+	\[
+	\gamma(a \sqcup a') = \gamma(a) \cup \gamma(a')
+	\]
+\end{corollary}
+
+This corollary states that $A$ is closed under union: if we consider an under-approximation Galois connection, where $\gamma = \id_A$, then for any pair of sets $S, S' \subseteq C$ that are in $A$ (ie. they are abstract properties) we have that also $S \cup S' \in A$.
+\todo{C'è un commento nel sorgente, è vero quello che dice?}%As remarked in the introduction, this property combined with difficulties in recovering from $\bot$ are the main reasons we believe under-approximation abstract domains are so hard to define.
+
+\section{Abstracting functions}
+\todo{}
+Definition of correct and best abstraction of a function $f: C \rightarrow C$. Examples.
+Remark that with GI notation $\alpha \circ f = f^{\#} \circ \alpha$ but actually different domains.
+Notation $f^{\flat}$ and examples.

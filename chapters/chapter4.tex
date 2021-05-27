@@ -37,6 +37,7 @@ The first new concept we introduce is that of highly onto function family. Our r
 Clearly the family of functions that add a constant are highly onto, and actually satisfies a stronger property: for any possible choice of $c$ \textit{all} possible choices of $d$ (that are infinitely many) have a function $f_d(x) = x + c - d$ such that $f_d(d) = c$, that is $P(c) = \setZ$. We used this property in the proof in order to apply lemma \ref{ch3:th:f-non-repr-pair}: we took an element $\bar{n}$ not representable with $n_0$ and used said function in order to get $f(\bar{n}) = n_0 \in R$, hence being able to apply the lemma to get $f(n_0) \in R$. The point is that at the beginning the only representable element we know of is $n_0$, so our only hope to show $f(\bar{n}) = \in R$ is to show that $f(\bar{n}) = n_0$.
 
 The requirement that we're able to do that for all possible $c$ is needed because first we fix the function family we're interested in analysing, then we can pick the abstract domain. Thinking of this as a game, player one fixes the function family and wants to show that there are no abstract domain able to analyse them, so player 2 thinks of a counterexample suited for that family. In fact, if there is even a single $c$ for which the condition doesn't hold, player 2 can actually construct such counterexample, as showed in the following proposition.
+\todo{Move in another section "Limitations" with its generalization and and the dual result}
 \begin{prop}
 	For any fixed family $F$ of functions from $C$ in itself that is not highly onto, there exists an abstract domain $A_F$ such that:
 	\begin{itemize}
@@ -171,7 +172,7 @@ The proof of this theorem is quite involved. It starts from $c_0 \in R$, that ex
 	\label{ch4:fig:final-f-sketch}
 \end{figure*}
 
-The main idea is to ``pick" a suitable $f$ in $F$ and define the sequence as the iterates $c_{n+1} = f(c_n)$, as sketched in figure \ref{ch4:fig:final-f-sketch}. The initial set of $\bar{c}$ mapped to $c_0$ is required to be able to apply lemma \ref{ch3:th:f-non-repr-pair}.
+The main idea is to pick a suitable $f$ in $F$ and define the sequence as the iterates $c_{n+1} = f(c_n)$, as sketched in figure \ref{ch4:fig:final-f-sketch}. The initial set of $\bar{c}$ mapped to $c_0$ is required to be able to apply lemma \ref{ch3:th:f-non-repr-pair}.
 The issue with this idea is that we don't have enough information on the sequence to pick such an $f$ at the beginning, so we actually bring along a (huge) list of candidate $f$ that all coincides on a prefix of the sequence. At step $n$, we pick a new element of the sequence among the possible images of $c_{n-1}$ through all candidate $f$ we have at that point, and discard all those that doesn't match the choice.
 
 Actually, instead of directly consider functions, we represent them with elements $\bar{c}$ of $C$. Each element represent a function $f_{\bar{c}}$ that satisfies $f_{\bar{c}}(\bar{c}) = c_0$. Note that this function exists for ``enough" (that is, infinitely many) $\bar{c}$ because of the high ontoness hypothesis. We call $E_n$ the set of $\bar{c}$ that represent functions that are ``valid" for the prefix up to $n$, ie. they map $c_{i}$ to $c_{i+1}$ for $0 \le i \le n - 1$. The core of the proof is an induction that proves that $E_n$ always contains ``enough" (in this case, infinitely many) elements and that the newly chosen $c_n$ is different from all the others.
@@ -350,8 +351,9 @@ The actual proof follows this idea in the opposite direction: starts from the (i
 
 	Now fix a function $f \in F$, and let $J(f)$ be the set of $\bar{c}$ for which $f$ is exactly $f_{\bar{c}}$:
 	\[
-	J(f) = \{ \bar{c} \in C \svert f = f_{\bar{c}} \}
+	J(f) = \{ \bar{c} \in C \setminus R(c_0) \svert f = f_{\bar{c}} \}
 	\]
+	
 	Hence for all $\bar{c} \in J(f)$ we have $f(\bar{c}) = c_0$. By the third condition on $F$, this can be true for at most a finite amount of $\bar{c}$, that is $J(f)$ is finite.
 
 	Now let $G$ be the set of functions in $F$ that are $f_{\bar{c}}$ for some $\bar{c} \in E$:

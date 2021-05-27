@@ -68,7 +68,7 @@ Given a set of variables $\text{Vars}$ and, for each one of these variables $x$,
 \[
 \pow(C) = \pow\left(\prod\limits_{x \in \text{Vars}} C_x \right)
 \]
-An element of the cartesian product $C$ is a function that maps each variable $x$ into a value in its domain $C_x$, so it's exactly a state of a program that operates on the set of variables $\text{Vars}$ can be in. The power set of that product is hence a concrete domain whose elements are set of possible states of such a program.
+An element of the cartesian product $C$ is a function that maps each variable $x$ into a value in its domain $C_x$ (a tuple of elements, one for each variable $x$ taken from $C_x$), so it's exactly one of the possible states a program that operates on the set of variables $\text{Vars}$ can be in. The power set of that product is hence a concrete domain whose elements are set of possible states of such a program.
 
 \begin{definition}[Non relational domain]
 	An abstract domain $A$ for concrete domain $\pow(C)$ is \textit{non relational} if it can be decomposed as
@@ -77,6 +77,8 @@ An element of the cartesian product $C$ is a function that maps each variable $x
 	\]
 	that is a product of one abstract domain for each variable, where for each variable $x$ there is a Galois Insertion $\pow(C_x) (\alpha_x, \id) A_x$ between the concrete domain for that variable and $A_x$.
 \end{definition}
+
+Also the abstract domain is a tuple of elements, one for each variable $x$, and describes the set of concrete states where each variable belongs to the values in it's abstract coordinate.
 
 An under-approximation, non relational domain is essentially trivial.
 \begin{prop}\label{ch3:th:underapprox-non-rel}
@@ -114,7 +116,7 @@ An under-approximation, non relational domain is essentially trivial.
 Completeness is a concept tailored to proving correctness: we use completeness to avoid false alarms while we over-approximate the set of possible values. In bug catching, an alternative, weaker definition may be enough
 \begin{definition}[Non emptying]\label{ch3:def:non-emptying}
 	Let $C (\alpha, \gamma) A$ be an under-approximating Galois Connection, $f : C \rightarrow C$ a monotone function on $C$ and $f^{\flat} = \alpha \circ f \circ \gamma$ it's best correct approximation in $A$.
-	We say that $f$ is \textit{non emptying} (in $A$) if, for any concrete value $c$, if both $\alpha(c) \neq \top$ and $\alpha(f(c)) \neq \bot$ then also $f^{\flat}(\alpha(c)) \neq \bot$.
+	We say that $f$ is \textit{non emptying} (in $A$) if, for any concrete value $c$, if both $\alpha(c) \neq \bot$ and $\alpha(f(c)) \neq \bot$ then also $f^{\flat}(\alpha(c)) \neq \bot$.
 \end{definition}
 
 Unlike completeness, this definition doesn't mean that the analysis will find the best possible result the abstraction can, but just that if it can find something ($\alpha(f(c)) \neq \bot$) then it will find at least one of the possible results ($f^{\flat}(\alpha(c)) \neq \bot$).
@@ -222,7 +224,7 @@ In order to define such a sequence, we want to use lemma \ref{ch3:th:f-non-repr-
 Now we move to a slightly different setting: we assume as concrete domain $\pow([-N; N])$, the powerset of a finite, symmetric interval for some large integer value $N$, and we assume all operations are performed ``in machine arithmetic", that is whenever the result is greater than $N$ we ``wrap back" to $-N$. This correspond to apply the function $n \mapsto n \% (2N + 1) - N$, but we'll try to avoid as much as possible to write it in formula since it clutters the notation a lot.
 Again, we make an assumption on the size of the abstract domain for the analysis to be feasible: we assume the size of $A$ is a polynomial in $N$.
 
-In this section we'll use asymptotic notation for some quantities. For this to be completely formal we would have to assume a sequence of abstract domain $A_N$, each for the concrete domain $\pow([-N; N])$, ordered by inclusion. Then define a sequence of values for each quantity we want to estimate, and take the limit of this sequence for $N$ going to infinity. However we do believe that also all these formal details would clutter both statements and proofs, making hard to get insight on meanings. For this reason, we avoid all this, just (ab)using the intuitive meaning associated with the notation.
+In this section we'll use asymptotic notation for some quantities. For this to be completely formal we would have to assume a sequence of abstract domain $A_N$, each one for the concrete domain $\pow([-N; N])$, ordered by inclusion. Then define a sequence of values for each quantity we want to estimate, and take the limit of this sequence for $N$ going to infinity. However we do believe that all these formal details would clutter both statements and proofs, making hard to get insight. For this reason, we avoid all this, just (ab)using the intuitive meaning associated with the notation.\todo{formal statements and proofs in appendix?}
 
 \begin{lemma}\label{ch3:th:R-S-bound-integer-fin}
 	For any fixed subset $S \subseteq \setZ$, $\lvert R(S) \rvert = O(\log(N))$.
