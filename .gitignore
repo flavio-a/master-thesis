@@ -28,5 +28,9 @@
 *.run.xml
 tot.bib
 
+# Minted
+_minted*
+
 ## Random things
 unused
+todo.md

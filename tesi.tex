@@ -3,6 +3,7 @@
 
 % includes
 \usepackage[inner=2cm,outer=2cm,top=3cm,bottom=3cm]{geometry}
+%\usepackage[inner=3cm,outer=3cm,twoside,top=3cm,bottom=3cm]{geometry}
 %\usepackage[inner=2cm,outer=3cm,twoside,top=3cm,bottom=3cm]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
@@ -23,8 +24,8 @@
 \usetikzlibrary{positioning,arrows}
 \usepackage[citestyle=alphabetic,style=numeric]{biblatex}
 %\usepackage{pdfpages} to include external pdf in the latex document
-\usepackage{stackengine}
-\stackMath
+%\usepackage{stackengine}
+%\stackMath
 
 \usepackage{enumitem}
 
@@ -52,6 +53,7 @@
 %\makeatother
 % ======================== Package for syntax highlight ===========================
 \usepackage{csquotes}
+\usepackage{minted}
 
 \graphicspath{{images/}}
 \setlength{\parindent}{0.5cm}     % paragraph indentation
@@ -109,9 +111,6 @@
 \newtheorem{definition}[theorem]{Definition}
 \providecommand*{\definitionautorefname}{Definition}
 
-% TODO possibly delete?
-\newcommand{\pZop}{pZop}
-
 \begin{document}
 	% macros (global)
 	\input{front/macros}
@@ -134,6 +133,7 @@
 	\input{chapters/introduction}
 	\input{chapters/background}
 
+	\input{chapters/chapter2-5}
 	\input{chapters/chapter3}
 	\input{chapters/chapter4}
 

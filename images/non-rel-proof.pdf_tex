@@ -1,6 +1,6 @@
-%% Creator: Inkscape 1.0.2 (e86c870879, 2021-01-15), www.inkscape.org
+%% Creator: Inkscape 1.0.2 (e86c870879, 2021-01-15, custom), www.inkscape.org
 %% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
-%% Accompanies image file 'drawing.pdf' (pdf, eps, ps)
+%% Accompanies image file 'non-rel-proof.pdf' (pdf, eps, ps)
 %%
 %% To include the image in your LaTeX document, write
 %%   \input{<filename>.pdf_tex}
@@ -38,7 +38,7 @@
   \newcommand*\fsize{\dimexpr\f@size pt\relax}%
   \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
   \ifx\svgwidth\undefined%
-    \setlength{\unitlength}{611.20966355bp}%
+    \setlength{\unitlength}{431.77145772bp}%
     \ifx\svgscale\undefined%
       \relax%
     \else%
@@ -50,19 +50,17 @@
   \global\let\svgwidth\undefined%
   \global\let\svgscale\undefined%
   \makeatother%
-  \begin{picture}(1,1.10652302)%
+  \begin{picture}(1,0.79408904)%
     \lineheight{1}%
     \setlength\tabcolsep{0pt}%
-    \put(0,0){\includegraphics[width=\unitlength,page=1]{drawing.pdf}}%
-    \put(-0.00407426,0.59577229){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$S_z'$\end{tabular}}}}%
-    \put(0,0){\includegraphics[width=\unitlength,page=2]{drawing.pdf}}%
-    \put(0.10114224,0.49186491){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$S_z$\end{tabular}}}}%
-    \put(0,0){\includegraphics[width=\unitlength,page=3]{drawing.pdf}}%
-    \put(0.47288717,0.01157569){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$S_y'$\end{tabular}}}}%
-    \put(0,0){\includegraphics[width=\unitlength,page=4]{drawing.pdf}}%
-    \put(0.37504757,0.11605564){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$S_y$\end{tabular}}}}%
-    \put(0,0){\includegraphics[width=\unitlength,page=5]{drawing.pdf}}%
-    \put(0.9125712,0.22168888){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$y$\end{tabular}}}}%
-    \put(0.21180908,1.06923157){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$z$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{non-rel-proof.pdf}}%
+    \put(0.15012834,0.76945397){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$z$\end{tabular}}}}%
+    \put(0.94224374,0.04957489){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$y$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{non-rel-proof.pdf}}%
+    \put(0.09108316,0.28632431){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$S_z$\end{tabular}}}}%
+    \put(0.38242089,0.00764701){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$S_y$\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=3]{non-rel-proof.pdf}}%
+    \put(-0.00269149,0.5465027){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$T_z \setminus S_z$\end{tabular}}}}%
+    \put(0.62687241,0.00764701){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}$T_y \setminus S_y$\end{tabular}}}}%
   \end{picture}%
 \endgroup%
