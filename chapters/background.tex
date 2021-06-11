@@ -23,7 +23,7 @@ Given a function $f : C \rightarrow D$ we use the same symbol also to denote its
 Meaning of $\infexists$.
 
 \section{Partially ordered sets}
-This section recalls basic notions of order theory upon which (much of) the abstract interpretation framework is based. For a more comprehensive introduction to order theory, we refer the reader to a text book, such as for instance appendix A of \cite{principles-of-program-analysis-book} or \cite{order-theory-book}.
+This section recalls basic notions of order theory upon which (much of) the abstract interpretation framework is based. For a more comprehensive introduction to order theory, we refer the reader to a text book, such as for instance \cite{order-theory-book} or appendix A of \cite{principles-of-program-analysis-book}.
 
 \begin{definition}[Partial order]
 	Given a set $S$, a partial order $\preceq$ on $S$ is a relation on it that, for all $a$, $b$ and $c$ in $S$, satisfies
@@ -89,7 +89,7 @@ The main mathematical tool we use to study abstract interpretations are Galois c
 	\]
 \end{definition}
 
-For our goals, we will call $C$ the \textit{concrete domain}, $A$ the \textit{abstract domain}, $\alpha$ the \textit{abstraction function} and $\gamma$ the \textit{concretization function}. The two functions $\alpha$ and $\gamma$ are also called \textit{adjoints}\footnote{Actually the term ``adjoint" comes from Category Theory, since Galois connections are adjunctions between the two poset seen as categories. However such a discussion would be outside the scope of this thesis, and would also require a basic knowledge of category theory.}.
+For our goals, we will call $C$ the \textit{concrete domain}, $A$ the \textit{abstract domain}, $\alpha$ the \textit{abstraction function} and $\gamma$ the \textit{concretization function}. The two functions $\alpha$ and $\gamma$ are also called \textit{adjoints}\footnote{Actually the term ``adjoint" comes from Category Theory, since Galois connections are adjunctions between the two posets seen as categories. However such a discussion would be outside the scope of this thesis, and would also require a basic knowledge of category theory.}.
 
 \todo{Add meaning of the order on $C$ and $A$}
 In program analysis we give the following intuitive meaning to those. $C$ is the domain of concrete states, $A$ the set of abstract properties we're interested in, $\alpha$ the function that maps a concrete state in the most precise abstract property that describes it and $\gamma$ a function that maps an abstract property in the biggest concrete state it describes.
@@ -129,7 +129,7 @@ In program analysis we give the following intuitive meaning to those. $C$ is the
 	\end{align*}
 \end{example}
 
-We recall here two properties of Galois connection that we'll be useful in this thesis.
+We recall here two properties of Galois connection that will be useful in this thesis.
 
 \begin{prop}\label{ch2:th:gc-extensive-charact}
 	Let $C$ and $A$ be two partially ordered sets, and $\alpha : C \rightarrow A$, $\gamma : A \rightarrow C$ be a pair of monotone functions between the two.

@@ -5,11 +5,12 @@ In the previous chapter we presented some results about integer domains. In this
 In this chapter we assume a set $C$ of values and use as concrete domain $\pow(C)$. We also assume an under-approximation Galois insertion $\pow(C) (\alpha, id) A$, that is $\alpha \preceq \id_C$ and $A$ is closed by union (propositions \ref{ch2:th:under-gc-extensive-charact} and \ref{ch2:th:under-gc-union-closure}.
 
 \todo{delete this, since it will be in the background chapter}
-As notation, we use $c, d$ for elements of $C$, $\bar{c}$ to denote some element of $C$ for which some pair $\{ c, \bar{c} \}$ is not representable (the specific pair is often clear from the context). We say an element of $\pow(C)$ (ie. a subset of $C$) is \textit{representable} if it belongs to $A$, or equivalently if $\alpha$ is the identity on it. It is worth noting that with this notation
-\[
-f^{\flat} = \alpha \circ f \circ \gamma = \alpha \circ f
-\]
-but they have ``different types": $\alpha \circ f$ is a function from $\pow(C)$ to $A$ and so can be applied to arbitrary elements of $\pow(C)$, while $f^{\flat}$ is from $A$ in itself, so it should always be applied to elements of $A$. This will be enforced putting and $\alpha$ in front of $\alpha \circ f$ whenever it's used as $f^{\flat}$.
+%As notation, we use $c, d$ for elements of $C$, $\bar{c}$ to denote some element of $C$ for which some pair $\{ c, \bar{c} \}$ is not representable (the specific pair is often clear from the context). We say an element of $\pow(C)$ (ie. a subset of $C$) is \textit{representable} if it belongs to $A$, or equivalently if $\alpha$ is the identity on it.
+%It is worth noting that with this notation
+%\[
+%f^{\flat} = \alpha \circ f \circ \gamma = \alpha \circ f
+%\]
+%but they have ``different types": $\alpha \circ f$ is a function from $\pow(C)$ to $A$ and so can be applied to arbitrary elements of $\pow(C)$, while $f^{\flat}$ is from $A$ in itself, so it should always be applied to elements of $A$. This will be enforced putting and $\alpha$ in front of $\alpha \circ f$ whenever it's used as $f^{\flat}$.
 
 Moreover, we often confuse a function from $C$ in itself and its additive extension, so if we say $f: C \rightarrow C$ is non emptying we actually mean that its additive extension
 \begin{align*}
@@ -28,13 +29,12 @@ An important notion for abstract domains is that of being or not relational. Int
 		y = 5 - x;
 		z = x + y;
 	\end{minted}
-	and assume at the beginning the variable \code{x} assumes values in the interval $[0, 5]$. An interval analysis on this fragment would find that \code{y} takes the opposite interval as \code{x}, that is $[0, 5]$, and then \code{z} is in the result of $[0, 5] + [0, 5]$, that in general is $[0, 10]$. However in the end \code{z} is always $5$.
-	The issue here is that the values of \code{x} and \code{y} aren't independent, so an operation between these two variables can't actually have all possible inputs with \code{x} in $[0, 5]$ and \code{y} in $[0, 5]$, but only those that satisfies the \textit{relation} \code{y = -x}. However, the interval domain knows nothing about this relation since it abstracts each variable independently.
+	and assume at the beginning the variable \code{x} assumes values in the interval $[0, 5]$. An interval analysis on this fragment would find that \code{y} takes values in the interval $5 - [0, 5] = [0, 5]$, and then \code{z} is in the result of $[0, 5] + [0, 5]$, that in general is $[0, 10]$. However at the end of the program \code{z} is always $5$.
+	The issue here is that the values of \code{x} and \code{y} aren't independent, so an operation between these two variables can't actually have all possible inputs with \code{x} in $[0, 5]$ and \code{y} in $[0, 5]$, but only those that satisfies the \textit{relation} \code{y = 5 - x}. However, the interval domain knows nothing about this relation since it abstracts each variable independently.
 \end{example}
-There exists extensions of the intervals domain that are relational, for instance octagons (\cite{mine-octagons}) and polyhedrons (\cite{cousot-polyhedrons}). In general, non relational domains are less precise but also less expensive to use.
+There exists extensions of the intervals domain that are relational, for instance octagons (\cite{mine-octagons}) and polyhedrons (\cite{cousot-polyhedrons}). In general, non relational domains are less precise but also computationally less expensive.
 
 The concept of non relational domain is frequently referred to in the literature, but not so often formalized. We stick to a slight variation of the one proposed in \cite{giacobazzi-analyzing-analyses} (section 5.2), that is quite simple but still sufficient for our goals.
-
 Given a set of variables $\text{Vars}$ and, for each one of these variables $x$, a concrete domain $C_x$, a concrete domain for the set of variables is the power set of
 \[
 C = \prod\limits_{x \in \text{Vars}} C_x
@@ -51,13 +51,13 @@ An element of the cartesian product $C$ is a function that maps each variable $x
 		\alpha(S) &= (\alpha_x(\pi_x(S)), \alpha_y(\pi_y(S)), \dots) \\
 		\gamma(a) &= \gamma_x(a_x) \times \gamma_y(a_y) \times \dots
 	\end{align*}
-	where $\pi_x$ denotes the additive extension of the projection $C \rightarrow C_x$ and $a_x$ is the $x$ component of the tuple $x \in \prod\limits_{x \in \text{Vars}} A_x$.
+	where $\pi_x$ denotes the additive extension of the projection $C \rightarrow C_x$ and $a_x$ is the $x$ component of the tuple $a \in \prod\limits_{x \in \text{Vars}} A_x$.
 \end{definition}
 
 A non relational abstract domain is a tuple of elements, one for each variable $x$, and describes the set of concrete states where each variable belongs to the values in it's abstract coordinate. The abstraction is performed on each variable independently, projecting all states in $S$ on that variable and then abstracting the resulting set. The concretization is performed on each variable independently, and then results are multiplied in all possible ways to get the concrete element.
 This separate handling of different variables prevent expressing relations. When abstracting, we lose all informations on possible relations since we project on each variable before abstracting. Conversely, when concretizing an abstract tuple, each element is concretized independently and hence the result is a Cartesian product of sets of possible values for each variable.
 
-%Non relational domains are a special case of so-called Cartesian domains (\todo{ref?}): first we abstract
+\todo{talk about Cartesian abstractions? Probably not}%Non relational domains are a special case of so-called Cartesian domains (\todo{ref?}): first we abstract
 
 If we consider and under-approximation non relational domain, we have to take into account both the fact that abstract elements are concretized in Cartesian product of set of values for each variable, and the fact that the domain is closed under union. Unfortunately, these two properties are incompatible.
 \begin{prop}\label{ch3:th:underapprox-non-rel}
@@ -81,7 +81,7 @@ If we consider and under-approximation non relational domain, we have to take in
 	For the sake of simplicity, let us assume that the Galois connections $\pow(C_x) (\alpha_x, \gamma_x) A_x$ for each variable $x$ are actually Galois insertions, and let us use the usual identification of $A_x$ and $\gamma(A_x) \subseteq \pow(C_x)$.
 	Moreover, let us assume that $\text{Vars}$ only contains two variables; the proof generalizes straightforwardly to an arbitrary set of variables, but it clutters the notation a lot.
 
-	By way of contradiction suppose that for two distinct variables $y$ and $z$ domains $A_y$ and $A_z$ contains more than one element other than $\bot$: let $S_y, S'_y \in A_y$ and $S_z, S'_z \in A_z$.
+	By way of contradiction, suppose that for two distinct variables $y$ and $z$ domains $A_y$ and $A_z$ contains more than one element other than $\bot$: let $S_y, S'_y \in A_y$ and $S_z, S'_z \in A_z$.
 
 	Since $S_y \neq S'_y$, without loss of generality we can assume $S'_y \nsubseteq S_y$ (otherwise just swap their names), and let $T_y = S_y \cup S'_y$. By union closure of the abstract domain $A_y$ (proposition \ref{ch2:th:under-gc-union-closure}), $T_y \in A_y$. Moreover, since $S'_y$ is not a subset of $S_y$, $T_y$ is a strict superset of $S_y$, and $S_y \neq \emptyset$ by hypothesis:
 	\[
@@ -98,16 +98,16 @@ If we consider and under-approximation non relational domain, we have to take in
 	S_y \times T_z \cup T_y \times S_z
 	\]
 	is in the abstract domain too. But this is not the product of two subsets of $C_y$ and $C_z$, as can be be quickly seen in figure \ref{ch3:fig:rel-domain}: the union is the red area, that clearly isn't a rectangle (a product of sets for $y$ and $z$).
-	
+
 	Formally, consider $v_y \in S_y$, $w_y \in T_y \setminus S_y$, $v_z \in S_z$ and $w_z \in T_z \setminus S_z$. We have that $(w_y, v_z) \in T_y \times S_z$ and $(v_y, w_z) \in S_y \times T_z$ but $(w_y, w_z) \notin S_y \times T_z \cup T_y \times S_z$ since it doesn't belong to neither of the two, so this can't be the product of two subsets of $C_y$ and $C_z$.
 \end{proof}
 
 \section{Non emptyingness}
 \todo{copy definitions/lemmas here?}
-We introduced the definition \ref{ch3:def:non-emptying} of non emptying function when talking about integers, but this notion is fully general with respect to the concrete domain: we already applied it to both the infinite set of integers $\setZ$ and the finite interval $[-N, N]$.
+In the previous chapter we introduced the definition \ref{ch3:def:non-emptying} of non emptying function when talking about integers, but this notion is fully general with respect to the concrete domain: we already applied it to both the infinite set of integers $\setZ$ and the finite interval $[-N, N]$, so we want now to work with an arbitrary concrete domain $\pow(C)$.
 We remark that also definition \ref{ch3:def:repr-with-set} of elements representable with a set and lemmas \ref{ch3:th:f-non-repr-pair} and \ref{ch3:th:R-S-bound-integer-inf} are fully general and doesn't depend on the specific integer domain we used in the previous chapter. Hence we start from these to build results independent of the concrete domain.
 
-In our results for integers, we show that an under-approximation abstract domain can't be non emptying for all functions in a given family (in that case, adding a constant). Now we would like to generalize those results, investigating which conditions \textit{on the family of functions} are sufficient to ensure that no abstract domain can be non emptying for all of them.
+In our results for integers, we showed that an under-approximation abstract domain can't be non emptying for all functions in a given family (in that case, adding a constant). Now we would like to generalize those results, investigating which conditions \textit{on the family of functions} are sufficient to ensure that no abstract domain can be non emptying for all of them. The reason of this is that first we fix the function family we want to analyse (corresponding to the program at hand) and then we look for a suitable domain for that specific family we fixed.
 
 In the following sections, we present two impossibility results. They share the same general structure: we fix a function family $F$ with some properties, assume that they are all non emptying in the abstract domain and that $R$ isn't empty. We need this last assumption in order to use lemma \ref{ch3:th:f-non-repr-pair}: if $R$ is empty we can't prove $f(\bar{c}) \in R$.
 Both results require the function family to satisfy a specific condition: that of being highly surjective.
@@ -115,9 +115,9 @@ Both results require the function family to satisfy a specific condition: that o
 \begin{definition}[Highly surjective function family]\label{ch4:def:highly-onto-func-family}
 	Given a family $F$ of functions from $C$ in itself and an element $c \in C$, let
 	\[
-	P(c) = \{ d \in C \svert \exists f_d \in F\ .\ f_d(d) = c \}
+	P(c) = \{ d \in C \svert \exists f_d \in F .\ f_d(d) = c \}
 	\]
-	the set of elements of $C$ for which there exists a function $f_d \in F$ that maps that element to $c$ (possible preimages of $c$).
+	be the set of \textit{preimages of $c$}, elements of $C$ for which there exists a function in $F$ that maps that element to $c$.
 
 	We say that the family $F$ is \textit{highly surjective} (or \textit{highly onto}) if $P(c)$ is infinite for any possible choice of $c \in C$.
 \end{definition}
@@ -128,24 +128,13 @@ The following two sections present the two impossibility results, while the last
 
 \section{First result}
 \todo{change section name}
-This first result is somehow more ``local", in the sense that we require each function in $F$ to satisfy some properties ``on its own", independently from other functions in $F$.
-
-One of the (possible) conditions on $f$ is acyclicness:
-\begin{definition}[Acyclic function]
-	Given a function $f$ from $C$ in itself we say that it's \textit{acyclic} if, for any finite sequence $c_0, c_1, \dots c_n$ of elements of $C$ of any length, it doesn't happen that
-	\[
-	f(c_0) = c_1, f(c_1) = c_2, \dots f(c_n) = c_0
-	\]
-	
-	Is this holds for all sequences of length at least $2$, we say $f$ is \textit{almost acyclic}.
-\end{definition}
-Acyclicness is quite restrictive because it also considers sequences of length $1$, that means that $f$ can't have fixpoints. Almost acyclicness is useful exactly for this, but it's not enough on its own, as we'll argue after the proof.
+This first result is somehow more ``local", in the sense that we require each function in $F$ to satisfy some properties ``on its own", independently from other functions in $F$. In its basic formulation, we just require each function in $F$ to be injective.
 
 \begin{theorem}\label{ch4:th:non-empt-res-local}
 	Let $F$ be a family of functions from $C$ in itself such that
 	\begin{itemize}
-		\item $F$ is highly onto
-		\item all functions $f \in F$ are either injective or acyclic
+		\item $F$ is highly surjective
+		\item all functions $f \in F$ are either injective
 	\end{itemize}
 	Assume also that $R$ isn't empty. Then $A$ can't be non emptying for all $f \in F$.
 \end{theorem}
@@ -156,14 +145,14 @@ The proof of this theorem is quite involved. It starts from $c_0 \in R$, that ex
 	\begin{tikzpicture}
 		\tikzset{vertex/.style = {shape=circle,fill,inner sep=1pt}}
 		\tikzset{func/.style = {->,> = latex'}}
-		
+
 		% vertices \bar{c}
 		\node[vertex,label=left:$\bar{c}$] (bc1) at (0,1){};
 		\node[vertex,label=left:$\bar{c}$] (bc2) at (0,0.5){};
 		\node at (0,0.1){$\vdots$};
 		\node[vertex,label=left:$\bar{c}$] (bc3) at (0,-0.5){};
 		\node[vertex,label=left:$\bar{c}$] (bc4) at (0,-1){};
-		
+
 		% vertices cn
 		\node[vertex,label=above:$c_0$] (c0) at (1,0){};
 		\node[vertex,label=above:$c_1$] (c1) at (2,0){};
@@ -171,7 +160,7 @@ The proof of this theorem is quite involved. It starts from $c_0 \in R$, that ex
 		\node (c2dots) at (4,0){$\dots$};
 		\node[vertex,label=above:$c_n$] (cn) at (5,0){};
 		\node (cndots) at (6,0){$\dots$};
-		
+
 		%edges \bar{c} -> c_0
 		\draw[func] (bc1) to (c0);
 		\draw[func] (bc2) to (c0);
@@ -188,10 +177,10 @@ The proof of this theorem is quite involved. It starts from $c_0 \in R$, that ex
 	\label{ch4:fig:final-f-sketch}
 \end{figure*}
 
-The main idea is to pick a suitable $f$ in $F$ and define the sequence as the iterates $c_{n+1} = f(c_n)$, as sketched in figure \ref{ch4:fig:final-f-sketch}. The initial set of $\bar{c}$ mapped to $c_0$ is required to be able to apply lemma \ref{ch3:th:f-non-repr-pair} to all pairs $\{ \bar{c}, c_n \}$ and get that $c_{n+1} = f(c_n)$ is representable, since $f(\bar{c}) = c_0 \in R$.
+The main idea is to pick a suitable $f$ in $F$ and define the sequence as the iterates $c_{n+1} = f(c_n)$. This function is sketched in figure \ref{ch4:fig:final-f-sketch}. The initial set of $\bar{c}$ mapped to $c_0$ is required to be able to apply lemma \ref{ch3:th:f-non-repr-pair} to all pairs $\{ \bar{c}, c_n \}$ and get that $c_{n+1} = f(c_n)$ is representable, since $f(\bar{c}) = c_0 \in R$.
 The issue with this idea is that we don't have enough information on the sequence to pick such an $f$ at the beginning, so we actually bring along a (huge) list of candidate $f$ that all coincides on a prefix of the sequence. At step $n$, we pick a new element of the sequence among the possible images of $c_{n-1}$ through all candidate $f$ we have at that point, and discard all those that doesn't match the choice.
 
-Actually, instead of directly consider functions, we represent them with elements $\bar{c}$ of $C$. Each element represent a function $f_{\bar{c}}$ that satisfies $f_{\bar{c}}(\bar{c}) = c_0$. Note that this function exists for ``enough" (that is, infinitely many) $\bar{c}$ because of the high ontoness hypothesis. We call $E_n$ the set of $\bar{c}$ that represent functions that are ``valid" for the prefix up to $n$, ie. they map $c_{i}$ to $c_{i+1}$ for $0 \le i \le n - 1$. The core of the proof is an induction that proves that $E_n$ always contains infinitely many elements and that the newly chosen $c_n$ is different from all the others.
+Actually, instead of directly consider functions, we represent them with elements $\bar{c}$ of $C$. Each element represent a function $f_{\bar{c}}$ that satisfies $f_{\bar{c}}(\bar{c}) = c_0$. Note that this function exists for ``enough" (that is, infinitely many) $\bar{c}$ because of the high surjectivity hypothesis. We call $E_n$ the set of $\bar{c}$ that represent functions that are ``valid" for the prefix up to $n$, ie. they map $c_{i}$ to $c_{i+1}$ for $0 \le i \le n - 1$. The core of the proof is an induction that proves that $E_n$ always contains infinitely many elements and that the newly chosen $c_n$ is different from all the others.
 
 \begin{proof}
 	Assume by contradiction that $A$ is non emptying for all $f \in F$. By hypothesis, $R$ isn't empty and thus we can take a $c_0 \in R$. We then construct recursively a sequence of representable elements $c_n$.
@@ -202,7 +191,7 @@ Actually, instead of directly consider functions, we represent them with element
 	\]
 	be the set of elements that are \textit{not} representable with it.
 
-	Since $F$ is an highly onto family, for an infinite amount of $\bar{c}$ there exists $f_{\bar{c}}$ such that $f_{\bar{c}}(\bar{c}) = c_0$.
+	Since $F$ is an highly surjective family, for an infinite amount of $\bar{c}$ there exists $f_{\bar{c}}$ such that $f_{\bar{c}}(\bar{c}) = c_0$.
 
 	To ease presentation, we define here $E_n$, a set of element of $C$ that depends on the sequence $c_n$ we'll construct in the proof. Do note that the definition of $E_n$ only depends on elements of the sequence up to $c_n$.
 	\begin{align*}
@@ -210,7 +199,7 @@ Actually, instead of directly consider functions, we represent them with element
 		& f_{\bar{c}}(\bar{c}) = c_0, \\
 		& \forall\ 0 \le i \le n - 1 \ .\ f_{\bar{c}}(c_i) = c_{i + 1} \}
 	\end{align*}
-	In the light of the introduction above, the first line is needed to apply lemma \ref{ch3:th:f-non-repr-pair} and get that $f_{\bar{c}}(c_n)$ is representable. The second one means that $\bar{c}$ actually represents $f_{\bar{c}}$, and the last is the requirement that $f_{\bar{c}}$ coincides on the prefix of the sequence up to $c_n$.
+	In the light of the introduction above, the first line is needed to apply lemma \ref{ch3:th:f-non-repr-pair} to the pair $\{ c_i, \bar{c} \}$ and get that $f_{\bar{c}}(c_i) = c_{i+1}$ is representable. The second one means that $\bar{c}$ actually represents $f_{\bar{c}}$, and the last is the requirement that $f_{\bar{c}}$ coincides on the prefix of the sequence up to $c_n$.
 
 	We observe that the sequence $E_n$ can also be defined inductively by
 	\begin{align*}
@@ -221,22 +210,22 @@ Actually, instead of directly consider functions, we represent them with element
 		E_{n+1} &= \{\ \bar{c} \in E_n \svert \bar{c} \in NR(c_{n+1}), f_{\bar{c}}(c_n) = c_{n+1} \} \\
 		&= NR(c_{n+1}) \cap \{\ \bar{c} \in E_n \svert f_{\bar{c}}(c_n) = c_{n+1} \} \addtocounter{equation}{1}\tag{\theequation} \label{ch4:eq:En-relation}
 	\end{align*}
-	$E_0$ is the intersection of $NR(c_0)$ and the set of $\bar{c}$ for which there exists $f_{\bar{c}}$. Using lemma \ref{ch3:th:R-S-bound-integer-inf} to say $R(c_0)$ is finite and recalling that $P(c_0)$ is infinite (by high ontoness), is easy to observe that
+	$E_0$ is the intersection of $NR(c_0)$ and the set of $\bar{c}$ for which there exists $f_{\bar{c}}$. Using lemma \ref{ch3:th:R-S-bound-integer-inf} to say $R(c_0)$ is finite and recalling that $P(c_0)$ is infinite (by high surjectivity), we observe that
 	\begin{align*}
 		E_0 = P(c_0) \cap NR(c_0) = P(c_0) \setminus (C \setminus NR(c_0)) = P(c_0) \setminus R(c_0)
 	\end{align*}
 	is infinite too.
 
 	We then prove by induction on $n$ the following three statements: first $c_n$ is representable, ie. $c_n \in R$; second $E_n$ is infinite; third $c_n$ is different from all $c_i$ for $0 \le i \le n - 1$.
-	
-	We've already proved base case for $n = 0$, so we assume the three hypothesis hold for $n$ and prove them for $n + 1$.
+	We've already proved base case for $n = 0$: $c_0$ is representable by hypothesis, $E_0$ is infinite as shown above and the third condition is vacuous since there are no $0 \le i \le -1$.
+	For the inductive step, assume the three hypothesis hold for $n$ and let us prove them for $n + 1$.
 	Consider the set
 	\[
-	\{ f_{\bar{c}}(c_n) \svert \bar{c} \in E_n \}
+	S = \{ f_{\bar{c}}(c_n) \svert \bar{c} \in E_n \}
 	\]
 	of candidate $c_{n+1}$.
-	Since $c_n \in R$, $\bar{c} \in E_n \subseteq NR(c_n)$ and $f_{\bar{c}}(\bar{c}) = c_0 \in R$ (by inductive hypotheses) we can apply lemma \ref{ch3:th:f-non-repr-pair} to get $f_{\bar{c}}(c_n) \in R$ too, hence that set is a subset of $R$. Since $R$ is finite also that set must be.
-	By inductive hypothesis we know $E_n$ is infinite, so there must exists an element $c_{n+1}$ in that set such that an infinite amount of $\bar{c} \in E_n$ satisfies $f_{\bar{c}}(c_n) = c_{n+1}$. We observe that, as shown above, $c_{n+1} \in R$. Moreover we chose $c_{n+1}$ such that
+	Since $c_n \in R$, $\bar{c} \in E_n \subseteq NR(c_n)$ and $f_{\bar{c}}(\bar{c}) = c_0 \in R$ (by inductive hypotheses) we can apply lemma \ref{ch3:th:f-non-repr-pair} to get $f_{\bar{c}}(c_n) \in R$ too, hence $S$ is a subset of $R$.
+	Since $R$ is finite also $S$ must be, and by inductive hypothesis we know $E_n$ is infinite, so there must exists an element $c_{n+1}$ in $S$ such that an infinite amount of $\bar{c} \in E_n$ satisfies $f_{\bar{c}}(c_n) = c_{n+1}$. We observe that, as shown above, $c_{n+1} \in R$. Moreover we chose $c_{n+1}$ such that
 	\[
 	\{\ \bar{c} \in E_n \svert f_{\bar{c}}(c_n) = c_{n+1} \}
 	\]
@@ -245,41 +234,21 @@ Actually, instead of directly consider functions, we represent them with element
 	\{\ \bar{c} \in E_n \svert f_{\bar{c}}(c_n) = c_{n+1} \} \cap NR(c_{n+1}) = \{\ \bar{c} \in E_n \svert f_{\bar{c}}(c_n) = c_{n+1} \} \setminus R(c_{n+1})
 	\]
 	is infinite too because $R(c_{n+1})$ is finite. But this, by equation \eqref{ch4:eq:En-relation} above, is exactly $E_{n+1}$.
-	
-	We only have to show that $c_{n+1} \neq c_i$ for all $0 \le i \le n$. Assume by contradiction that this is not the case: for some $0 \le j \le n$ it holds $c_{n+1} = c_j$.
-	If $f_{\bar{c}}$ is acyclic this is a contradiction because it would create the cycle
-	\[
-	f_{\bar{c}}(c_j) = c_{j+1}, \dots, f_{\bar{c}}(c_n) = c_{n+1} = c_j
-	\]
-	If instead $f_{\bar{c}}$ is injective, let us distinguish two cases. If $j = 0$ we get $f_{\bar{c}}(c_n) = c_{n+1} = c_0 = f_{\bar{c}}(\bar{c})$, that would imply $c_n = \bar{c}$, but the former is representable and the latter is not. If otherwise $j > 0$ we get $f_{\bar{c}}(c_n) = c_{n+1} = c_j = f_{\bar{c}}(c_{j-1})$, that would imply $c_n = c_{j-1}$, that is not the case by inductive hypothesis.
 
-	This concludes the inductive proof.
-	
+	We only have to show that $c_{n+1} \neq c_i$ for all $0 \le i \le n$. Assume by contradiction that this is not the case: for some $0 \le j \le n$ it holds $c_{n+1} = c_j$, and let us distinguish two cases. If $j = 0$ we get $f_{\bar{c}}(c_n) = c_{n+1} = c_0 = f_{\bar{c}}(\bar{c})$, that would imply $c_n = \bar{c}$, but the former is representable and the latter is not, absurd. If otherwise $j > 0$ we get $f_{\bar{c}}(c_n) = c_{n+1} = c_j = f_{\bar{c}}(c_{j-1})$, that would imply $c_n = c_{j-1}$, that is not the case by inductive hypothesis. So $c_{n+1} \neq c_j$, and this concludes the inductive proof.
+
 	By the induction above we have that all $c_n$, that are an infinite amount, are elements of $R$ and are all distinct. This yields the desired contradiction because $R$ is finite.
 \end{proof}
 
 Intuitively, if we were able to find the ``final" $f$ from the beginning, it would look like figure \ref{ch4:fig:final-f-sketch}: some $\bar{c}$, those for which that $f$ is $f_{\bar{c}}$, are mapped to $c_0$, and from there it just maps each $c_n$ to $c_{n+1}$. Do note that this is just an intuitive description: in fact, such an $f$ may not even exists (this correspond to the limit of $E_n$ being empty), but is indeed useful to visualize the proof.
 
-An interesting observation about the proof is that we used injectivity or acyclicness of $f$ only to show that $c_{n+1} \neq c_i$, so any other condition that allows us to do so is a fine alternative to those two. In particular, we can require almost acyclicness to functions in $F$ if we're also able to guarantee that $f_{\bar{c}}(c_n) = c_{n+1} \neq c_n$. A possible condition is
-\[
-\forall c \in C. f(c) \neq c \implies f(f(c)) \neq f(c)
-\]
-This condition is enough since all $c_n$ are the image of something through $f_{\bar{c}}$: for $n = 0$, $f_{\bar{c}}(\bar{c})= c_0 \neq \bar{c}$, and for $n > 0$, $f_{\bar{c}}(c_{n-1}) = c_n \neq c_{n-1}$.
-This condition could be restated as follows: any non-fixpoint of $f$ can't be mapped to a fixpoint, that is
-\[
-f(C \setminus \fix(f)) \subseteq C \setminus \fix(f)
-\]
-This condition is still restrictive, but is less so than acyclicness, that prevents fixpoints to exist at all.
-The theorem above could hence be changed considering an highly onto family $F$ of functions such that any function $f \in F$ is either injective or both almost acyclic and satisfying $f(C \setminus \fix(f)) \subseteq C \setminus \fix(f)$.
-%\todo{almost acyclicness is implied (equiv?) to extensiveness wrt some partial order. Do I want to enter this discussion here? Maybe references?}
-
-A simple example of such a family of functions are constant sums over integers.
+A simple example of such a function family are constant sums over integers.
 \begin{example}
-We take $C = \setZ$ and
-\[
-F = \{ \lambda x. x + n \svert n \in \setZ \}
-\]
-The family is highly onto (actually $P(c) = \setZ$ for all $c$) and all these functions are injective, so it meets the hypothesis of the theorem.
+	We take $C = \setZ$ and
+	\[
+	F = \{ \lambda x. x + n \svert n \in \setZ \}
+	\]
+	The family is highly surjective (actually $P(c) = \setZ$ for all $c$) and all these functions are injective, so it meets the hypothesis of the theorem.
 \end{example}
 
 Even though we've already proved that no abstract domain can be non emptying for all functions in this family $F$ in proposition \ref{ch3:th:ne-sum-nonexsistence-inf} in the previous chapter, it's important to note that this proof isn't a generalization of the proof of that proposition. In this proof, we iterate a single $f$ to build the entire sequence, while in that one we change the function every time, mapping the non representable $\bar{n}$ to the newly found representable $n_0 + t d$ to get that the image of $n_0$ through that function is representable too, as sketched in figure \ref{ch4:fig:ne-sum-inf-sketch}.
@@ -338,6 +307,37 @@ Even though we've already proved that no abstract domain can be non emptying for
 	\caption{Graphical representation of the proof of proposition \ref{ch3:th:ne-sum-nonexsistence-inf}}
 	\label{ch4:fig:ne-sum-inf-sketch}
 \end{figure*}
+
+\todo{}
+An interesting observation about the proof is that we used injectivity of $f$ only to show that $c_{n+1} \neq c_i$, so any other condition that allows us to do so is a fine alternative. As an example, we present here the possibility that $f$ is acyclic instead of injective.
+\begin{definition}[Acyclic function]
+	Given a function $f$ from $C$ in itself we say that it's \textit{acyclic} if, for any finite sequence $c_0, c_1, \dots c_n$ of elements of $C$ of any length, it doesn't happen that
+	\[
+	f(c_0) = c_1, f(c_1) = c_2, \dots f(c_n) = c_0
+	\]
+
+	Is this holds for all sequences of length at least $2$, we say $f$ is \textit{almost acyclic}.
+\end{definition}
+If $f$ is acyclic the theorem holds: if for some $0 \le j \le n$ it were $c_{n+1} = c_j$, we would incur in the contradiction that $f$ has the cycle
+\[
+f(c_j) = c_{j+1}, \dots, f(c_n) = c_{n+1} = c_j
+\]
+
+However acyclicness is quite restrictive because it also considers sequences of length $1$, that means that $f$ can't have fixpoints. Almost acyclicness is useful exactly for this, but it's not enough on its own.
+In particular, we can require almost acyclicness to functions in $F$ if we're also able to guarantee that $f(c_n) = c_{n+1} \neq c_n$, because for $0 \le j \le n - 1$ the same proof as above is still correct. A possible condition to enforce this is
+\[
+\forall c \in C.\ f(c) \neq c \implies f(f(c)) \neq f(c)
+\]
+This condition is enough since all $c_n$ are the image of something through $f$: for $n = 0$, $f(\bar{c})= c_0 \neq \bar{c}$, and for $n > 0$, $f(c_{n-1}) = c_n \neq c_{n-1}$.
+This condition could be equivalently restated as any non-fixpoint of $f$ can't be mapped to a fixpoint, that is
+\[
+f(C \setminus \fix(f)) \subseteq C \setminus \fix(f)
+\]
+This condition is still restrictive, but is less so than acyclicness, that prevents fixpoints to exist at all.
+The theorem above could hence be changed considering an highly surjective family $F$ of functions such that any function $f \in F$ is either injective, acyclic or both almost acyclic and satisfying $f(C \setminus \fix(f)) \subseteq C \setminus \fix(f)$.
+
+\todo{example with rationals and/or with machine reals?}
+
 
 \section{Second result}
 The second result we propose is instead more ``global", in the sense that it requires conditions on $F$ as a whole, and not on each $f$ on its own.
