@@ -130,11 +130,11 @@ The following two sections present the two impossibility results, while the last
 \todo{change section name}
 This first result is somehow more ``local", in the sense that we require each function in $F$ to satisfy some properties ``on its own", independently from other functions in $F$. In its basic formulation, we just require each function in $F$ to be injective.
 
-\begin{theorem}\label{ch4:th:non-empt-res-local}
+\begin{theorem}\label{ch4:th:non-empt-res-local-basic}
 	Let $F$ be a family of functions from $C$ in itself such that
 	\begin{itemize}
 		\item $F$ is highly surjective
-		\item all functions $f \in F$ are either injective
+		\item all functions $f \in F$ are injective
 	\end{itemize}
 	Assume also that $R$ isn't empty. Then $A$ can't be non emptying for all $f \in F$.
 \end{theorem}
@@ -308,7 +308,15 @@ Even though we've already proved that no abstract domain can be non emptying for
 	\label{ch4:fig:ne-sum-inf-sketch}
 \end{figure*}
 
-\todo{}
+Another example are rational or real numbers, with sums or products, as shown for instance in this example
+\begin{example}
+	We take $C = \mathbb{Q} \setminus \{ 0 \}$ and
+	\[
+	F = \{ \lambda x. x \cdot q \svert q \in \mathbb{Q} \setminus \{ 0 \} \}
+	\]
+	The family is highly surjective since $P(c) = \mathbb{Q} \setminus \{ 0 \}$ for all $c$, and all these functions are invertible, hence injective.
+\end{example}
+
 An interesting observation about the proof is that we used injectivity of $f$ only to show that $c_{n+1} \neq c_i$, so any other condition that allows us to do so is a fine alternative. As an example, we present here the possibility that $f$ is acyclic instead of injective.
 \begin{definition}[Acyclic function]
 	Given a function $f$ from $C$ in itself we say that it's \textit{acyclic} if, for any finite sequence $c_0, c_1, \dots c_n$ of elements of $C$ of any length, it doesn't happen that
@@ -334,10 +342,127 @@ This condition could be equivalently restated as any non-fixpoint of $f$ can't b
 f(C \setminus \fix(f)) \subseteq C \setminus \fix(f)
 \]
 This condition is still restrictive, but is less so than acyclicness, that prevents fixpoints to exist at all.
-The theorem above could hence be changed considering an highly surjective family $F$ of functions such that any function $f \in F$ is either injective, acyclic or both almost acyclic and satisfying $f(C \setminus \fix(f)) \subseteq C \setminus \fix(f)$.
+Theorem \ref{ch4:th:non-empt-res-local-basic} could hence be generalized as
+\begin{theorem}\label{ch4:th:non-empt-res-local}
+	Let $F$ be an highly surjective function family from $C$ in itself such that all functions $f \in F$ satisfies at least one of the following conditions:
+	\begin{itemize}
+		\item $f$ is injective
+		\item $f$ is acyclic
+		\item $f$ is almost acyclic and $f(C \setminus \fix(f)) \subseteq C \setminus \fix(f)$
+	\end{itemize}
+	Assume also that $R$ isn't empty. Then $A$ can't be non emptying for all $f \in F$.
+\end{theorem}
 
-\todo{example with rationals and/or with machine reals?}
+As an example of this more general version, we propose floating-point numbers and multiplications.
+\begin{example}\label{ch4:ex:fp-numbers-local}
+	We fix as concrete domain $C$ the set $\mathcal{F_+}$ of strictly positive floating-point numbers that can be represented with a fixed number of significant digits ($t$ bits) but with an arbitrary precision exponent. We make this choice in order to preserve characteristics of floating-point arithmetic but to have an infinite domain; a finite number of bits for exponents too would require a theorem for finite domains.\todo{Will I talk about this in a later section?} We limit ourselves to positive numbers since multiplications don't change signs, a discussion considering also negative numbers is completely analogous but takes twice as long to handle details of sign changes.
 
+	Let $\cdot$ and $\odot$ denote respectively real product and its floating-point arithmetic approximation\todo{add ref}, and consider the function family
+	\[
+	F = \{ \lambda x . x \odot y \svert y \in \mathcal{F_+} \}
+	\]
+
+	First, we recall some basic properties about floating-point numbers and arithmetic. A floating-point number is defined by a significant $s$, of $t$ bits and satisfying $1 \le s < 2$, and an exponent $p$, and these correspond to the number $s \cdot 2^p$. If $\macheps$ is the machine epsilon and $\tilde{x}$ denotes the floating-point approximation of the real number $x$, then
+	\[
+	\left\lvert \frac{\tilde{x} - x}{x} \right\rvert < \macheps
+	\]
+	The smallest floating-point number greater than $1$ is $1 + 2^{-t+1}$. Analogously, the greatest floating-point number smaller than $1$ is $1 - 2^{-t}$. Moreover, $\macheps \le 2^{-t+1}$, hence the greatest number smaller than $1$ is at most $1 - \macheps / 2$.
+	The floating-point multiplication is defined as\todo{fix the tilde because it's ugly}
+	\[
+	x \odot y = \widetilde{(x \cdot y)}
+	\]
+	and it is commutative and satisfies the following two properties.
+	For any three floating point numbers $x$, $y$ and $z > 0$, if $x \le y$ also $x \odot z \le y \odot z$.
+	For any two floating point numbers $x = s_1 \cdot 2^{p_1}$ and $y = s_2 \cdot 2^{p_2}$, the product $x \odot y = (s_1 \odot s_2) \cdot 2^{p_1 + p_2}$.
+
+	We now show that $F$ meets the hypothesis of the theorem.
+	The function family is highly surjective since, fixed $x = s \cdot 2^p$, we have that for all $n \ge 0$ the number
+	$x \cdot 2^{-n} = s \cdot 2^{p-n}$ is in $\mathcal{F_+}$ and
+	\[
+	(x \cdot 2^{-n}) \odot (1 \cdot 2^{n}) = x
+	\]
+	hence $P(x) \supseteq \{ 1 \cdot 2^{-n} \svert n \ge 0 \}$ is infinite.
+	For the second condition, if $y = 1 \cdot 2^{0}$ we have that the function $\lambda x. x \odot y$ is the identity, hence injective. So assume $y = s \cdot 2^p \neq 1 \cdot 2^0$ and let us show that $\lambda x. x \odot y$ is acyclic. Assume by contradiction it has a cycle $f(x_0) = x_1, f(x_1) = x_2, \dots, f(x_n) = x_0$. By monotonicity we have
+	\[
+	f(x) = x \odot y \ge x \odot 1 = x
+	\]
+	and then
+	\[
+	x_0 \le f(x_0) = x_1 \le f(x_1) = x_2 \le \dots \le x_n \le f(x_n) = x_0
+	\]
+	thus that all the elements of the cycle are equal, in particular $f(x_0) = x_0$. So we only have to show that such a function can't have a fixpoint.
+
+	To do so, we distinguish four cases on $y = s \cdot 2^p$. In all four we assume $x_0 = s_0 \cdot 2^{p_0}$.
+	If $p \ge 1$, since $s \ge 1$ we have
+	\begin{align*}
+		x_0 \odot y &= (s_0 \odot s) \cdot 2^{p_0 + p} \\
+		&\ge (s_0 \odot 1) \cdot 2^{p_0 + 1} \\
+		&= s_0 \cdot 2^{p_0} \cdot 2 > x_0
+	\end{align*}
+	If $p \le -2$, since $s < 2$ we have
+	\begin{align*}
+		x_0 \odot y &\le (s_0 \odot 2) \cdot 2^{p_0 + p} \\
+		&\le (s_0 \odot 1) \cdot 2^{p_0 + p + 1} \\
+		&= s_0 \cdot 2^{p_0} \cdot 2^{p + 1} \le x_0 / 2\\
+	\end{align*}
+	If $p = -1$ it must be the case that $s \cdot 2^{-1} \le 1 - \macheps / 2$, that is $s \le 2 - \macheps$, thus
+	\[
+	x_0 \odot y \le (s_0 \odot (2 - \macheps)) \cdot 2^{p_0 - 1}
+	\]
+	If $s_0 \odot (2 - \macheps) \ge s_0$ we would have
+	\begin{align*}
+		\macheps &> \left\lvert \frac{(s_0 \odot (2 - \macheps)) - s_0 \cdot (2 - \macheps)}{s_0 \cdot (2 - \macheps)} \right\rvert \\
+		&\ge \left\lvert \frac{s_0 - s_0 \cdot (2 - \macheps)}{s_0 \cdot (2 - \macheps)} \right\rvert \\
+		&= \left\lvert \frac{- 1 + \macheps}{2 - \macheps} \right\rvert \\
+		&= \frac{1 - \macheps}{2 - \macheps} \ge \frac{1}{2} \ge \macheps\\
+	\end{align*}
+	where we assumed $\macheps \le 1/2$ for the last line, and this is a contradiction.
+	Lastly, let us consider the case of $p = 0$. Since $y \neq 1$ it must be the case that $s \neq 1$ too, hence $s \ge 1 + 2^{-t+1}$. From this it follows
+	\begin{align*}
+		x_0 \odot y &= (s_0 \odot s) \cdot 2^{p_0 + p} \\
+		&\ge (s_0 + s_0 \cdot 2^{-t+1}) \cdot 2^{p_0}
+	\end{align*}
+	Since $s \ge 1$ we have that $s_0 \cdot 2^{-t+1} \ge 2^{-t+1}$ and hence this is an increase in one of the bits of the machine representation of $s_0 \cdot s$, thus $s_0 \odot s \neq s$ because they differ in at least one bit.
+	For example, assume $t = 4$, $s_0 = 1.011$ and $s = 1.001$ (that is its smallest possible value). Then the product is
+	\begin{center}
+		\begin{tabular}{c@{\;}c@{\,}c@{\,}c@{\,}c@{\,}c@{\,}c@{\,}c}
+			& & & & 1. & 0 & 1 & 1 \\
+			$\times$ & & & & 1. & 0 & 0 & 1 \\
+			\hline
+			& 0. & 0 & 0 & 1 & 0 & 1 & 1 \\
+			$+$ & 1. & 0 & 1 & 1 & 0 & 0 & 0 \\
+			\hline
+			& 1. & 1 & 0 & 0 & 0 & 0 & 1
+		\end{tabular}
+	\end{center}
+	so the result is represented (both with rounding and truncation) as $1.100$, that is different from $s_0 = 1.011$.
+
+	In all four cases, the function has no fixpoint, and so it's acyclic. So this family meets hypothesis of theorem \ref{ch4:th:non-empt-res-local}: no abstract domain on floating-point numbers can be non emptying for all multiplications.
+	Observe that theorem \ref{ch4:th:non-empt-res-local-basic} wasn't enough to prove this result, since in general these functions are not injective because of approximations. For instance both products
+	\begin{center}
+		\hfill
+		\begin{tabular}{c@{\;}c@{\;}c@{\,}c@{\,}c@{\,}c@{\,}c@{\,}c@{\,}c}
+			& & & & & 1. & 1 & 0 & 0 \\
+			$\times$ & & & & & 1. & 1 & 0 & 0 \\
+			\hline
+			    & & 0. & 1 & 1 & 0 & 0 & 0 & 0\\
+			$+$ & & 1. & 1 & 0 & 0 & 0 & 0 & 0 \\
+			\hline
+			  & 1 & 0. & 0 & 1 & 0 & 0 & 0 & 0
+		\end{tabular}
+		\hfill
+		\begin{tabular}{c@{\;}c@{\;}c@{\,}c@{\,}c@{\,}c@{\,}c@{\,}c@{\,}c}
+			& & & & & 1. & 1 & 0 & 1 \\
+			$\times$ & & & & & 1. & 1 & 0 & 0 \\
+			\hline
+			    & & 0. & 1 & 1 & 0 & 1 & 0 & 0\\
+			$+$ & & 1. & 1 & 0 & 1 & 0 & 0 & 0 \\
+			\hline
+			  & 1 & 0. & 0 & 1 & 1 & 1 & 0 & 0
+		\end{tabular}
+	\end{center}
+	are approximated by the same floating-point number $1.001 \cdot 2^1$ but their first arguments differ by the last bit.
+\end{example}
 
 \section{Second result}
 The second result we propose is instead more ``global", in the sense that it requires conditions on $F$ as a whole, and not on each $f$ on its own.
@@ -345,21 +470,21 @@ The second result we propose is instead more ``global", in the sense that it req
 \begin{theorem}\label{ch4:th:non-empt-res-global}
 	Let $F$ be a family of functions from $C$ in itself such that
 	\begin{itemize}
-		\item $F$ is highly onto
+		\item $F$ is highly surjective
 		\item for all pair of elements $c, d \in C$ there exists at most a finite amount of $f \in F$ such that $f(d) = c$
 		\item for all pair of an element $c \in C$ and a function $f \in F$, there exists at most a finite amount of elements $d \in C$ such that $f(d) = c$
 	\end{itemize}
 	Assume also that $R$ isn't empty. Then $A$ can't be non emptying for all $f \in F$.
 \end{theorem}
 
-The idea of the proof is that all these finiteness requirements makes it impossible to build enough $\bar{c}$ for which there exists $f_{\bar{c}}$ that maps them into $c_0$ (ie. $\bar{c} \in P(c_0)$), contradicting the hypothesis that $F$ is highly onto. This may seem a little contradictory on its own (after all it is us that are requiring $F$ to satisfy all those conditions), but actually it is not because the proof also involves finiteness of $R$ and $R(c_0)$, that are enforced by the abstract domain. In fact we'll present an example of function family that meets those requirements.
+The idea of the proof is that all these finiteness requirements makes it impossible to build enough $\bar{c}$ for which there exists $f_{\bar{c}}$ that maps them into $c_0$ (ie. $\bar{c} \in P(c_0)$), contradicting the hypothesis that $F$ is highly surjective. This may seem a little contradictory on its own (after all it is us that are requiring $F$ to satisfy all those conditions), but actually it is not because the proof also involves finiteness of $R$ and $R(c_0)$, that are enforced by the abstract domain. In fact we'll present an example of function family that meets those requirements.
 
-The actual proof follows this idea in the opposite direction: starts from the (infinite) set $P(c_0)$ of $\bar{c}$ and propagates its infiniteness down to $R$, thus getting the contradiction.
+The actual proof follows this idea in the opposite direction: starts from the (infinite) set $P(c_0)$ of $\bar{c}$ and propagates its infiniteness down to $R$.
 
 \begin{proof}
 	Assume by contradiction that $A$ is non emptying for all $f \in F$. By hypothesis, $R$ isn't empty and thus we can take a $c_0 \in R$.
-	
-	Since $F$ is an highly onto family, $P(c_0)$ is infinite. Using lemma \ref{ch3:th:R-S-bound-integer-inf} to say that $R(c_0)$ is finite we can say that
+
+	Since $F$ is an highly surjective family, $P(c_0)$ is infinite. Using lemma \ref{ch3:th:R-S-bound-integer-inf} to say that $R(c_0)$ is finite we can say that
 	\begin{align*}
 		E &= \{ \bar{c} \in C \svert \bar{c} \notin R(c_0), \exists f_{\bar{c}} \in F\ .\ f_{\bar{c}}(\bar{c}) = c_0 \} \\
 		&= P(c_0) \setminus R(c_0)
@@ -370,7 +495,7 @@ The actual proof follows this idea in the opposite direction: starts from the (i
 	\[
 	J(f) = \{ \bar{c} \in C \setminus R(c_0) \svert f = f_{\bar{c}} \}
 	\]
-	
+
 	Hence for all $\bar{c} \in J(f)$ we have $f(\bar{c}) = c_0$. By the third condition on $F$, this can be true for at most a finite amount of $\bar{c}$, that is $J(f)$ is finite.
 
 	Now let $G$ be the set of functions in $F$ that are $f_{\bar{c}}$ for some $\bar{c} \in E$:
@@ -386,10 +511,10 @@ The actual proof follows this idea in the opposite direction: starts from the (i
 	By lemma \ref{ch3:th:f-non-repr-pair}, for all $\bar{c} \in E$ we have $f_{\bar{c}}(c_0)$ is representable. This can be equivalently restated saying that for all $f \in G$, $f(c_0)$ is representable.
 	So consider the set $I$ of all possible images of $c_0$ through functions in $G$:
 	\[
-	I = \{ f(c_0) \svert f \in G \}	
+	I = \{ f(c_0) \svert f \in G \}
 	\]
 	This set is a subset of $R$ because all its elements are representable.
-	
+
 	Clearly
 	\[
 	G = \bigcup\limits_{d \in I} \{ f \in G \svert f(c_0) = d \}
@@ -399,24 +524,35 @@ The actual proof follows this idea in the opposite direction: starts from the (i
 	\{ f \in F \svert f(c_0) = d \}
 	\]
 	is finite, and this is a superset of $\{ f \in G \svert f(c_0) = d \}$. So $I$ must be infinite too.
-	
+
 	However, this yields the desired contradiction: $I$ is infinite and is a subset of $R$, that is finite.
 \end{proof}
 
-An example of such a family of functions are constant integer divisions.
+As an example of such a family of functions we again propose floating-point numbers with multiplications:
 \begin{example}
-	We take $C = \setZ \setminus \{ 0 \}$ and
+	Take $C = \mathcal{F} \setminus \{ 0 \}$ the set of non-zero floating-point numbers with $t$ bits significants, one bit sign and arbitrary precision exponents, and
 	\[
-	F = \{ \lambda x. \lfloor x / n \rfloor \svert n \in \setZ \setminus \{ 0 \}\}
+	F = \{ \lambda x . x \odot y \svert y \in \mathcal{F} \setminus \{ 0 \} \}
 	\]
-	The family is highly onto, since $P(c) \supseteq \{ ct \svert t \in \setZ \}$ (we can map $ct$ to $c$ with $\lambda x. \lfloor x / t \rfloor$).
-	Fixed $c, d \in \setZ$, we have that $\lfloor d / n \rfloor = c$ if and only if $d / (c+1) < n \le d / c$, so for a finite amount of integers.
-	Fixed $c, n \in \setZ$ we have that $\lfloor d / n \rfloor = c$ if and only if $c n \le d < c (n + 1)$, so again for a finite amount of integers.
-	Hence this family meets the hypothesis of the theorem.
-\end{example}
 
-%Another example is the set of $\text{drop}_n$ functions, that taken a finite list of element
-%\todo{problems with the empty list. Can we fix them saying there's a list that isn't empty that is repr? Nope, this can't be fixed because we loose hp 2, that should be valid for all possible images of $c_0$ through $f_{\bar{c}}$}
+	A straightforward adaptation of the argument of example \ref{ch4:ex:fp-numbers-local} (to take into account signs) shows that this family is highly surjective.
+	Fixed two floating-point numbers $x, y$, we have that $y = f(x) = x \odot z$ only if
+	\[
+	\left\lvert \frac{y - (x \cdot z)}{x \cdot z} \right\rvert < \macheps
+	\]
+	that is
+	\[
+	\left\lvert\frac{y}{x}\right\rvert \frac{1}{1+\macheps} < \abs{z} < \left\lvert\frac{y}{x}\right\rvert \frac{1}{1-\macheps}
+	\]
+	This is a bounded interval since $x \neq 0$, and hence contains only a finite amount of floating-point numbers.
+	Conversely, fixed a floating point $y$ and a function $f(x) = x \odot z$, we have that $y = x \odot z$ only if the same condition as above holds, that solved in $x$ becomes
+	\[
+	\left\lvert\frac{y}{z}\right\rvert \frac{1}{1+\macheps} < \abs{x} < \left\lvert\frac{y}{z}\right\rvert \frac{1}{1-\macheps}
+	\]
+	Again since $z \neq 0$ this is a bounded interval, thus proving the finiteness of the amount of floating-point $x$ that satisfies it.
+
+	So, by means of theorem \ref{ch4:th:non-empt-res-global} above, we proved again that no abstract domain on floating-point numbers can be non emptying for all multiplications.
+\end{example}
 
 \section{Limitations}
 \todo{reorganize}
