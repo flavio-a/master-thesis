@@ -357,19 +357,19 @@ As an example of this more general version, we propose floating-point numbers an
 \begin{example}\label{ch4:ex:fp-numbers-local}
 	We fix as concrete domain $C$ the set $\mathcal{F_+}$ of strictly positive floating-point numbers that can be represented with a fixed number of significant digits ($t$ bits) but with an arbitrary precision exponent. We make this choice in order to preserve characteristics of floating-point arithmetic but to have an infinite domain; a finite number of bits for exponents too would require a theorem for finite domains.\todo{Will I talk about this in a later section?} We limit ourselves to positive numbers since multiplications don't change signs, a discussion considering also negative numbers is completely analogous but takes twice as long to handle details of sign changes.
 
-	Let $\cdot$ and $\odot$ denote respectively real product and its floating-point arithmetic approximation\todo{add ref}, and consider the function family
+	Let $\cdot$ and $\odot$ denote respectively real product and its floating-point arithmetic approximation, and consider the function family
 	\[
 	F = \{ \lambda x . x \odot y \svert y \in \mathcal{F_+} \}
 	\]
 
-	First, we recall some basic properties about floating-point numbers and arithmetic. A floating-point number is defined by a significant $s$, of $t$ bits and satisfying $1 \le s < 2$, and an exponent $p$, and these correspond to the number $s \cdot 2^p$. If $\macheps$ is the machine epsilon and $\tilde{x}$ denotes the floating-point approximation of the real number $x$, then
+	First, we recall some basic properties about floating-point numbers and arithmetic (see eg. \cite{overton-num-analysis-book}). A floating-point number is defined by a significant $s$, of $t$ bits and satisfying $1 \le s < 2$, and an exponent $p$, and these correspond to the number $s \cdot 2^p$. If $\macheps$ is the machine epsilon and $\fp(x)$ denotes the floating-point approximation of the real number $x$, then
 	\[
-	\left\lvert \frac{\tilde{x} - x}{x} \right\rvert < \macheps
+	\left\lvert \frac{\fp(x) - x}{x} \right\rvert < \macheps
 	\]
-	The smallest floating-point number greater than $1$ is $1 + 2^{-t+1}$. Analogously, the greatest floating-point number smaller than $1$ is $1 - 2^{-t}$. Moreover, $\macheps \le 2^{-t+1}$, hence the greatest number smaller than $1$ is at most $1 - \macheps / 2$.
-	The floating-point multiplication is defined as\todo{fix the tilde because it's ugly}
+	The smallest floating-point number greater than $1$ is $1 + 2^{-t+1}$. Analogously, the greatest floating-point number smaller than $1$ is $1 - 2^{-t}$. Moreover $\macheps \le 2^{-t+1}$, hence the greatest number smaller than $1$ is at most $1 - \macheps / 2$.
+	The floating-point multiplication is defined as\todo{cite IEEE standard?}
 	\[
-	x \odot y = \widetilde{(x \cdot y)}
+	x \odot y = \fp(x \cdot y)
 	\]
 	and it is commutative and satisfies the following two properties.
 	For any three floating point numbers $x$, $y$ and $z > 0$, if $x \le y$ also $x \odot z \le y \odot z$.
@@ -379,7 +379,7 @@ As an example of this more general version, we propose floating-point numbers an
 	The function family is highly surjective since, fixed $x = s \cdot 2^p$, we have that for all $n \ge 0$ the number
 	$x \cdot 2^{-n} = s \cdot 2^{p-n}$ is in $\mathcal{F_+}$ and
 	\[
-	(x \cdot 2^{-n}) \odot (1 \cdot 2^{n}) = x
+	(x \cdot 2^{-n}) \odot (1 \cdot 2^{n}) = (x \odot 1) \cdot 2^{-n+n} = x
 	\]
 	hence $P(x) \supseteq \{ 1 \cdot 2^{-n} \svert n \ge 0 \}$ is infinite.
 	For the second condition, if $y = 1 \cdot 2^{0}$ we have that the function $\lambda x. x \odot y$ is the identity, hence injective. So assume $y = s \cdot 2^p \neq 1 \cdot 2^0$ and let us show that $\lambda x. x \odot y$ is acyclic. Assume by contradiction it has a cycle $f(x_0) = x_1, f(x_1) = x_2, \dots, f(x_n) = x_0$. By monotonicity we have
@@ -440,28 +440,28 @@ As an example of this more general version, we propose floating-point numbers an
 	In all four cases, the function has no fixpoint, and so it's acyclic. So this family meets hypothesis of theorem \ref{ch4:th:non-empt-res-local}: no abstract domain on floating-point numbers can be non emptying for all multiplications.
 	Observe that theorem \ref{ch4:th:non-empt-res-local-basic} wasn't enough to prove this result, since in general these functions are not injective because of approximations. For instance both products
 	\begin{center}
-		\hfill
-		\begin{tabular}{c@{\;}c@{\;}c@{\,}c@{\,}c@{\,}c@{\,}c@{\,}c@{\,}c}
-			& & & & & 1. & 1 & 0 & 0 \\
-			$\times$ & & & & & 1. & 1 & 0 & 0 \\
-			\hline
-			    & & 0. & 1 & 1 & 0 & 0 & 0 & 0\\
-			$+$ & & 1. & 1 & 0 & 0 & 0 & 0 & 0 \\
-			\hline
-			  & 1 & 0. & 0 & 1 & 0 & 0 & 0 & 0
-		\end{tabular}
-		\hfill
-		\begin{tabular}{c@{\;}c@{\;}c@{\,}c@{\,}c@{\,}c@{\,}c@{\,}c@{\,}c}
-			& & & & & 1. & 1 & 0 & 1 \\
-			$\times$ & & & & & 1. & 1 & 0 & 0 \\
-			\hline
-			    & & 0. & 1 & 1 & 0 & 1 & 0 & 0\\
-			$+$ & & 1. & 1 & 0 & 1 & 0 & 0 & 0 \\
-			\hline
-			  & 1 & 0. & 0 & 1 & 1 & 1 & 0 & 0
-		\end{tabular}
+	\parbox{0.45\textwidth}{\centering
+	\begin{tabular}{c@{\;}c@{\;}c@{\,}c@{\,}c@{\,}c@{\,}c@{\,}c@{\,}c}
+		& & & & & 1. & 1 & 0 & 0 \\
+		$\times$ & & & & & 1. & 1 & 0 & 0 \\
+		\hline
+		& & 0. & 1 & 1 & 0 & 0 & 0 & 0\\
+		$+$ & & 1. & 1 & 0 & 0 & 0 & 0 & 0 \\
+		\hline
+		& 1 & 0. & 0 & 1 & 0 & 0 & 0 & 0
+	\end{tabular}}
+	\parbox{0.45\textwidth}{\centering
+	\begin{tabular}{c@{\;}c@{\;}c@{\,}c@{\,}c@{\,}c@{\,}c@{\,}c@{\,}c}
+		& & & & & 1. & 1 & 0 & 1 \\
+		$\times$ & & & & & 1. & 1 & 0 & 0 \\
+		\hline
+		& & 0. & 1 & 1 & 0 & 1 & 0 & 0\\
+		$+$ & & 1. & 1 & 0 & 1 & 0 & 0 & 0 \\
+		\hline
+		& 1 & 0. & 0 & 1 & 1 & 1 & 0 & 0
+	\end{tabular}}
 	\end{center}
-	are approximated by the same floating-point number $1.001 \cdot 2^1$ but their first arguments differ by the last bit.
+	are approximated by the same floating-point number $1.001 \cdot 2^1$ (assuming truncation instead of rounding) but their first arguments differ by the last bit.
 \end{example}
 
 \section{Second result}
@@ -555,37 +555,36 @@ As an example of such a family of functions we again propose floating-point numb
 \end{example}
 
 \section{Limitations}
-\todo{reorganize}
+\todo{work in progress}
+We began from theorem \ref{ch4:th:non-empt-res-local-basic}, that required all functions in $F$ to be injective, and then we tried to relax that requirement, either asking other properties on each individual function or adding conditions on $F$ as a whole.
+A natural question at this point is hence what can be done to weaken the high surjectivity hypothesis. The answer is nothing.
+
 The requirement that the function family $F$ is highly surjective is somewhat global: we require that \textit{all} possible $c$ has infinitely many preimages.
-This is needed because first we fix the function family we want to analyse, then we can pick the abstract domain. Thinking of this as a game, player one fixes the function family and wants to show that there are no abstract domain able to analyse them, so player 2 thinks of a counterexample suited for that family. In fact, if there is even a single $c$ for which the condition doesn't hold, player 2 can actually construct such counterexample, as showed in the following proposition.
-\todo{Move in another section "Limitations" with generalizations}
-\begin{prop}
-	For any fixed family $F$ of functions from $C$ in itself that is not highly onto, there exists an abstract domain $A_F$ such that:
+We use this condition in the proofs to apply lemma \ref{ch3:th:f-non-repr-pair} and get that some elements can be mapped to the only known representable elements. We need this condition for all possible choices of $c$ because first we fix the function family we want to analyse, then we can pick the abstract domain, so the ``initial" representable element $c$.
+Thinking of this as a game, player one fixes the function family $F$ and wants to show that no abstract domain is able to analyse it, so player 2 thinks of a counterexample \textit{with $F$ in mind}, that is they can carefully craft it around the specific choice of $F$. This lead to universal quantifiers over elements of $C$: in fact, if there is even a single $c_0$ for which the condition doesn't hold, player 2 can actually construct such counterexample starting from that specific value, as showed in the following proposition.
+\begin{prop}\label{ch4:th:no-higly-onto-domain-construction}
+	For any fixed family $F$ of functions from $C$ in itself that is not highly surjective, there exists an abstract domain $A_F$ such that:
 	\begin{itemize}
 		\item $A_F$ is finite
 		\item all functions $f \in F$ are non emptying in $A_F$
 	\end{itemize}
 \end{prop}
 \begin{proof}
-	Since $F$ is not highly onto, there exists $c_0 \in C$ such that $P(c_0)$ is finite. We then define $A_F$ as follows.
-	
+	Since $F$ is not highly surjective, there exists $c_0 \in C$ such that $P(c_0)$ is finite. We then define $A_F$ as follows.
 	The only element of $C$ representable on its own is $c_0$ itself, ie. $R = \{ c_0 \}$.
 	A pair of elements of $C$ is representable if and only if one of its elements is $c_0$ and the other is in $P(c_0)$. This also means that $R(c_0) = P(c_0)$.
 	Subsets of $C$ with at least three elements are representable if and only if they are unions of representable pairs.
-	
-	Putting all together
+	The complete definition of $A_F$ is then
 	\[
 	A_F = \{ \emptyset, \{ c_0 \} \} \cup \{ \{ c_0 \} \cup T \svert T \subseteq P(c_0) \}
 	\]
-	
-	$A_F$ is a Moore family with respect to $\pow(C)^{\op}$ (it contains the maximal element, that is $\emptyset$, and is closed by union, that is meet in the opposite powerset), hence $A_F$ is a correct under-approximation abstract domain.
-	
-	Since $R(c_0) = P(c_0)$ is finite, we get that $A_F$ is finite too:
+	$A_F$ is an opposite Moore family with respect to $\pow(C)$: it contains the minimal element, that is $\emptyset$, and is closed by union, that are lubs. Hence $A_F$ is an under-approximation abstract domain by means of proposition \ref{ch2:th:under-gi-moore-family}.
+	Moreover, since $R(c_0) = P(c_0)$ is finite, we get that $A_F$ is finite too:
 	\[
 	\abs{A_F} = 2 + 2^{\abs{P(c_0)}}
 	\]
-	
-	Now we want to show that any $f$ in $F$ is non emptying in $A_F$.
+
+	Now we want to show that an arbitrary $f$ in $F$ is non emptying in $A_F$.
 	We first observe that a subset $S \subseteq C$ is such that $\alpha(S) \neq \emptyset$ if and only if $c_0 \in S$. Suppose that $c_0 \in S$, then
 	\[
 	\alpha(S) \supseteq \alpha(\{ c_0 \}) = \{ c_0 \} \supset \emptyset
@@ -594,9 +593,9 @@ This is needed because first we fix the function family we want to analyse, then
 	\[
 	c_0 \in \alpha(S) \subseteq S
 	\]
-	
-	So fix now $S \subseteq C$ an element of the concrete domain. If $\alpha(S) = \emptyset$ then the non emptying condition is vacuously true, so assume $\alpha(S) \neq \emptyset$, or equivalently that $c_0 \in S$.
-	Consider now $\alpha(f(S))$. If this is empty again the non emptying condition is vacuously true, so assume it is not. Again, this holds if and only if $c_0 \in f(S)$, that can be rewritten as $\exists d \in S\ .\ f(d) = c_0$. But by definition of $A_F$ we know this is equivalent to $d \in P(c_0) = R(c_0)$.
+
+	So fix now $S \subseteq C$ an element of the concrete domain, and assume that both $\alpha(S) \neq \emptyset$ and $\alpha(f(S)) \neq \emptyset$.
+	These two assumptions are equivalent to $c_0 \in S$ and $c_0 \in f(S)$ respectively, and the latter can be equivalently rewritten as $\exists d \in S\ .\ f(d) = c_0$. But by definition of $A_F$ we know this is equivalent to $d \in P(c_0) = R(c_0)$.
 	Hence
 	\begin{align*}
 		&S \supseteq \{ c_0, d \} \\
@@ -604,14 +603,14 @@ This is needed because first we fix the function family we want to analyse, then
 		\implies& f(\alpha(S)) \supseteq f(\{ c_0, d \}) \supseteq \{ f(d) \} = \{ c_0 \} \\
 		\implies& f^{\flat}(\alpha(S)) = \alpha(f(\alpha(S))) \supseteq \alpha(\{ c_0 \}) = \{ c_0 \}
 	\end{align*}
-	Lines are motivated respectively by: monotonicity of $\alpha$ and representability of $\{ c_0, d \}$; monotonicity of $f$ and the fact that $f(d) = c_0$; monotonicity of $\alpha$ and representability of $\{ c_0 \}$. Also note that the implication chain above holds even if $d = c_0$.
+	where in the second line we used that $\alpha(\{ c_0, d \}) = \{ c_0, d \}$ because $d \in R(c_0)$ and in the third the fact that $f(d) = c_0$.
 	The last line implies $f^{\flat}(\alpha(S)) \neq \emptyset$, so $f$ is non emptying in $A_F$.
 \end{proof}
 
-We now show a simple example of the construction used in the proof
+We now show a simple example of the construction used in the proof.
 \begin{example}
 	Fix the pair of functions $f(x) = x - 1$ and $g(x) = x - 2$ on $\setZ$, and let us build an under-approximating abstract domain for which these functions are non emptying. Following the proof of the previous proposition, we need an integer $n_0$ such that only a finite amount of integers can be mapped into it using either $f$ or $g$. Clearly any integer is fine, so let us fix $n_0 = 0$.
-	
+
 	The set $P(0)$ of integers that can be mapped into $0$ is simply $P(0) = \{ 1, 2 \}$. The abstract domain is then
 	\[
 	A_F = \{ \emptyset, \{ 0 \}, \{ 0, 1 \}, \{ 0, 2 \}, \{ 0, 1, 2 \} \}
@@ -626,18 +625,51 @@ We now show a simple example of the construction used in the proof
 	\end{align*}
 	The check for $g$ is analogous.
 \end{example}
+It's also interesting to note that the proof of this proposition is somewhat reminiscent of example \ref{ch3:ex:ne-not-complete}. The reason is that both in that example and in this proposition, all elements of the abstract domain but the empty set share a common element, $0$ in the example and $c_0$ here.
 
-This proposition gives us one limit of approaches based on non emptying functions to show non existence of under-approximating abstract domains: whatever we do, we must fix enough functions to have high ontoness. This in particular means those approaches are ill suited to prove results where we focus on a single function.
+This proposition gives us one limit of approaches based on non emptying functions to show non existence of under-approximating abstract domains: whatever we do, we must fix enough functions to have high surjectivity. This in particular means these approaches are ill suited to prove results where we focus on a single function.
 
-In the following sections, we present two impossibility results. They share the same general structure: we fix a function family $F$ with some properties, assume that they are all non emptying in the abstract domain and that $R$ isn't empty. We need this last assumption in order to use lemma \ref{ch3:th:f-non-repr-pair}: if $R$ is empty we can't prove $f(\bar{c}) \in R$.
+Actually, this is just the first step towards their limits. A little thoughts show that the proposition just presented can be straightforwardly generalized to an arbitrary subset $S \subseteq C$ with a finite amount of preimages.
+Definition of preimages of an element (see definition \ref{ch4:def:highly-onto-func-family}) can be generalized to an arbitrary subset $S$ of $C$ as
+\[
+P(S) = \{ T \subseteq C \svert \exists f \in F. f(T) = S \}
+\]
+Do note that in this definition we require that a single function $f$ maps the whole $T$ to $S$.
+\begin{prop}
+	Let $F$ be a family of functions from $\pow(C)$ in itself, and assume there is a set $S \subseteq C$ such that $P(S)$ is finite. Then there exists a finite abstract domain $A_F$ such that all functions $f \in F$ are non emptying in $A_F$.
+\end{prop}
+\begin{proof}
+	Since the proof is very similar to that of proposition \ref{ch4:th:no-higly-onto-domain-construction} above, we gloss over some details.
+
+	We take $S_0$ such that $P(S_0)$ is finite, that exists by hypothesis. First, we define a \textit{basis} of the abstract domain as
+	\[
+	B_F = \{ S_0 \cup S \svert S \in P(S_0) \}
+	\]
+	and then consider its union closure
+	\[
+	A_F = \left\lbrace \bigcup\limits_{T \in \Gamma} T \svert \Gamma \subseteq B_F \right\rbrace
+	\]
+	This is a dual Moore family and hence is an under-approximation abstract domain for $\pow(C)$, and is finite because
+	\[
+	\abs{A_F} \le \abs{\pow(B_F)}
+	\]
+	and
+	\[
+	\abs{B_F} = \abs{\pow(P(S_0))}
+	\]
+	with $P(S_0)$ finite by hypothesis.
+
+	Again we observe that a subset $T \subseteq C$ is such that $\alpha(T) \neq \emptyset$ if and only if $S_0 \subseteq T$ because all elements of the abstract domain but the empty set contains $S_0$. Then the proof proceeds as above: we fix $T \subseteq C$ such that $\alpha(T) \neq \emptyset$ and $\alpha(f(T)) \neq \emptyset$, that in turn are equivalent to $S_0 \subseteq S$ and $\exists S \subseteq T. f(S) = S_0$. Then by definition of $A_F$ this means $S_0 \cup S \in A_F$, so
+	\begin{align*}
+		&T \supseteq S_0 \cup S \\
+		\implies& \alpha(T) \supseteq \alpha(S_0 \cup S) = S_0 \cup S \\
+		\implies& f(\alpha(T)) \supseteq f(S_0 \cup S) \supseteq f(S) = S_0 \\
+		\implies& f^{\flat}(\alpha(T)) = \alpha(f(\alpha(T))) \supseteq \alpha(S_0) = S_0
+	\end{align*}
+	that is $f$ is non emptying.
+\end{proof}
 
 \todo{Scrivere bene le generalizzazioni e un po' di contesto}
-Generalization of the above prop.
-\begin{prop}
-	Fix a family $F$ of functions from $\pow(C)$ in itself, and assume there is a set $S \subseteq C$ such that $P(S)$ is finite. Then there exists a finite abstract domain $A_F$ such that all functions $f \in F$ are non emptying in $A_F$.
-\end{prop}
-The proof is more or less the same.
-
 ``Dual" result of this (the other goes ``along" $F$, this goes ``backward").
 \begin{prop}
 	Fix a family $F$ of functions from $\pow(C)$ in itself, and for $S \subseteq C$ let $I(S)$ the set of all iterate images of $S$, that is the smallest subset of $\pow(C)$ such that

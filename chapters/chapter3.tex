@@ -78,7 +78,7 @@ The rationale behind this definition is the fact that, as anticipated in the int
 %This property reminds of compositionality of complete abstractions: if basic constructs of a program are complete for the abstract domain, then their composition, and hence the abstract semantics of the whole program, is complete too (\cite{giacobazzi-analyzing-analyses}).
 
 Clearly completeness implies non emptyingness since $f^{\flat}(\alpha(c)) = \alpha(f(c)) \neq \bot$, but the converse is not true, as shown in the following example.
-\begin{example}
+\begin{example}\label{ch3:ex:ne-not-complete}
 	Consider the under-approximation domain $\Int_0$ of intervals containing $0$ (see example \ref{ch2:ex:intervals-0}). Do note that in this example we'll write intervals to denote subsets of $\setZ$, following the identification given by the Galois insertion, as well as use both $\bot$ and $\emptyset$ to refer to the same object (the empty subset of $\setZ$).
 
 	Consider (the additive extension of) the function $f(x) = x + 1$. This function is not complete in the abstract domain since, for instance on the concrete element $S = \{ -1 \}$, we have

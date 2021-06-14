@@ -189,6 +189,20 @@ Using this isomorphism, whenever we consider a Galois insertion we identify $A$ 
 
 Do note that this identification simplifies notation, but introduces a pitfall: reasoning as above we may be tempted to say that also $\alpha = \alpha \circ \gamma \preceq \id_A$, always by proposition \ref{ch2:th:gc-extensive-charact}, so concluding that $\id \preceq \alpha \preceq \id$ and hence $\alpha = \id$. However here we're neglecting the fact that $\gamma = \id_A$, not the identity on the whole set $C$, and actually $\gamma$ is defined only on elements of $A \subseteq C$. This means that the above relation is indeed correct, but only for elements of $A$, as pointed out by the fact that $\alpha \preceq \id_A$ and not $\id_C$. This is a problem that arise in general with this notation: two functions that looks the same are actually different because of their domain, that isn't specified. We'll make sure to always clarify the domain whenever it's not uniquely determined by the context.
 
+We recall here a  way to define a Galois insertion
+\begin{prop}\label{ch2:th:gi-moore-family}
+	Let $C$ be a complete lattice, and $\bar{A} \subseteq C$ a \textit{Moore family}, that is a subset such that
+	\begin{itemize}
+		\item $\sup(C) \in \bar{A}$
+		\item for any subset $T \subseteq \bar{A}$ of the Moore family, $\inf(T) \in \bar{A}$
+	\end{itemize}
+	Let also
+	\[
+	\alpha(x) = \inf\{ a \in \bar{A} \svert x \preceq a \}
+	\]
+	Then $C(\alpha, \id_C) \bar{A}$ is a Galois insertion.
+\end{prop}
+
 \subsection{Under-approximation Galois connections}
 %The definition of Galois connection is not symmetric, in a way that can be seen from two different points of view. On the one hand we can say it's asymmetric in the two domains: if we swap concrete and abstract domain what we get is no longer a Galois connection. On the other hand, the definition puts $\gamma$ above and $\alpha$ below: in fact the two are also called upper and lower adjoints. This asymmetry in the two adjoints favours one specific direction, that is over-approximations.
 %
@@ -254,6 +268,20 @@ This second proposition has an interesting corollary for under-approximation Gal
 
 This corollary states that $A$ is closed under union: if we consider an under-approximation Galois connection, where $\gamma = \id_A$, then for any pair of sets $S, S' \subseteq C$ that are in $A$ (ie. they are abstract properties) we have that also $S \cup S' \in A$.
 \todo{C'è un commento nel sorgente, è vero quello che dice?}%As remarked in the introduction, this property combined with difficulties in recovering from $\bot$ are the main reasons we believe under-approximation abstract domains are so hard to define.
+
+We can also get an under-approximation version of proposition \ref{ch2:th:gi-moore-family} to define a Galois insertion from an opposite Moore family:
+\begin{prop}\label{ch2:th:under-gi-moore-family}
+	Let $C$ be a complete lattice, and $\bar{A} \subseteq C$ a subset such that
+	\begin{itemize}
+		\item $\inf(C) \in \bar{A}$
+		\item for any subset $T \subseteq \bar{A}$ also $\sup(T) \in \bar{A}$
+	\end{itemize}
+	Let also
+	\[
+	\alpha(x) = \sup\{ a \in \bar{A} \svert a \preceq x \}
+	\]
+	Then $C(\alpha, \id_C) \bar{A}$ is an under-approximation Galois insertion.
+\end{prop}
 
 \section{Abstracting functions}
 Definition of correct and best abstraction of a function $f: C \rightarrow C$. Examples.
