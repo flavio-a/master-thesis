@@ -2,21 +2,21 @@
 \begin{center}
 	\Large
 	\textbf{\thesistitle}
-	
+
 %	\vspace{0.4cm}
 %	\large
 %	Thesis Subtitle
-	
+
 	\vspace{1.2cm}
 	\large
-	\peopleheader	
+	\peopleheader
 	\textbf{\authornamefl} \hfill \textbf{\supervisors}
-	
+
 	\vspace{2.0cm}
 	\textbf{Abstract}
 \end{center}
 Static program analyses are a set of useful techniques that allows to infer properties on programs from their source code, without executing them. Among those, abstract interpretation is a general framework to define sound analyses based on constructive approximations that found its way through many aspects of modern Computer Science.
 Nowadays most formal static analyses focus on over-approximation, that is they determine a set bigger than the set of all possible behaviours of the program, in order to show absence of bugs: if the analysis reports no unwanted behaviour, then the program doesn't have any.
-In principle there is another, dual application of static analyses: to compute and under-approximation of the set of possible behaviours in order to find bugs. However, this kind of analyses hasn't been studied as intensively as over-approximations in the last few decades, and even though abstract interpretation has been proposed for over- as well as under-approximation, in practice has almost only been used for the former.
+In principle there is another, dual application of static analyses: to compute and under-approximation of the set of possible behaviours in order to find bugs. However, this kind of analyses hasn't been studied as intensively as over-approximations in the last few decades, and even though abstract interpretation has been proposed for over as well as under-approximation, in practice has almost only been used for the former.
 
-In this thesis, we would like to investigate both technical and conceptual reasons that make the design of under-approximation abstract domains difficult. We propose the new definition of ``non emptying function" to describe a function whose analysis produces a non vacuous result. We then explore both how this definition can be used to prove the non existence of under-approximation domains and which are its limitations in doing so.
+In this thesis, we would like to investigate both technical and conceptual reasons that make the design of under-approximation abstract domains difficult. We present the main differences between over and under-approximation, and we propose the new definition of ``non emptying function" to describe a function whose analysis produces a non vacuous result. Using this definition, we give conditions for the non existence of under-approximation domains. Lastly, we study the limitations of this new definition for proving non existence of such domains.

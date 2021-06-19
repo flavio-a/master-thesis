@@ -1,4 +1,55 @@
-\chapter{Comparison}
-\todo{change chapter name}
+\chapter{Over versus under-approximations}
+In this chapter\todo{section?} we present an high level, conceptual comparison of over- and under-approximation. We would like to describe the many similarities but more importantly the basic differences between the two, with a preferential view on but not limited to abstract interpretation.
 
-Comparison between over- and under-approximation in general.
+As anticipated in the introduction, over- and under-approximations are designed with different, dual goals in mind.
+Over-approximations can prove correctness of a program, that is the absence of bugs: since it computes a superset of all the behaviours of a program, whenever all of these satisfy the specification, also real behaviours, that are a subset, do so. However, they are ill suited to find bugs, since the behaviour violating the specification may be part of the over-approximation but not of the program.
+Conversely, under-approximations can prove incorrectness of a program, or presence of bugs: whenever one of the identified behaviours violate the specification, that is a possible execution of the program that then have a bug.
+
+Hoare logic (\cite{hoare-logic}) is perhaps the first example of formal static analysis, and indeed is an over-approximation one. And this correctly fits its goal, to prove the absence of errors. Maybe the influence of early works like this and the position of people like Dijkstra (``Testing shows the presence, not the absence of bugs") directed the focus toward over-approximation, and in fact very few studied formal under-approximation static analyses.
+Peter O'Hearn advocates in \cite{ohearn-incorrectness-logic} for a change of trend: while it would be ideal to have only provably correct programs, this clashes with both theoretical and practical issues. Program analysis is often undecidable, and in any case is computationally expensive and requires formal specifications, imposing an heavy burden on programmers.
+So in his works he proposes ``incorrectness logic", a dual version of Hoare logic thought from the ground up for under-approximation in order to find bugs. There are many similarities between the two, but the single most important difference is the consequence rule, where implications are reversed in under-approximation with respect to classic Hoare logic. In over-approximation, we're allowed to weaken the post-condition, enlarging the set of final states, while in under-approximation we can strengthen it.
+Another, possibly more striking example of this duality is what O'Hearn calls $\land \lor$ symmetry. If in over-approximation the final result satisfies both $q_1$ and $q_2$, it satisfies $q_1 \land q_2$. Dually, if in under-approximation the final result contains both $q_1$ and $q_2$ then it must contain $q_1 \lor q_2$. While in over-approximation we carry over the logical conjunction of triples to the formulas, in under-approximation this is dualized into a logical disjunction.
+
+This very same duality is present also in abstract interpretation: we introduced the idea of under-approximation as an order theoretic opposite of over-approximation, so that we just replace smaller with greater (direction of implications) and lubs with glbs (logical disjunctions and conjunctions).
+This seems to  allow a direct translation of ``standard" abstract interpretation theory to under-approximation, and is probably the reason that motivated the original authors to state that it could be applied to both over- and under-approximations. However, as we would like to show in the remainder of the chapter\todo{section?}, there are two main points that aren't dualized in abstract interpretation, breaking the (only apparent) symmetry.
+
+\section{Functions}
+Concrete functions are not dualized. Their abstract semantics is different since $\alpha$ and $\gamma$ changes, but the functions themselves on the concrete domain doesn't change, and this is an asymmetry on its own.
+
+In general this is not a problem at the level of concrete \textit{values}, since they are regarded as flat from the abstraction, but manifests itself when we lift functions to \textit{set} of values.
+As an example, consider the domain of integers $\setZ$. We observed before that the concrete domain $C$ on which the analysis is performed is not $\setZ$ itself, but $\pow(\setZ)$ because we're interested in set of values. In this case, we consider additive extensions of basic functions on $\setZ$, and those impose a ``direction" on $C = \pow(\setZ)$, simply by an argument of cardinality.
+If we consider the additive extension of sum and a pair of sets $S, T \subseteq \setZ$, if they are both non empty it's easy to observe that
+\[
+\abs{S + T} \ge \max\{ \abs{S}, \abs{T} \}
+\]
+If both $T$ and $S$ contains an element different than $0$ the same holds also for product.
+Conversely, an initialization assignment like \code{x := 10} has an output cardinality of $1$ irrespective of the input, unless this is the empty set (that, as we'll discuss in the following section, describes divergence and introduces problems on its own).
+
+This ``direction" of functions influences abstract domains design because it introduces an asymmetry in ``interesting sets" of the concrete domain.
+If we didn't consider those, we could just define an under-approximation domain from any over-approximation one taking complements.
+\begin{example}
+	Intervals (example \ref{ch2:ex:intervals}) can be made an under-approximation domain by taking as meaning of an abstract element the complement of the set it represents as an over-approximation.
+	For instance, the interval $[n, m]$ would represent the set of elements \textit{not} in the interval, ie. $\{ x \in \setZ \svert x < n \lor x > m \}$.
+	$\alpha$ and $\gamma$ are changed accordingly.
+
+	This is a correct under-approximation domain: complementation reverse ordering, so it de facto changes $A$ into $A^{\op}$. However in practice it isn't useful because some basic functions doesn't behave well with the sets described, for instance initializations.
+\end{example}
+
+An alternative way to see this very same asymmetry is the fact that interesting sets, determined by functions, are more or less the same both in over- and under-approximation, but in the former we must ensure the domain is closed under intersections, in the latter under unions. This forces us to put in the abstract domain only some interesting set, in order to ensure closure by the required operation without making it too large to be feasible for the analysis.
+\todo{discussion in the conclusion about union closure of over-approx domains}
+
+\section{Divergence}
+In over-approximation, the abstract $\top$ represent absence of information: any set of concrete values is correctly described by $\top$. This role in under-approximation is, dually, filled by $\bot$.
+However the concrete $\emptyset$, that is always the concretization of $\bot$ in under-approximation, represent also divergence, the fact that a certain program point cannot be reached by any concrete state, and this is not dualized moving from over- to under-approximation.
+
+This is an issue because many concrete functions are strict: if their input diverges, their output does too. There are exceptions in functional languages or functional fragments of multiparadigm languages, but most programming languages evaluate arguments of a function before calling it, making them strict. Moreover, strictness is carried over in under-approximation abstractions:
+\[
+f^{\flat}(\bot) = f^{\flat}(\alpha(\emptyset)) \preceq \alpha(f(\emptyset)) = \alpha(\emptyset) = \bot
+\]
+Together, these two facts implies that when the abstract analysis determines $\bot$ for a program point, it will almost always determine $\bot$ for all points reachable from that one. We may colloquially say that ``recovery" from $\bot$, that is producing a meaningful analysis result starting from it, is very hard.
+In over-approximation the issue is much lighter: even though it causes loss of precision, ``recovery" from $\top$ is quite common.
+
+This has severe repercussions on abstract domain design. In over-approximation we can admit interesting sets without an abstraction, because we can use $\top$ hoping in a recovery afterwards, in order to have a feasible domain. However, in under-approximation any set that is abstracted to $\bot$ is a set that, whenever reached, removes any possible usefulness to the analysis.
+To make things worse, sets that are easily abstracted with $\top$ in over-approximation are very large sets, most of which are never really reached in any execution of a real program. Conversely, in under-approximation, sets that are easily abstracted with $\bot$ are small sets, especially singletons, that are not so rare during program executions, for instance at initializations or beginning of loops.
+
+Example of ``bad" conditional wrt the abstract domain. (logic doesn't have this issue)
