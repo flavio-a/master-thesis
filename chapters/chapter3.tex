@@ -3,7 +3,7 @@
 In this chapter we focus on the domain of integers, and try to determine sufficient conditions for the non existence of under-approximation abstract domains.
 
 \section{Sum completeness}
-The concept of complete abstraction (definition \ref{ch2:def:complete-abstr}) for a function is very important in over-approximation abstract interpretation because it correspond to analyses without false alarms. In general it's very hard that all the basic expression of a program are complete, and in particular boolean guards are almost never complete. However, it's not uncommon that some basic operations are complete: for instance, in the interval domain sum is a complete operation.
+The concept of complete abstraction (definition \ref{ch2:def:complete-abstr}) for a function is very important in over-approximation abstract interpretation because it correspond to analyses without false alarms. In general it's very hard that all the basic transfer functions of a program are complete, and in particular boolean guards are almost never so. However, it's not uncommon that \textit{some} of them are complete: for instance, in the interval domain sum is a complete operation.
 
 In under-approximation, completeness is much harder to achieve: the reason is the fact that complete abstractions allow to ``distribute" $\alpha$ over the operation, so having even a single set that is abstracted to $\bot$ forces, by strictness of concrete operations, all concrete sets that can be obtained applying the operation to that specific set to be $\bot$ as well. This idea is more easily seen in the proof of the following proposition:
 
@@ -28,8 +28,8 @@ In this proposition we're considering as usual the additive extension of $+$.
 	where the second line follows by completeness of $+^{\flat}$ and the last by its correctness. This means that any set $S$ is abstracted to $\emptyset$, so $A = \{ \emptyset \}$.
 \end{proof}
 
-In our opinion, the reason this doesn't happen in over-approximation is that many operations, defined as the additive extension of basic constructs, ``increase" the output cardinality. For instance, the sum of two sets of integers have a cardinality that is at least the largest of the two inputs. This asymmetry allows to get many subsets of the concrete domain as the result of applying the function to a ``small" set (for instance a singleton) but not to a big one.
-Then, as anticipated in the introduction, in under-approximation small sets can be composed by union to make the abstract domain grow until it's too big to be feasible, while in over-approximation sets are composed by intersection. To emulate this behaviour, we would need big sets (eg. the whole $C$ without a single value) so that their intersections give rise to lots of smaller sets, but this conflicts with the ``direction" of basic operations.
+In our opinion, the reason this doesn't happen in over-approximation is an instance of the asymmetry born of basic transfer functions. As we introduced in the previous chapter, many operations, defined as the additive extension of basic constructs, increase the output cardinality. For instance, the sum of two sets of integers have a cardinality that is at least the largest of the two inputs. This asymmetry allows to get many subsets of the concrete domain as the result of applying the function to a small set (for instance a singleton) but not to a big one.
+Then in under-approximation small sets can be composed by union to make the abstract domain grow until it's too big to be feasible, while in over-approximation sets are composed by intersection. To emulate this behaviour, we would need big sets (eg. the whole $C$ without a single value) so that their intersections give rise to lots of smaller sets, but this conflicts with the ``direction" of basic transfer functions.
 
 Of course in general completeness is a very strong property to require, so in the next section we'll introduce a weaker notion and show that also that is enough to prevent the existence of under-approximation abstract domain.
 
@@ -60,7 +60,7 @@ Of course in general completeness is a very strong property to require, so in th
 %However this result is not as nice as it seems. In overapprox, completeness for a boolean implies representability, but this is not true in under approx:
 %\begin{example}
 %	Let $A$ be the abstract domain of remainder classes modulo $p$. Then no boolean of the form $x \bowtie n$ is representable in $A$.
-%	
+%
 %	However all these booleans are complete (as stated in the previous proposition): indeed $\denot{x \bowtie n} S \subseteq (x \bowtie n)$ and so $\alpha(\denot{x \bowtie n} S) \succeq \alpha(x \bowtie n) = \top$, hence $\lambda a . \top$ is a complete abstraction for all these booleans.
 %\end{example}
 
@@ -72,10 +72,7 @@ Completeness is a concept tailored to proving correctness: we use completeness t
 \end{definition}
 
 Unlike completeness, this definition doesn't mean that the analysis will find the best possible result the abstraction can, but just that if it starts from something ($\alpha(c) \neq \bot$) and it can find something ($\alpha(f(c)) \neq \bot$) then it will find at least one of the possible results ($f^{\flat}(\alpha(c)) \neq \bot$).
-The rationale behind this definition is the fact that, as anticipated in the introduction, many functions allow to ``recovery" from $\top$ (ie. produce a meaningful result starting from it) while recovery from $\bot$ is very rare because almost all functions are strict, and so must be their abstractions. This definition just prevents the analysis to fall into $\bot$ because of imprecision of abstracted functions.
-
-%Another point that suggested this definition is the fact that if two functions are non emptying, the composition of their best abstractions still satisfies the definition with the concrete composition of the two functions: if it starts from something and it can find something, it does find at least one of the possible results. In formula, if both $f$ and $g$ are non emptying, $\alpha(c) \neq \bot$ and $\alpha(g(f(c))) \neq \bot$ then also $g^{\flat}(f^{\flat}(\alpha(c))) \neq \bot$.
-%This property reminds of compositionality of complete abstractions: if basic constructs of a program are complete for the abstract domain, then their composition, and hence the abstract semantics of the whole program, is complete too (\cite{giacobazzi-analyzing-analyses}).
+The rationale behind this definition is that the analysis shouldn't get to $\bot$ because, as stated in the previous chapter, recovery from it is rare. This definition exactly prevents this when it's caused only by imprecisions of abstracted functions.
 
 Clearly completeness implies non emptyingness since $f^{\flat}(\alpha(c)) = \alpha(f(c)) \neq \bot$, but the converse is not true, as shown in the following example.
 \begin{example}\label{ch3:ex:ne-not-complete}
@@ -110,7 +107,7 @@ Clearly completeness implies non emptyingness since $f^{\flat}(\alpha(c)) = \alp
 \end{example}
 However, even this weaker notion allows to prove some results on $A$ under some assumptions.
 
-For the reminder of this section, we assume there is an under-approximating Galois insertion $\pow(C) (\alpha, \id) A$. Moreover, we say an element $S \in \pow(C)$ is \textit{representable} if it belongs to $A$, or equivalently if $\alpha(S) = S$.
+For the reminder of this section, we assume there is an under-approximation Galois insertion $\pow(C) (\alpha, \id_A) A$. Moreover, we say an element $S \in \pow(C)$ is \textit{representable} if it belongs to $A$, or equivalently if $\alpha(S) = S$.
 
 \begin{definition}\label{ch3:def:repr-with-set}
 	Let $S \subseteq C$ be a subset of $C$. We say that $d \in C$ is \textit{representable with $S$} if $S \cup \{ d \}$ is representable. We call $R(S)$ the set of elements of $C$ representable with $S$, ie.
@@ -135,7 +132,7 @@ We now present a lemma about non emptying functions that makes reasoning easier.
 	\{ c, \bar{c} \} \supseteq \alpha(\{ c, \bar{c} \})
 	\]
 	and $\alpha(\{ c, \bar{c} \})$ can't be the pair $\{ c, \bar{c} \}$ because this is not representable and hence not in the image of $\alpha$, it should be the case that $\alpha(\{ c, \bar{c} \}) = \{ c \}$.
-	
+
 	Now
 	\[
 	\alpha(f(\{ c, \bar{c} \})) = \alpha(\{ f(c), f(\bar{c}) \}) \supseteq \alpha(\{ f(\bar{c}) \}) = \{ f(\bar{c}) \}
@@ -145,7 +142,7 @@ We now present a lemma about non emptying functions that makes reasoning easier.
 	\[
 	f^{\flat}(\alpha(\{ c, \bar{c} \})) \neq \emptyset
 	\]
-	
+
 	From this we find
 	\begin{align*}
 		\emptyset &\neq f^{\flat}(\alpha(\{ c, \bar{c} \})) \\
@@ -166,7 +163,7 @@ In this subsection we focus on the infinite concrete domain $\pow(\setZ)$. We as
 We first present a simple cardinality estimate that will be useful in the proof of the following result. The goal of this lemma is to show that some sets must be ``small" (in some sense, in this case finite), so we can find a contradiction showing that one of these sets is actually ``big". We'll follow this line of reasoning in almost all of our proofs of non existence of abstract domain with some properties.
 
 \begin{lemma}\label{ch3:th:R-S-bound-integer-inf}
-	For any fixed subset $S \subseteq \setZ$, $R(S)$ is at most finite.
+	For any fixed subset $S \subseteq \setZ$, $R(S)$ is finite.
 \end{lemma}
 \begin{proof}
 	By union closure of the abstract domain (proposition \ref{ch2:th:under-gc-union-closure}), any set $S \cup T$ for $T \subseteq R(S)$ is representable too, since it can be expressed as the union of representable sets:
@@ -178,25 +175,25 @@ We first present a simple cardinality estimate that will be useful in the proof 
 	The number of those sets is the cardinality of $\pow(R(S))$, and since $A$ is at most countable the set $R(S)$ can't be infinite.
 \end{proof}
 
-We now present the first result that shows that requiring some functions to be non emptying makes impossible to create an abstract domain. The main idea is to define an infinite sequence of representable elements, that is in contradiction with the previous lemma that says that $R = R(\emptyset)$ is at most finite.
+We now present the first result that shows that requiring some functions to be non emptying makes impossible to create an abstract domain. The main idea is to define an infinite sequence of representable elements, that is in contradiction with the previous lemma that says that $R = R(\emptyset)$ is finite.
 In order to define such a sequence, we want to use lemma \ref{ch3:th:f-non-repr-pair}: we start from an initial representable $n_0$ and from a value $\bar{n}$ not representable with it, then find a non-emptying $f$ that maps $\bar{n}$ into $n_0$, so that $f(\bar{n})$ is representable and we can then apply the lemma to get the new representable element $f(n_0)$. We then iterate this procedure, changing $f$, to build the infinite sequence.
 
 We believe the assumption that there exists an initial representable value is not very restrictive since any initialization like \code{x = 0} must be abstracted to $\bot$ if $0$ is not representable.
 
 \begin{prop}\label{ch3:th:ne-sum-nonexsistence-inf}
-	Let $\pow(\setZ) (\alpha, \id) A$ be an under-approximating Galois Insertion, and assume that there is an integer $n_0$ that is representable. Then it can't be the case that all the functions of the form $f_n(x) = x + n$ are non emptying in $A$.
+	Let $\pow(\setZ) (\alpha, \id_A) A$ be an under-approximation Galois Insertion, and assume that there is an integer $n_0$ that is representable. Then it can't be the case that all the functions of the form $f_n(x) = x + n$ are non emptying in $A$.
 \end{prop}
 
 \begin{proof}
 	Assume by contradiction that all $f_n$ are non emptying in $A$.
 	By hypothesis, $n_0 \in R$, and $R(n_0)$ is at most finite by lemma \ref{ch3:th:R-S-bound-integer-inf}. Since $\setZ$ is infinite, this means there exists an $\bar{n} \in \setZ \setminus R(n_0)$, that is an element such that the pair $\{ n_0, \bar{n} \}$ is not representable.
 
-	Let $d = n_0 - \bar{n}$ and consider $f_d$. We assumed it to be non emptying, so we can apply lemma \ref{ch3:th:f-non-repr-pair}: $n_0$ is representable while the pair $\{ n_0, \bar{n} \}$ is not, and 
+	Let $d = n_0 - \bar{n}$ and consider $f_d$. We assumed it to be non emptying, so we can apply lemma \ref{ch3:th:f-non-repr-pair}: $n_0$ is representable while the pair $\{ n_0, \bar{n} \}$ is not, and
 	\[
 	f_d(\bar{n}) = \bar{n} + d = \bar{n} + n_0 - \bar{n} = n_0
 	\]
 	so it's representable. Hence also $f_d(n_0) = n_0 + d$ is representable.
-	
+
 	Following this idea, we can prove by induction on $t$ that $n_0 + t d$ is representable for all $t$. The base step $t = 0$ is the hypothesis that $n_0$ is representable.
 	For the inductive step, assume $n_0 + (t - 1) d$ is representable, and consider $f_{t d}$. We assumed this non emptying, so we can apply again lemma \ref{ch3:th:f-non-repr-pair} to the pair $\{ n_0, \bar{n} \}$:
 	\[
@@ -209,10 +206,10 @@ We believe the assumption that there exists an initial representable value is no
 \end{proof}
 
 \subsection{Finite domain}
-Now we move to a slightly different setting: we assume as concrete domain $\pow([-N; N])$, the powerset of a finite, symmetric interval for some large integer value $N$, and we assume all operations are performed ``in machine arithmetic", that is whenever the result is greater than $N$ we ``wrap back" to $-N$ because of overflows. This correspond to work modulo $2N + 1$, and taking the unique representative of each congruence class in the interval $[-N; N]$ of interest.
+Now we move to a slightly different setting: we assume as concrete domain $\pow([-N, N])$, the power set of a finite, symmetric interval for some large integer value $N$, and we assume all operations are performed ``in machine arithmetic", that is whenever the result is greater than $N$ it ``wraps back" to $-N$ because of overflows. This correspond to work modulo $2N + 1$, and taking the unique representative of each congruence class in the interval $[-N, N]$ of interest.
 Again, we make an assumption on the size of the abstract domain for the analysis to be feasible: we assume the size of $A$ is polynomial in $N$.
 
-In this section we'll use asymptotic notation for some quantities. For this to be completely formal we would have to define a sequence of abstract domain $A_N$, each one for the concrete domain $\pow([-N; N])$; then define a sequence of values for each quantity we want to estimate, and take the limit of this sequence for $N$ going to infinity. However we do believe that all these formal details would clutter both statements and proofs, making hard to get insight. For this reason, we avoid all this, just (ab)using the intuitive meaning associated with the notation.\todo{formal statements and proofs in appendix?}
+In this section we'll use asymptotic notation for some quantities. For this to be completely formal we should define a sequence of abstract domain $A_N$, each one for the concrete domain $\pow([-N, N])$; then define a sequence of values for each quantity we want to estimate, and take the limit of this sequence for $N$ going to infinity. However we do believe that all these formal details would clutter both statements and proofs, making hard to get insight. For this reason, we avoid all this, just (ab)using the intuitive meaning associated with the notation.\todo{formal statements and proofs in appendix?}
 
 \begin{lemma}\label{ch3:th:R-S-bound-integer-fin}
 	For any fixed subset $S \subseteq \setZ$, $\lvert R(S) \rvert = O(\log(N))$.
@@ -220,7 +217,7 @@ In this section we'll use asymptotic notation for some quantities. For this to b
 \begin{proof}
 	As in the proof of \ref{ch3:th:R-S-bound-integer-inf}, by union closure any set $S \cup T$ for $T \subseteq R(S)$ is representable too. We then have
 	\[
-	\poly(N) = \abs{A} \ge \abs{\pow(R(S))} = 2^{\abs{R(S)}} 
+	\poly(N) = \abs{A} \ge \abs{\pow(R(S))} = 2^{\abs{R(S)}}
 	\]
 	so, taking log at both sides, $\abs{R(S))} = O(\log(N))$.
 \end{proof}
@@ -228,7 +225,7 @@ In this section we'll use asymptotic notation for some quantities. For this to b
 The following proposition uses the same proof line as proposition \ref{ch3:th:ne-sum-nonexsistence-inf} above: we define a sequence of representable elements, and prove that they are too much since, by the previous lemma, $R$ is quite small.
 
 \begin{prop}\label{ch3:th:ne-sum-nonexsistence-fin}
-	Let $\pow([-N; N]) (\alpha, \id) A$ be an under-approximating Galois Insertion, and assume that there is an integer $n_0$ that is representable. Then it can't be the case that all the functions of the form $f_n(x) = x + n$ (modulo $2N + 1$) are non emptying in $A$.
+	Let $\pow([-N, N]) (\alpha, \id_A) A$ be an under-approximation Galois Insertion, and assume that there is an integer $n_0$ that is representable. Then it can't be the case that all the functions of the form $f_n(x) = x + n$ (modulo $2N + 1$) are non emptying in $A$.
 \end{prop}
 \begin{proof}
 	Let $r = \abs{R(n_0)}$. By the previous lemma \ref{ch3:th:R-S-bound-integer-fin} we know that $r = O(\log(N))$. Fix an element $\bar{n} \notin R(n_0)$ not representable with $n_0$ such that

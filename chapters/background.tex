@@ -1,26 +1,5 @@
 \chapter{Background}
-
-Things needed to understand the thesis that aren't strictly related to the thesis subject.
-
-\section{Notation}
-\todo{probably drop this section}
-$C (\alpha, \gamma) A$ means a Galois Connection (GC) between $C$ and $A$.
-
-If $S$ is a poset, $S^{\op}$ is the poset with the opposite ordering. So for instance $\pow(C)^{\op}$ is the powerset of $C$ ordered by containment $\supseteq$, and hence $\emptyset$ is the greatest element ($\top$) of the set.
-
-Unless otherwise specified, a Galois Insertion (GI) is always specified with the ``small" set on the right, ie. if $C (\alpha, \gamma) A$ is a GI then $\alpha \circ \gamma = \id_A$.
-
-Given a GC $C (\alpha, \gamma) A$, an element $c \in C$ is \textit{representable} in $A$ if $\gamma(\alpha(c)) = c$.
-
-%Given $\pZop (\gamma, \alpha) A$ a GI, we call $n^{\flat}$ the only abstract element (if any) such that $\gamma(n^{\flat}) = \{ n \}$. We say $n^{\flat} \notin A$ if there is no such element in $A$.
-
-Recall that in a GI $\gamma$ and $\alpha$ map concrete top in abstract top and vice versa.
-
-A GI is the same as assuming $A \subseteq C$, and we'll do this. With this notation, $f^{\#}$ is the same as $\alpha \circ f$, but is conceptually different.
-
-Given a function $f : C \rightarrow D$ we use the same symbol also to denote its additive extension $f: \pow(C) \rightarrow \pow(D)$.
-
-Meaning of $\infexists$.
+This chapter gives background concepts and notation used in the rest of the thesis.
 
 \section{Partially ordered sets}
 This section recalls basic notions of order theory upon which (much of) the abstract interpretation framework is based. For a more comprehensive introduction to order theory, we refer the reader to a text book, such as for instance \cite{order-theory-book} or appendix A of \cite{principles-of-program-analysis-book}.
@@ -38,7 +17,7 @@ We say that the pair $(S, \preceq)$ is a partially ordered set, or a \textit{pos
 \begin{definition}[Opposite ordering]
 	Given a poset $(S, \preceq)$, the \textit{opposite} poset $(S, \preceq^{-1})$ is defined with $a \preceq^{-1} b$ if and only if $b \preceq a$.
 \end{definition}
-We often use $\succeq$ to indicate $\preceq^{-1}$ and $S^{\op}$ for (the carrier set of) the opposite poset.
+We often use $\succeq$ to indicate $\preceq^{-1}$ and $S^{\op}$ for the carrier set of the opposite poset $(S^{\op}, \succeq)$. Hence $S^{\op} = S$ as sets, but they have different orders defined on them.
 
 \begin{definition}[Upper bounds and least upper bound]
 	Given a poset $S$ and one of its subsets $T \subseteq S$, an \textit{upper bound} of $T$ is an element $c \in S$ that is greater or equal than any element of $T$:
@@ -76,38 +55,48 @@ Given a set $S$ and a poset $T$, we can consider the set of functions from $S$ t
 \end{definition}
 It's easy to show that this relation among functions is a partial order too. Moreover, if $T$ is a (complete) lattice, the set of functions from $S$ to $T$ is a (complete) lattice too, and this still holds if $S$ is a poset and we restrict ourselves to monotone functions between the two.
 
+An important example of complete lattice are power sets. Given a set $S$, its power set $\pow(S)$ with the ordering induced by set inclusion is a complete lattice. A function $f : S \rightarrow S$ can be lifted to a function on $\pow(S)$ by taking its \textit{additive extension}, that correspond to apply $f$ to all elements of the input set: for a set $T \subseteq S$ we have
+\[
+f(T) = \{ f(s) \svert s \in T \}
+\]
+We overloaded the notation using the same symbol for both $f$ and its additive extension, but which of the two we're referring to will always be clear from whether the argument is a set or not.
+
 \section{Galois connections}
 \todo{add references for this whole section}
 The main mathematical tool we use to study abstract interpretations are Galois connections, and the special case of Galois insertions.
 
+\todo{add figures}
 \begin{definition}[Galois connection]\label{ch2:def:gc}
 	Let $C$ and $A$ be two partially ordered sets, and $\alpha : C \rightarrow A$, $\gamma : A \rightarrow C$ be a pair of monotone functions between the two.
-	
+
 	We say $C (\alpha, \gamma) A$ is a Galois connection if, for any choice of $c \in C$ and $a \in A$ we have
 	\[
 	\alpha(c) \preceq a \iff c \preceq \gamma(a)
 	\]
 \end{definition}
 
-For our goals, we will call $C$ the \textit{concrete domain}, $A$ the \textit{abstract domain}, $\alpha$ the \textit{abstraction function} and $\gamma$ the \textit{concretization function}. The two functions $\alpha$ and $\gamma$ are also called \textit{adjoints}\footnote{Actually the term ``adjoint" comes from Category Theory, since Galois connections are adjunctions between the two posets seen as categories. However such a discussion would be outside the scope of this thesis, and would also require a basic knowledge of category theory.}.
+For our goals, we will call $C$ the \textit{concrete domain}, $A$ the \textit{abstract domain}, $\alpha$ the \textit{abstraction function} and $\gamma$ the \textit{concretization function}. The two functions $\alpha$ and $\gamma$ are also called \textit{adjoints}\footnote{The term ``adjoint" comes from Category Theory, since Galois connections are adjunctions between the two posets seen as categories. However such a discussion would be outside the scope of this thesis, and would also require a basic knowledge of category theory.}.
 
-\todo{Add meaning of the order on $C$ and $A$}
-In program analysis we give the following intuitive meaning to those. $C$ is the domain of concrete states, $A$ the set of abstract properties we're interested in, $\alpha$ the function that maps a concrete state in the most precise abstract property that describes it and $\gamma$ a function that maps an abstract property in the biggest concrete state it describes.
+In program analysis we give the following intuitive meaning to those. $C$ is the domain of concrete states, $A$ the set of abstract properties we're interested in. Partial orders on $C$ and $A$ represent a relation of ``more precise than": if $a \preceq a'$ for two abstract elements $a, a' \in A$, then the meaning is that the property $a$ is stronger than $a'$. Alternatively, we may say that $a$ describes less states than $a'$, or in logical terms that $a \Rightarrow a'$. This is less intuitive on the concrete domain $C$, but in the case when it's a power set and the ordering is set inclusion a ``stronger" concrete element is just a subset, that de facto describes less individual values.
+With this meaning for partial orders, $\alpha$ is the function that maps a concrete state in the most precise (ie. strongest or minimal) abstract property that describes it and $\gamma$ a function that maps an abstract property in the biggest (weakest or maximal) concrete state it describes.
 
 \begin{example}[Intervals]\label{ch2:ex:intervals}
-	We can now formalize the intuitive example \ref{intr:ex:intervals} of intervals we introduced in the previous chapter.
-	$C$ is the set of possible values of the variable \code{x}. Since this is an integer values, elements of $C$ are subsets of $\setZ$, so $C = \pow(\setZ)$, with the ordering given by set inclusion. $A$ is the set of abstract properties we track in our analysis, so in our example the set of interval to which \code{x} may belongs. This means $A = \Int$.
-	$\alpha$ is the function that allows us to abstract a set of possible values of \code{x} into the best (ie. most precise) possible abstract property:
+	We can now formalize the intuitive example \ref{intr:ex:intervals} of intervals we introduced in the introduction.
+	$C$ is the set of possible values of a variable, for instance \code{i}. Since this is an integer value, elements of $C$ are subsets of $\setZ$, so $C = \pow(\setZ)$, with the ordering given by set inclusion. $A$ is the set of abstract properties we track in our analysis, so in our example the set of interval to which \code{i} may belongs. This means
+	\[
+	A = \Int = \{ [n, m] \svert n \in \setZ \cup \{ -\infty \}, m \in \setZ \cup \{ +\infty \}, n \le m \} \cup \{ [+\infty, -\infty] \}
+	\]
+	$\alpha$ is the function that allows us to abstract a set of possible values of \code{i} to the best (ie. most precise) possible abstract property:
 	\begin{align*}
 		\alpha(S) &= [\min(S); \max(S)]
 	\end{align*}
 	with the convention that $\min(\emptyset) = +\infty$, $\min(\emptyset) = -\infty$, the minimum of a lower-unbound set is $-\infty$ and the maximum of an upper-unbound set is $+\infty$. This abstraction function is exactly what we expect: no smaller interval can describe the set $S$, since $\min(S)$ and $\max(S)$ are elements of $S$ and so must also be in the interval. Conversely, this is a correct abstraction of $S$ since all its elements are between $\min(S)$ and $\max(S)$, so are in the interval too.
-	
-	$\gamma$ is the function that does the inverse operation: given an interval $[n, m]$, thought as a formal writing that describes the property that the value of \code{x} is between $n$ and $m$, gives us its ``meaning", that is the largest subset of $\setZ$ that matches that property:
+
+	$\gamma$ is the function that does the inverse operation: given an interval $[n, m]$, thought as a formal writing that describes the property that the value of \code{i} is between $n$ and $m$, gives us its ``meaning", that is the largest subset of $\setZ$ that matches that property:
 	\[
 	\gamma([n, m]) = \{ x \in \setZ \svert n \le x \le m \}
 	\]
-	The set $\{ x \in \setZ \svert n \le x \le m \}$ is exactly what is commonly represented with $[n; m]$: $\gamma$ is simply translating the formal writing (or, in our context, an abstract property) to a semantic set of values.
+	The set $\{ x \in \setZ \svert n \le x \le m \}$ is exactly what is commonly represented with $[n; m]$: $\gamma$ is simply translating the formal writing (or, in our context, an abstract property) to a semantics set of values.
 
 	Of course this definition of $\gamma$ is incomplete, the full, formal one being
 	\begin{align*}
@@ -133,7 +122,7 @@ We recall here two properties of Galois connection that will be useful in this t
 
 \begin{prop}\label{ch2:th:gc-extensive-charact}
 	Let $C$ and $A$ be two partially ordered sets, and $\alpha : C \rightarrow A$, $\gamma : A \rightarrow C$ be a pair of monotone functions between the two.
-	
+
 	Then $C (\alpha, \gamma) A$ is a Galois connection if and only if both $\id_C \preceq \gamma \circ \alpha$ and $\alpha \circ \gamma \preceq \id_A$.
 \end{prop}
 \begin{prop}\label{ch2:th:gc-adjoints-preserve-glb-lub}
@@ -145,7 +134,7 @@ In a Galois connection it may very well happen that two abstract elements have t
 \begin{example}[Product abstraction]
 	Consider two concrete domains, for instance two copies of $\pow(\setZ)$ that describes the possible states of two different variables \code{x} and \code{y} that appear in the program.
 	Then consider the Galois connection $\pow(\setZ) (\alpha, \gamma) \Int$, and suppose we want to use it to abstract both variables. If we abstract separately both the element of $\pow(\setZ_x)$ and that of $\pow(\setZ_y)$ (where subscripts indicates the variable the domain refers to), we get a pair of intervals, one for \code{x} and one for \code{y}, that is an element of $\Int_x \times \Int_y$. It's easy to check that this abstraction function defines a Galois connection between $\pow(\setZ_x \times \setZ_y)$ and $\Int_x \times \Int_y$.
-	
+
 	However, this abstraction has redundant elements: consider
 	\begin{align*}
 		(\bot, [n, m])
@@ -181,7 +170,7 @@ The one proposed above isn't the standard definition of Galois insertion: more c
 	\end{enumerate}
 \end{prop}
 
-The interval domain presented above is an example of Galois insertion: since we required $n \le m$ in the interval $[n, m]$ no two intervals describe the same concrete set, and hence $\gamma$ is injective. However, as we've seen, composing two independent interval domains gives rise to a Galois connection that isn't an insertion. There are techniques to delete redundant elements of an abstract domain in order to make it a Galois insertion (\todo{add references}), but we're not interested in them for this thesis.
+The interval domain presented above is an example of Galois insertion: since we required $n \le m$ in the interval $[n, m]$ no two intervals describe the same concrete set, and hence $\gamma$ is injective. However, as we've seen, composing two independent interval domains gives rise to a Galois connection that isn't an insertion. \todo{Why this sentence?}There are techniques to delete redundant elements of an abstract domain in order to make it a Galois insertion, but we're not interested in them for this thesis.
 
 In a Galois insertion, since $\gamma$ is injective, we have a bijection between $A$ and $\gamma(A)$. By the definition of Galois insertion we have $\alpha \circ \gamma = \id_A$, hence $\alpha$ is the inverse of $\gamma$ when restricted to $\gamma(A)$. Since both functions are monotone this defines an isomorphism of poset between $A$ and $\gamma(A) \subseteq C$.
 
@@ -193,14 +182,14 @@ We recall here a  way to define a Galois insertion
 \begin{prop}\label{ch2:th:gi-moore-family}
 	Let $C$ be a complete lattice, and $\bar{A} \subseteq C$ a \textit{Moore family}, that is a subset such that
 	\begin{itemize}
-		\item $\sup(C) \in \bar{A}$
-		\item for any subset $T \subseteq \bar{A}$ of the Moore family, $\inf(T) \in \bar{A}$
+		\item $\bigsqcup C = \top \in \bar{A}$
+		\item for any subset $T \subseteq \bar{A}$ of the Moore family, $\bigsqcap T \in \bar{A}$
 	\end{itemize}
 	Let also
 	\[
-	\alpha(x) = \inf\{ a \in \bar{A} \svert x \preceq a \}
+	\alpha(x) = \bigsqcap \{ a \in \bar{A} \svert x \preceq a \}
 	\]
-	Then $C(\alpha, \id_C) \bar{A}$ is a Galois insertion.
+	Then $C(\alpha, \id_{\bar{A}}) \bar{A}$ is a Galois insertion.
 \end{prop}
 
 \subsection{Under-approximation Galois connections}
@@ -208,17 +197,17 @@ We recall here a  way to define a Galois insertion
 %
 %We say that the two asymmetries are actually the same because if we \textit{both} swap the two domains \textit{and} change the upper and lower adjoint definition, we get again a Galois connection
 
-The definition of Galois connection is not symmetric, in the sense that the definition puts $\gamma$ above and $\alpha$ below: in fact the two are also called upper and lower adjoints respectively. This asymmetry in the two adjoints favours one specific direction, that is over-approximations, and is not suited to describe under-approximations. For this reason we introduce the notion of
+The definition of Galois connection is not symmetric, in the sense that it puts $\gamma$ above and $\alpha$ below: in fact the two are also called upper and lower adjoints respectively. This asymmetry in the two adjoints favours one specific direction, that is over-approximations, and is not suited to describe under-approximations. For this reason we introduce the notion of
 \begin{definition}[Under-approximation Galois connection]\label{ch2:def:under-gc}
 	Let $C$ and $A$ be two partially ordered sets, and $\alpha : C \rightarrow A$, $\gamma : A \rightarrow C$ be a pair of monotone functions between the two.
-	
+
 	We say $C (\alpha, \gamma) A$ is an under-approximation Galois connection if, for any choice of $c \in C$ and $a \in A$ we have
 	\[
 	a \preceq \alpha(c) \iff \gamma(a) \preceq c
 	\]
 \end{definition}
 
-This definition is the same as that of Galois connection (\ref{ch2:def:gc}) but the fact that here $\alpha$ is above and $\gamma$ below.
+This definition is the same as that of Galois connection (\ref{ch2:def:gc}) except that here $\alpha$ is above and $\gamma$ below.
 \begin{example}\label{ch2:ex:intervals-0}
 	Consider the following example of under-approximation Galois insertion (we haven't given its definition yet, but we're confident the reader can anticipate it): the concrete domain is $\pow(\setZ)$, while the abstract domain is the set of all intervals (see example \ref{ch2:ex:intervals}) containing $0$, plus the empty interval:
 	\[
@@ -229,7 +218,7 @@ This definition is the same as that of Galois connection (\ref{ch2:def:gc}) but 
 	\begin{align*}
 		\alpha(S) = \bigcup \{ I \in \Int_0 \svert I \subseteq S \}
 	\end{align*}
-	The result is in $\Int_0$: if it isn't empty, it does indeed contain $0$, since is the union of intervals in $\Int_0$ that contains $0$ themselves. Moreover is an interval because union of overlapping intervals is an interval too, and all those intervals intersect at $0$.
+	The result is in $\Int_0$: if it isn't empty, it does indeed contain $0$, since is the union of intervals in $\Int_0$ that contains $0$ themselves. Moreover it is an interval because union of overlapping intervals is an interval too, and all those intervals intersect at $0$.
 
 	To show this is an under-approximation Galois connection, fix a set $S \subseteq \setZ$ and an interval $[-m, n]$ with $n, m \ge 0$.
 	Now the following chain of equivalences hold:
@@ -243,14 +232,11 @@ This definition is the same as that of Galois connection (\ref{ch2:def:gc}) but 
 
 	For simplicity we neglected the case where the interval is $\bot$ and assumed both $n, m$ are non negative integers, but those cases are analogous to the one we presented.
 \end{example}
-
-\todo{other example, intervals with 0 or 1}
-
 With this definition, we could easily prove results analogous to propositions \ref{ch2:th:gc-extensive-charact}, \ref{ch2:th:gc-adjoints-preserve-glb-lub} and give an analogous definition of under-approximation Galois insertion.
-Instead of doing this explicitly, we just observe that an under-approximation Galois connection $C (\alpha, \gamma) A$ is just a Galois connection between opposite domain $C^{\op} (\alpha, \gamma) A^\op$ to get as corollaries of those propositions analogous results where we just reverse inequalities:
+Instead of doing this explicitly, we just observe that an under-approximation Galois connection $C (\alpha, \gamma) A$ is just a Galois connection between opposite domain $C^{\op} (\alpha, \gamma) A^\op$ to get those propositions just reversing inequalities:
 \begin{prop}\label{ch2:th:under-gc-extensive-charact}
 	Let $C$ and $A$ be two partially ordered sets, and $\alpha : C \rightarrow A$, $\gamma : A \rightarrow C$ be a pair of monotone functions between the two.
-	
+
 	Then $C (\alpha, \gamma) A$ is an under-approximation Galois connection if and only if both $\gamma \circ \alpha \preceq \id_C$ and $\id_A \preceq \alpha \circ \gamma$.
 \end{prop}
 
@@ -266,31 +252,166 @@ This second proposition has an interesting corollary for under-approximation Gal
 	\]
 \end{corollary}
 
-This corollary states that $A$ is closed under union: if we consider an under-approximation Galois connection, where $\gamma = \id_A$, then for any pair of sets $S, S' \subseteq C$ that are in $A$ (ie. they are abstract properties) we have that also $S \cup S' \in A$.
-\todo{C'è un commento nel sorgente, è vero quello che dice?}%As remarked in the introduction, this property combined with difficulties in recovering from $\bot$ are the main reasons we believe under-approximation abstract domains are so hard to define.
+This corollary states that $A$ is closed under union: if we consider an under-approximation Galois insertion, where $\gamma = \id_A$, then for any pair of sets $S, S' \subseteq C$ that are in $A$ (ie. they are abstract properties) we have that also $S \cup S' \in A$.
 
 We can also get an under-approximation version of proposition \ref{ch2:th:gi-moore-family} to define a Galois insertion from an opposite Moore family:
 \begin{prop}\label{ch2:th:under-gi-moore-family}
 	Let $C$ be a complete lattice, and $\bar{A} \subseteq C$ a subset such that
 	\begin{itemize}
-		\item $\inf(C) \in \bar{A}$
-		\item for any subset $T \subseteq \bar{A}$ also $\sup(T) \in \bar{A}$
+		\item $\bigsqcap C = \bot \in \bar{A}$
+		\item for any subset $T \subseteq \bar{A}$ also $\bigsqcup T \in \bar{A}$
 	\end{itemize}
 	Let also
 	\[
-	\alpha(x) = \sup\{ a \in \bar{A} \svert a \preceq x \}
+	\alpha(x) = \bigsqcup \{ a \in \bar{A} \svert a \preceq x \}
 	\]
-	Then $C(\alpha, \id_C) \bar{A}$ is an under-approximation Galois insertion.
+	Then $C(\alpha, \id_{\bar{A}}) \bar{A}$ is an under-approximation Galois insertion.
 \end{prop}
 
+\begin{example}
+	Consider a variation of the previous example: intervals that contains either $0$ or $1$
+	\[
+	\Int_{0,1} = \{ I \in \Int \svert 0 \in \Int \lor 1 \in \Int \} \cup \{ \bot \}
+	\]
+	To show this is an under-approximation Galois insertion, we use proposition \ref{ch2:th:under-gi-moore-family} above.
+	$\emptyset$, the bottom element of $\pow(\setZ)$ is in $\Int_{0,1}$ by definition. In $\pow(\setZ)$, lubs are unions, so it's enough to show that union of intervals in $\Int_{0,1}$ is still in $\Int_{0,1}$.
+	Consider a set $T \subseteq \Int_{0,1}$ of intervals containing either $0$ or $1$. If $T = \{ \bot \}$ then $\bigcup T = \emptyset \in \Int_{0,1}$, and whenever $T$ contains at least one non empty element the union of its elements is the same whether the empty set is in $T$ or not, so we can assume that $\bot \notin T$.
+
+	Let $T_0$ be the set of intervals in $T$ containing $0$ and $T_1$ the set of those containing $1$. If $T_0$ (respectively $T_1$) is not empty, the union of its elements is an interval containing $0$ (resp. $1$) too because all its elements are interval that intersect at $0$ (resp. $1$). If both are empty also $T$ is empty, hence $\bigcup T = \emptyset$ that is in $\Int_{0,1}$. If one of the two is empty, say $T_1$ then $\bigcup T = \bigcup T_0$ that is an interval containing $0$, hence in $\Int_{0,1}$ too. Lastly, if neither is empty, we have
+	\[
+	\bigcup T = \left( \bigcup T_0 \right) \cup \left( \bigcup T_1 \right)
+	\]
+	but the former is an interval containing $0$, and the latter is an interval containing $1$, hence their union is still an interval that contains both $0$ and $1$ and so is in $\Int_{0,1}$.
+\end{example}
+
 \section{Abstracting functions}
-Definition of correct and best abstraction of a function $f: C \rightarrow C$. Examples.
-Remark that with GI notation $\alpha \circ f = f^{\#} \circ \alpha$ but actually different domains.
-Notation $f^{\flat}$ and examples.
-Notion of complete abstraction.
+Only defining abstract domains is useless because we want to analyse \textit{programs}, that dynamic entities that change the state. Hence the need for a way to abstract functions, used to represent the semantics of programs.
+
+Given a monotone function $f : C \rightarrow C$ on the concrete domain, we want a way to approximate its behaviour in abstract. In over approximation, we want to make sure the abstract version outputs at least an over-approximation of the concrete one to ensure soundness.
+\begin{definition}[Correct abstraction]
+	A monotone function $f^{\sharp} : A \rightarrow A$ on the abstract domain is called a \textit{correct abstraction} of $f$ if
+	\[
+	\alpha \circ f \preceq f^{\#} \circ \alpha
+	\]
+	The function
+	\[
+	f^{\alpha} = \alpha \circ f \circ \gamma
+	\]
+	is called the best abstraction of $f$.
+\end{definition}
+\todo{add figures}
+\begin{example}
+	Going back to the example \ref{ch2:ex:intervals} of intervals, consider the program fragment
+\begin{minted}{C}
+if (x < 0) {
+	x = -x;
+}
+\end{minted}
+	It's semantics is the additive extension of the absolute value, that is
+	\[
+	f(S) = \{ \abs{x} \svert x \in S \}
+	\]
+	on the concrete domain $\pow(\setZ)$. A correct abstraction of this function is
+	\[
+	f^{\sharp}([n, m]) = [0, \max(\abs{n}, \abs{m})]
+	\]
+	because the interval $[0, \max(\abs{n}, \abs{m})]$ always contains the entire set $f(S)$ when $n = \min(S)$ and $m = \max(S)$. However this is not the best possible abstraction: for instance on $S = \{ 1 \}$ this yields $[0, 1]$ while $f(S) = \{ 1 \}$. Actually this is computed as
+	\[
+	f^{\alpha}([n, m]) = \alpha \circ f \circ \gamma([n, m]) = \begin{cases*}
+		[0, \max(\abs{n}, \abs{m})] &if $n \le 0 \le m$ \\
+		[n, m] &if $0 < n$ \\
+		[-m, -n] &if $m < 0$ \\
+	\end{cases*}
+	\]
+\end{example}
+In this example, we computed the semantics of the whole program fragment and then we proceeded to abstract it. However this process is not what happens in practice because, if we knew the concrete semantics of the program we wouldn't really need the abstraction. An analyser would instead know abstractions of basic transfer functions, the semantics of basic construct of the language, and compose them in order to get a \textit{correct} approximation, but with no guarantee to get the \textit{best} abstraction. For the reminder of this thesis we won't concern ourselves with this issue because we focus on basic transfer functions; however the reason we're allowed to do so is exactly that those are the basic building blocks used to define the abstract semantics of complex programs.
+%\begin{example}
+%	Considering again the same program fragment of the previous example, we have that the semantics of the guard \code{x < 0} is
+%	\[
+%	f(S) = \{ x \svert x \in S, x < 0 \}
+%	\]
+%	and the semantics of \code{x = -x} is
+%	\[
+%	g(S) = \{ -x \svert x \in S \}
+%	\]
+%	The implicit else branch of the conditional does nothing, so it's semantics is the identity.
+%	The best abstractions of these three functions are
+%	\begin{align*}
+%		f^{\alpha}([n, m]) &= \begin{cases*}
+%			[n, 0] &if $n \le 0 \le m$ \\
+%			\bot &if $0 < n$ \\
+%			[n, m] &if $m < 0$ \\
+%		\end{cases*} \\
+%		\bar{f}^{\alpha}([n, m]) &= \begin{cases*}
+%			[0, m] &if $n \le 0 \le m$ \\
+%			[n, m] &if $0 < n$ \\
+%			\bot &if $m < 0$ \\
+%		\end{cases*} \\
+%		g^{\alpha}([n, m]) &= [-m, -n] \\
+%		\id_C^{\alpha} &= \id_A \\
+%	\end{align*}
+%	The concrete semantic of the conditional is obtained as
+%	\[
+%	\lambda S. g(f(S)) \cup \id_C(\bar{f}(S))
+%	\]
+%	and correspondingly one of its correct abstractions is
+%	\[
+%	\lambda [n, m]. g^{\alpha}(f^{\alpha}([n, m])) \sqcup \id_A(\bar{f}^{\alpha}([n, m]))
+%	\]
+%	that can be reduced to
+%	\[
+%	\lambda [n, m]. \begin{cases*}
+%		[0, -n] \sqcup [0, m] = [0, \max(\abs{n}, \abs{m})] &if $n \le 0 \le m$ \\
+%		\bot \sqcup [n, m] = [n, m] &if $0 < n$ \\
+%		[-m, -n] \sqcup \bot = [-m, -n] &if $m < 0$ \\
+%	\end{cases*}
+%	\]
+%\end{example}
+
+\begin{example}
+	Consider for instance
+	\[
+	f(S) = \{ x \% 2 \svert x \in S \}
+	\]
+	where $\%$ is the modulo operator.
+	It's best abstraction in the interval domain is
+	\[
+	f^{\alpha}([n, m]) = \begin{cases*}
+		[0, 0] &if $n = m$ is even \\
+		[1, 1] &if $n = m$ is odd \\
+		[0, 1] &otherwise
+	\end{cases*}
+	\]
+	and this introduces an error: for instance on $S = \{ 1, 3 \}$ we have
+	\[
+	[1, 1] = \alpha(f(S)) \prec f^{\sharp}(\alpha(S)) = f^{\sharp}([1, 3]) = [0, 1]
+	\]
+\end{example}
+
+In under-approximation, the definition of correct abstraction simply reverse inequality, as expected, but as notation we use $f^{\flat}$ for a correct under-approximation abstraction instead of $f^{\sharp}$.
+\begin{example}
+	Consider the under-approximation domain $\Int_0$ of intervals containing 0 (see example \ref{ch2:ex:intervals-0}) and again the absolute value operation
+	\[
+	f(S) = \{ \abs{x} \svert x \in S \}
+	\]
+	In this case it's best abstraction is
+	\[
+	f^{\alpha}([n, m]) = [0, \max(\abs{n}, \abs{m})]
+	\]
+	since it's always the case that $n \le 0 \le m$.
+\end{example}
+
+An important remark is that, with a Galois insertions (both over and under-approximation), we have
+\[
+f^{\alpha} = \alpha \circ f \circ \gamma = \alpha \circ f \circ \id_A
+\]
+that may lead to say $f^{\alpha} = \alpha \circ f$. However, as we observed above, this is not the case since they have different domains: $f^{\alpha}$ takes as input abstract elements only, while $\alpha \circ f$ can be applied to any element of $C$. We'll ensure this condition is satisfied whenever we use $f^{\alpha}$, often because we'll consider $f^{\alpha} \circ \alpha$.
+
+An important notion in abstract interpretation is that of complete abstraction. A correct abstraction of a function is said to be complete if it doesn't lose precision with respect to the concrete semantics.
 \begin{definition}[Complete abstraction]\label{ch2:def:complete-abstr}
 	Given a function $f$ and one of its correct abstractions $f^{\#}$, we say that it is a \textit{complete abstraction} when
 	\[
 	\alpha \circ f = f^{\#} \circ \alpha
 	\]
 \end{definition}
+There have been some interest about complete abstractions \todo{ref} because they avoid false alarms, but in this thesis we're just interested in it as a way of constraining an abstract domain to interact with a function. We refer the reader to the discussion in the next chapter for an explanation of why we need this.
