@@ -1,9 +1,9 @@
 \chapter{Introduction}
 
 \section{Abstract interpretation}
-Static program analyses are a useful set of techniques to infer properties of programs directly from their source code, without executing them. Recently they became part of the software development and lifecycle, and are used in major companies like Facebook \cite{distefano-static-analysis-fb} and Google \cite{static-analysis-google} to catch bugs before they reach production.
+Static program analyses are a useful set of techniques to infer properties of programs directly from their source code, without executing them. Recently they became part of the software development, and are used in major companies like Facebook \cite{distefano-static-analysis-fb} and Google \cite{static-analysis-google} to catch bugs before they reach production.
 
-Among those, abstract interpretation \cite{cousot-77,cousot-79,cousot-92} (see chapter 4 of \cite{principles-of-program-analysis-book} for an introduction) is a general framework to define sound analyses based on constructive approximations that found its way through many aspects of modern Computer Science.
+Among those techniques, abstract interpretation \cite{cousot-77,cousot-79,cousot-92} (see chapter 4 of \cite{principles-of-program-analysis-book} for an introduction) is a general framework to define sound analyses based on constructive approximations that found its way through many aspects of modern Computer Science.
 The idea of abstract interpretation is to execute a program keeping track only of some properties that are valid of the current program state, abstracting from the complexity of concrete states. This introduces approximation errors, but make the analysis feasible. Differently from logic, the properties considered are fixed beforehand and define the \textit{abstract domain} of the analysis.
 
 \begin{example}[Intervals]\label{intr:ex:intervals}
@@ -18,7 +18,7 @@ for (int i = 0; i <= 5; ++i) {
 	a[j] += 1;
 }
 	\end{minted}
-	could be analysed to determine that within the loop the variable \code{i} belongs to the interval $[0, 5]$, the variable \code{j} to $[0, 10]$ and so that the access to the array \code{a} may happen out of bounds.
+	could be analysed to determine that within the loop the variable \code{i} belongs to the interval $[0, 5]$. From this, after the assignment \code{j = i * 2} the analyser can derive that \code{j} belongs to $[0, 5] * 2 = [0, 10]$, and so that the array access to \code{a} may happen out of bounds.
 	Do note that the interval $[0, 5]$ to which \code{i} belongs is exact, that is the variable actually has all the possible values during the loop, while $[0, 10]$ for \code{j} is not: it will never be the case that \code{j} is $3$.
 \end{example}
 
@@ -28,8 +28,8 @@ Abstract interpretation's generality allows it to be used within a broad variety
 In the example above, the error of the analysis is of over-approximation: the result contains all the values that happens in the concrete execution, but also some more.
 Nowadays, most static analyses focus on over-approximation in order to show absence of bugs: they compute a superset of all possible behaviours of a program, and if none of them exhibits a bug also all real behaviours, that are a subset, are correct. However, in principle there is a dual approach to static analysis, that is under-approximation: compute a subset of all possible behaviours, and if any of them exhibits a bug than that is a real bug and not an artifact of the analysis.
 
-Hoare logic \cite{hoare-logic} is perhaps the first example of formal static analysis, and indeed is an over-approximation one. And this correctly fits its goal, to prove the absence of errors. Maybe the influence of early works like this and the position of people like Dijkstra (``Testing shows the presence, not the absence of bugs") directed the focus toward over-approximation, and in fact very few studied formal under-approximation static analyses.
-Recently, O'Hearn \cite{ohearn-incorrectness-logic} advocated for a change of trend: while it would be ideal to have only provably correct programs, this clashes with both theoretical and practical issues. Program analysis is often undecidable, and in any case is computationally expensive and requires formal specifications, imposing an heavy burden on programmers, hence the need (also) for bug catching. In his works he proposes ``incorrectness logic", a dual version of Hoare logic thought from the ground up for under-approximation in order to find bugs, and propose to do the same for other over-approximation techniques.
+Hoare logic \cite{hoare-logic} is perhaps the first example of formal static analysis, and indeed is an over-approximation one, that correctly fits its goal of proving the absence of errors. Maybe the influence of early works like this and the position of people like Dijkstra (``Testing shows the presence, not the absence of bugs") directed the focus toward over-approximation, and in fact very few studied formal under-approximation static analyses.
+Recently, O'Hearn \cite{ohearn-incorrectness-logic} advocated for a change of trend: while it would be ideal to have only provably correct programs, this clashes with both theoretical and practical issues. Program analysis is often undecidable, and in any case is computationally expensive and requires formal specifications, imposing an heavy burden on programmers, hence the need (also) for bug catching. In his work he proposes ``incorrectness logic", a dual version of Hoare logic thought from the ground up for under-approximation in order to find bugs, and propose to do the same for other over-approximation techniques.
 
 \section{Under-approximation abstract interpretation}
 In his paper, O'Hearn leaves as an open question whether abstract interpretation could ``eventually play a guiding and explanatory role for a wide range of static and dynamic under-approximate tools for bug catching, similar to what it already does for over-approximate analyses."
@@ -39,11 +39,11 @@ Schmidt \cite{schmidt-higher-order-approx-2007} ``existentially quantifies" abst
 Lev-Ami et al. \cite{lev-backward-analysis-complement} propose to use complements of over-approximation domains to infer sufficient precondition.
 Miné \cite{mine-backward-underapprox-14} uses over-approximation domains for under-approximation for the same goal, giving up the best abstraction and handling the choice of a minimal one with heuristics.
 
-In this thesis, we try to determine some of the reasons that make under-approximation abstract domain design hard, and hence why it has been studied so little when compared with over-approximation.
+All these works study special cases of under-approximation abstract interpretation, and to the extent of our knowledge there are no abstract domains thought from the ground up for under-approximation. In this thesis, we try to determine some of the reasons that make under-approximation abstract domain design hard, and hence why it hasn't been studied as extensively as over-approximation.
 
 \section{Overview}
 The second chapter lays out the background and the notation used in the thesis.
 In the third we present a comparison of over and under-approximation, investigating similarities and differences between the two. In particular we're interested in the role of basic transfer functions, the semantics of elementary constructs of the language, that in our opinion is fundamental since they are the main asymmetry between over and under-approximation.
 In the fourth we apply ideas from the previous chapter to the integer domain to show that, under some conditions, no under-approximation domain exists. To do this, we introduces the new definition of ``non emptying function", that describes the fact that such function doesn't tamper analysis, and show that no abstract domain makes all sums such.
-In the fifth we try to generalize the result we obtained for integers to arbitrary concrete domains, obtaining conditions on the family of functions under which no abstract domain exists that makes them all non emptying. Then we study under which conditions there do exist abstract domains that make all functions in a certain family non emptying, effectively restricting the scope of applicability of this definition in proving non existence of abstract domains.
+In the fifth we try to generalize the result we obtained for integers to arbitrary concrete domains, obtaining conditions on the family of functions under which no abstract domain exists that makes them all non emptying. Then we study under which conditions there do exist abstract domains that make all functions in a certain family non emptying, effectively restricting applicability of approaches that uses this definition to show non existence of abstract domains.
 Lastly, the sixth chapter draws conclusions and propose some future research directions.
