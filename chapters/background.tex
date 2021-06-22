@@ -42,6 +42,8 @@ Again, if this exists we denote it with $\bigsqcap T$, and if $T = \{ a, b \}$ w
 	A poset $S$ is called a \textit{lattice} if every pair of elements has a lub and glb. It is called a \textit{complete lattice} if every subset has a lub and a glb.
 \end{definition}
 
+When the whole set $S$ has an upper bound, that is an element greater than all other elements, that is unique and we denote it with $\top_S$, possibly dropping the subscript if the set is clear from the context. Note that $\top_S$ is the glb of the empty set. Dually, we denote with $\bot_S$ the lower bound of $S$ (if any), that is an element smaller than all other elements, and this is the lub of $\emptyset$.
+
 \begin{definition}[Monotone function]
 	Given two poset $S$, $T$ and a function $f : S \rightarrow T$, that function is called \textit{monotone} (or \textit{order-preserving}) if, for any pair $a, b \in S$ of elements of the domain such that $a \preceq_S b$, also their images satisfies $f(a) \preceq_T f(b)$.
 \end{definition}
@@ -62,10 +64,8 @@ f(T) = \{ f(s) \svert s \in T \}
 We overloaded the notation using the same symbol for both $f$ and its additive extension, but which of the two we're referring to will always be clear from whether the argument is a set or not.
 
 \section{Galois connections}
-\todo{add references for this whole section}
-The main mathematical tool we use to study abstract interpretations are Galois connections, and the special case of Galois insertions.
+The main mathematical tool we use to study abstract interpretations are Galois connections, and the special case of Galois insertions. An introduction to Galois connections can be found in chapter 7 of \cite{order-theory-book}.\todo{it would be nice to have a CS textbook for this}
 
-\todo{add figures}
 \begin{definition}[Galois connection]\label{ch2:def:gc}
 	Let $C$ and $A$ be two partially ordered sets, and $\alpha : C \rightarrow A$, $\gamma : A \rightarrow C$ be a pair of monotone functions between the two.
 
@@ -74,11 +74,40 @@ The main mathematical tool we use to study abstract interpretations are Galois c
 	\alpha(c) \preceq a \iff c \preceq \gamma(a)
 	\]
 \end{definition}
-
 For our goals, we will call $C$ the \textit{concrete domain}, $A$ the \textit{abstract domain}, $\alpha$ the \textit{abstraction function} and $\gamma$ the \textit{concretization function}. The two functions $\alpha$ and $\gamma$ are also called \textit{adjoints}\footnote{The term ``adjoint" comes from Category Theory, since Galois connections are adjunctions between the two posets seen as categories. However such a discussion would be outside the scope of this thesis, and would also require a basic knowledge of category theory.}.
 
 In program analysis we give the following intuitive meaning to those. $C$ is the domain of concrete states, $A$ the set of abstract properties we're interested in. Partial orders on $C$ and $A$ represent a relation of ``more precise than": if $a \preceq a'$ for two abstract elements $a, a' \in A$, then the meaning is that the property $a$ is stronger than $a'$. Alternatively, we may say that $a$ describes less states than $a'$, or in logical terms that $a \Rightarrow a'$. This is less intuitive on the concrete domain $C$, but in the case when it's a power set and the ordering is set inclusion a ``stronger" concrete element is just a subset, that de facto describes less individual values.
 With this meaning for partial orders, $\alpha$ is the function that maps a concrete state in the most precise (ie. strongest or minimal) abstract property that describes it and $\gamma$ a function that maps an abstract property in the biggest (weakest or maximal) concrete state it describes.
+
+\todo{is this the figure I want?}
+\begin{figure}[ht]
+	\centering
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		{
+			\selectfont
+			\def\svgwidth{.8\textwidth}
+			\input{images/gc1.pdf_tex}
+		}
+		\caption{The Galois connection relation}
+		\label{ch2:fig:gc-sketch:relation}
+	\end{subfigure}%
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		{
+			\selectfont
+			\def\svgwidth{.8\textwidth}
+			\input{images/gc2.pdf_tex}
+		}
+		\caption{Composing $\alpha$ and $\gamma$}
+		\label{ch2:fig:gc-sketch:gamma-alpha-c}
+	\end{subfigure}
+	\caption{Graphical sketch of a Galois connection}
+	\label{ch2:fig:gc-sketch}
+\end{figure}
+Figure \ref{ch2:fig:gc-sketch} sketches a Galois connection: the lower adjoint $\alpha$ is bent down, and the upper adjoint $\gamma$ is bent up.
+In figure \ref{ch2:fig:gc-sketch:relation} there's a sketch of the relation required by the Galois connection. Figure \ref{ch2:fig:gc-sketch:gamma-alpha-c} shows what happens when abstracting and then concretizing back and element (this intuitive sketch is formalized in proposition \ref{ch2:th:gc-extensive-charact}).
+To give an intuition of the role of Galois connections in program analysis, we present the following example.
 
 \begin{example}[Intervals]\label{ch2:ex:intervals}
 	We can now formalize the intuitive example \ref{intr:ex:intervals} of intervals we introduced in the introduction.
@@ -118,7 +147,7 @@ With this meaning for partial orders, $\alpha$ is the function that maps a concr
 	\end{align*}
 \end{example}
 
-We recall here two properties of Galois connection that will be useful in this thesis.
+We recall here two properties of Galois connections that are useful in this thesis.
 
 \begin{prop}\label{ch2:th:gc-extensive-charact}
 	Let $C$ and $A$ be two partially ordered sets, and $\alpha : C \rightarrow A$, $\gamma : A \rightarrow C$ be a pair of monotone functions between the two.
@@ -193,10 +222,7 @@ We recall here a  way to define a Galois insertion
 \end{prop}
 
 \subsection{Under-approximation Galois connections}
-%The definition of Galois connection is not symmetric, in a way that can be seen from two different points of view. On the one hand we can say it's asymmetric in the two domains: if we swap concrete and abstract domain what we get is no longer a Galois connection. On the other hand, the definition puts $\gamma$ above and $\alpha$ below: in fact the two are also called upper and lower adjoints. This asymmetry in the two adjoints favours one specific direction, that is over-approximations.
-%
-%We say that the two asymmetries are actually the same because if we \textit{both} swap the two domains \textit{and} change the upper and lower adjoint definition, we get again a Galois connection
-
+\todo{figure here, too?}
 The definition of Galois connection is not symmetric, in the sense that it puts $\gamma$ above and $\alpha$ below: in fact the two are also called upper and lower adjoints respectively. This asymmetry in the two adjoints favours one specific direction, that is over-approximations, and is not suited to describe under-approximations. For this reason we introduce the notion of
 \begin{definition}[Under-approximation Galois connection]\label{ch2:def:under-gc}
 	Let $C$ and $A$ be two partially ordered sets, and $\alpha : C \rightarrow A$, $\gamma : A \rightarrow C$ be a pair of monotone functions between the two.
@@ -407,11 +433,11 @@ f^{\alpha} = \alpha \circ f \circ \gamma = \alpha \circ f \circ \id_A
 \]
 that may lead to say $f^{\alpha} = \alpha \circ f$. However, as we observed above, this is not the case since they have different domains: $f^{\alpha}$ takes as input abstract elements only, while $\alpha \circ f$ can be applied to any element of $C$. We'll ensure this condition is satisfied whenever we use $f^{\alpha}$, often because we'll consider $f^{\alpha} \circ \alpha$.
 
-An important notion in abstract interpretation is that of complete abstraction. A correct abstraction of a function is said to be complete if it doesn't lose precision with respect to the concrete semantics.
+An important notion in abstract interpretation is that of complete abstraction \cite{giacobazzi-making-abstr-complete}. A correct abstraction of a function is said to be complete if it doesn't lose precision with respect to the concrete semantics.
 \begin{definition}[Complete abstraction]\label{ch2:def:complete-abstr}
 	Given a function $f$ and one of its correct abstractions $f^{\#}$, we say that it is a \textit{complete abstraction} when
 	\[
 	\alpha \circ f = f^{\#} \circ \alpha
 	\]
 \end{definition}
-There have been some interest about complete abstractions \todo{ref} because they avoid false alarms, but in this thesis we're just interested in it as a way of constraining an abstract domain to interact with a function. We refer the reader to the discussion in the next chapter for an explanation of why we need this.
+There have been some interest about complete abstractions \cite{giacobazzi-making-abstr-complete,giacobazzi-analyzing-analyses} because they avoid false alarms, but in this thesis we're just interested in it as a way of constraining an abstract domain to interact with a function. We refer the reader to the discussion in the next chapter for an explanation of why we need this.
