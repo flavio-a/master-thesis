@@ -64,7 +64,7 @@ f(T) = \{ f(s) \svert s \in T \}
 We overloaded the notation using the same symbol for both $f$ and its additive extension, but which of the two we're referring to will always be clear from whether the argument is a set or not.
 
 \section{Galois connections}
-The main mathematical tool we use to study abstract interpretations are Galois connections, and the special case of Galois insertions. An introduction to Galois connections can be found in chapter 7 of \cite{order-theory-book}.\todo{it would be nice to have a CS textbook for this}
+The main mathematical tool we use to study abstract interpretations are Galois connections, and the special case of Galois insertions. An introduction to Galois connections from an order theoretic point of view can be found in chapter 7 of \cite{order-theory-book}.
 
 \begin{definition}[Galois connection]\label{ch2:def:gc}
 	Let $C$ and $A$ be two partially ordered sets, and $\alpha : C \rightarrow A$, $\gamma : A \rightarrow C$ be a pair of monotone functions between the two.
@@ -106,7 +106,7 @@ With this meaning for partial orders, $\alpha$ is the function that maps a concr
 	\label{ch2:fig:gc-sketch}
 \end{figure}
 Figure \ref{ch2:fig:gc-sketch} sketches a Galois connection: the lower adjoint $\alpha$ is bent down, and the upper adjoint $\gamma$ is bent up.
-In figure \ref{ch2:fig:gc-sketch:relation} there's a sketch of the relation required by the Galois connection. Figure \ref{ch2:fig:gc-sketch:gamma-alpha-c} shows what happens when abstracting and then concretizing back and element (this intuitive sketch is formalized in proposition \ref{ch2:th:gc-extensive-charact}).
+In figure \ref{ch2:fig:gc-sketch:relation} is represented the relation required by the Galois connection. Figure \ref{ch2:fig:gc-sketch:gamma-alpha-c} shows what happens when abstracting and then concretizing back and element (formalized in proposition \ref{ch2:th:gc-extensive-charact}).
 To give an intuition of the role of Galois connections in program analysis, we present the following example.
 
 \begin{example}[Intervals]\label{ch2:ex:intervals}
@@ -115,11 +115,11 @@ To give an intuition of the role of Galois connections in program analysis, we p
 	\[
 	A = \Int = \{ [n, m] \svert n \in \setZ \cup \{ -\infty \}, m \in \setZ \cup \{ +\infty \}, n \le m \} \cup \{ [+\infty, -\infty] \}
 	\]
-	$\alpha$ is the function that allows us to abstract a set of possible values of \code{i} to the best (ie. most precise) possible abstract property:
+	$\alpha$ is the function that allows us to abstract a set $S$ of possible values of \code{i} to the best (ie. most precise) possible abstract property:
 	\begin{align*}
 		\alpha(S) &= [\min(S); \max(S)]
 	\end{align*}
-	with the convention that $\min(\emptyset) = +\infty$, $\min(\emptyset) = -\infty$, the minimum of a lower-unbound set is $-\infty$ and the maximum of an upper-unbound set is $+\infty$. This abstraction function is exactly what we expect: no smaller interval can describe the set $S$, since $\min(S)$ and $\max(S)$ are elements of $S$ and so must also be in the interval. Conversely, this is a correct abstraction of $S$ since all its elements are between $\min(S)$ and $\max(S)$, so are in the interval too.
+	with the convention that $\min(\emptyset) = +\infty$, $\min(\emptyset) = -\infty$, the minimum of a lower-unbound set is $-\infty$ and the maximum of an upper-unbound set is $+\infty$. This abstraction function is exactly what we expect: no smaller interval can describe the set $S$, since $\min(S)$ and $\max(S)$ are elements of $S$ and hence must also be in the interval. Conversely, this is a correct abstraction of $S$ since all its elements are between $\min(S)$ and $\max(S)$, so are in the interval too.
 
 	$\gamma$ is the function that does the inverse operation: given an interval $[n, m]$, thought as a formal writing that describes the property that the value of \code{i} is between $n$ and $m$, gives us its ``meaning", that is the largest subset of $\setZ$ that matches that property:
 	\[
@@ -146,12 +146,9 @@ To give an intuition of the role of Galois connections in program analysis, we p
 		\iff &S \subseteq \gamma([n, m])
 	\end{align*}
 \end{example}
-
-We recall here two properties of Galois connections that are useful in this thesis.
-
+We recall here two properties of Galois connections.
 \begin{prop}\label{ch2:th:gc-extensive-charact}
 	Let $C$ and $A$ be two partially ordered sets, and $\alpha : C \rightarrow A$, $\gamma : A \rightarrow C$ be a pair of monotone functions between the two.
-
 	Then $C (\alpha, \gamma) A$ is a Galois connection if and only if both $\id_C \preceq \gamma \circ \alpha$ and $\alpha \circ \gamma \preceq \id_A$.
 \end{prop}
 \begin{prop}\label{ch2:th:gc-adjoints-preserve-glb-lub}
@@ -295,7 +292,7 @@ We can also get an under-approximation version of proposition \ref{ch2:th:gi-moo
 \end{prop}
 
 \begin{example}
-	Consider a variation of the previous example: intervals that contains either $0$ or $1$
+	Consider a slight variation of the previous example, intervals that contains at least one of $0$ and $1$.
 	\[
 	\Int_{0,1} = \{ I \in \Int \svert 0 \in \Int \lor 1 \in \Int \} \cup \{ \bot \}
 	\]
@@ -350,7 +347,7 @@ if (x < 0) {
 	\end{cases*}
 	\]
 \end{example}
-In this example, we computed the semantics of the whole program fragment and then we proceeded to abstract it. However this process is not what happens in practice because, if we knew the concrete semantics of the program we wouldn't really need the abstraction. An analyser would instead know abstractions of basic transfer functions, the semantics of basic construct of the language, and compose them in order to get a \textit{correct} approximation, but with no guarantee to get the \textit{best} abstraction. For the reminder of this thesis we won't concern ourselves with this issue because we focus on basic transfer functions; however the reason we're allowed to do so is exactly that those are the basic building blocks used to define the abstract semantics of complex programs.
+In this example, we computed the semantics of the whole program fragment and then we proceeded to abstract it. However this process is not what happens in practice because, if we knew the concrete semantics of the program we wouldn't really need the abstraction. An analyser would instead know abstractions of basic transfer functions, the semantics of basic construct of the language, and compose them in order to get a \textit{correct} approximation, but with no guarantee to get the \textit{best} abstraction. For the remainder of this thesis we won't concern ourselves with this issue because we focus on basic transfer functions; however the reason we're allowed to do so is exactly that those are the basic building blocks used to define the abstract semantics of complex programs.
 %\begin{example}
 %	Considering again the same program fragment of the previous example, we have that the semantics of the guard \code{x < 0} is
 %	\[
@@ -440,4 +437,4 @@ An important notion in abstract interpretation is that of complete abstraction \
 	\alpha \circ f = f^{\#} \circ \alpha
 	\]
 \end{definition}
-There have been some interest about complete abstractions \cite{giacobazzi-making-abstr-complete,giacobazzi-analyzing-analyses} because they avoid false alarms, but in this thesis we're just interested in it as a way of constraining an abstract domain to interact with a function. We refer the reader to the discussion in the next chapter for an explanation of why we need this.
+There have been some interest about complete abstractions \cite{giacobazzi-making-abstr-complete,giacobazzi-analyzing-analyses,bruni-abst-intensionality} because they avoid false alarms, but in this thesis we're just interested in it as a way of constraining an abstract domain to interact with a function. We refer the reader to the discussion in the next chapter for an explanation of why we need this.

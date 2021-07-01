@@ -1,5 +1,4 @@
-\chapter{Generalizations}
-\todo{Change chapter name}
+\chapter{Arbitrary domains}
 In the previous chapter we presented some results about integer domains. In this one, we would like to explore how much of the previous results can be generalized to arbitrary domains.
 
 In this chapter we assume a set $C$ of values and use as concrete domain $\pow(C)$. We also assume an under-approximation Galois insertion $\pow(C) (\alpha, id_A) A$, that is $\alpha \preceq \id_C$ and $A$ is closed by union (propositions \ref{ch2:th:under-gc-extensive-charact} and \ref{ch2:th:under-gc-union-closure}.
@@ -41,8 +40,6 @@ An element of the cartesian product $C$ is a function that maps each variable $x
 A non relational abstract domain is a tuple of elements, one for each variable $x$, and describes the set of concrete states where each variable belongs to the values in it's abstract coordinate. The abstraction is performed on each variable independently, projecting all states in $S$ on that variable and then abstracting the resulting set. The concretization is performed on each variable independently, and then results are multiplied in all possible ways to get concrete values.
 This separate handling of different variables prevent expressing relations. When abstracting, we lose all informations on possible relations since we project on each variable before abstracting. Conversely, when concretizing an abstract tuple, each element is concretized independently and hence the result is a Cartesian product of sets of possible values for each variable.
 
-\todo{talk about Cartesian abstractions? Probably not}%Non relational domains are a special case of so-called Cartesian domains (\todo{ref?}): first we abstract
-
 If we consider and under-approximation non relational domain, we have to take into account both the fact that abstract elements are concretized in Cartesian product of set of values for each variable, and the fact that the domain is closed under union. Unfortunately, these two properties are incompatible.
 \begin{prop}\label{ch3:th:underapprox-non-rel}
 	Let $\pow(C) (\alpha, \gamma) A$ be an under-approximating Galois connection, and assume $A$ is non relational. Then, for all but one variable (let it be $y$), the abstract domain $A_x$ is \textit{almost} trivial, that is it contains at most one value $a_x$ other than $\bot$:
@@ -65,7 +62,7 @@ If we consider and under-approximation non relational domain, we have to take in
 	For the sake of simplicity, let us assume that the Galois connections $\pow(C_x) (\alpha_x, \gamma_x) A_x$ for each variable $x$ are actually Galois insertions, and let us use the usual identification of $A_x$ and $\gamma(A_x) \subseteq \pow(C_x)$.
 	Moreover, let us assume that $\text{Vars}$ only contains two variables; the proof generalizes straightforwardly to an arbitrary set of variables, but it clutters the notation a lot.
 
-	By way of contradiction, suppose that for two distinct variables $y$ and $z$ domains $A_y$ and $A_z$ contains more than one element other than $\bot$: let $S_y, S'_y \in A_y$ and $S_z, S'_z \in A_z$.
+	By way of contradiction, suppose that for both variables $y$ and $z$ domains $A_y$ and $A_z$ contains more than one element other than $\bot$: let $S_y, S'_y \in A_y$ and $S_z, S'_z \in A_z$.
 
 	Since $S_y \neq S'_y$, without loss of generality we can assume $S'_y \nsubseteq S_y$ (otherwise just swap their names), and let $T_y = S_y \cup S'_y$. By union closure of the abstract domain $A_y$ (proposition \ref{ch2:th:under-gc-union-closure}), $T_y \in A_y$. Moreover, since $S'_y$ is not a subset of $S_y$, $T_y$ is a strict superset of $S_y$, and $S_y \neq \emptyset$ by hypothesis:
 	\[
@@ -90,9 +87,9 @@ Again this result is an abstract interpretation way to rephrase O'Hearn's senten
 The need to remember informations along a path implies exactly that the analysis can't forget which were the values of other variables that get each of the results, that is it can't forget relations between variables.
 
 \section{Non emptyingness}
-\todo{copy definitions/lemmas here?}
+\todo{copy definitions and lemmas here?}
 In the previous chapter we introduced the definition \ref{ch3:def:non-emptying} of non emptying function when talking about integers, but this notion is fully general with respect to the concrete domain: we already applied it to both the infinite set of integers $\setZ$ and the finite interval $[-N, N]$, so we want now to work with an arbitrary concrete domain $\pow(C)$.
-We remark that also definition \ref{ch3:def:repr-with-set} of elements representable with a set and lemmas \ref{ch3:th:f-non-repr-pair} and \ref{ch3:th:R-S-bound-integer-inf} are fully general and doesn't depend on the specific integer domain we used in the previous chapter. Hence we start from these to build results independent of the concrete domain.
+We remark that also definition \ref{ch3:def:repr-with-set} of elements representable with a set and lemma \ref{ch3:th:f-non-repr-pair} are fully general and doesn't depend on the specific integer domain we used in the previous chapter, as well as lemma \ref{ch3:th:R-S-bound-integer-inf} if we assume $C$ to be infinite. Hence we start from these to build results independent of the concrete domain.
 
 In our results for integers, we showed that an under-approximation abstract domain can't be non emptying for all functions in a given family (in that case, adding a constant). Now we would like to generalize those results, investigating which conditions \textit{on the family of functions} are sufficient to ensure that no abstract domain can be non emptying for all of them. The reason of this is that first we fix a function family, corresponding to a program, and then we look for a domain well suited to analyse the specific family (ie. program) at hand.
 
@@ -113,9 +110,8 @@ Clearly the family of functions that add a constant is highly surjective, and ac
 
 The following two sections present the two impossibility results, while the last one of the chapter discuss limits of approaches based on non emptyingness.
 
-\section{First result}
-\todo{change section name}
-This first result is somehow more ``local", in the sense that we require each function in $F$ to satisfy some properties ``on its own", independently from other functions in $F$. In its basic formulation, we just require each function in $F$ to be injective.
+\section{Local result}
+This first result is somehow more ``local", in the sense that we require each function in $F$ to satisfy some properties independently from other functions in $F$. In its basic formulation, we just require each function in $F$ to be injective.
 
 \begin{theorem}\label{ch4:th:non-empt-res-local-basic}
 	Let $F$ be a family of functions from $C$ in itself such that
@@ -344,7 +340,7 @@ As an example of this more general version, we propose floating-point numbers an
 \begin{example}\label{ch4:ex:fp-numbers-local}
 	Fix as concrete domain $C$ the set $\mathcal{F_+}$ of strictly positive floating-point numbers that can be represented with a fixed number of significant digits, say $t$ bits, but with an arbitrary precision exponent. We make this choice in order to preserve characteristics of floating-point arithmetic but to have an infinite domain; a finite number of bits for exponents too would require a theorem for finite domains.\todo{Will I talk about this in a later section?} We limit ourselves to positive numbers since multiplications don't change signs, a discussion considering also negative numbers is completely analogous but takes twice as long to handle details of sign changes.
 
-	Let $\cdot$ and $\odot$ denote respectively real product and its floating-point arithmetic approximation, and consider the function family
+	Let $\cdot$ and $\odot$ denote respectively real product and its floating point approximation, and consider the function family
 	\[
 	F = \{ \lambda x . x \odot y \svert y \in \mathcal{F_+} \}
 	\]
@@ -451,7 +447,7 @@ As an example of this more general version, we propose floating-point numbers an
 	are approximated by the same floating-point number $1.001 \cdot 2^1$ (assuming truncation instead of rounding) but their first arguments differ by the last bit.
 \end{example}
 
-\section{Second result}
+\section{Global result}
 The second result we propose is instead more ``global", in the sense that it requires conditions on $F$ as a whole, and not on each $f$ independently.
 
 \begin{theorem}\label{ch4:th:non-empt-res-global}
@@ -516,7 +512,7 @@ The actual proof follows this idea in the opposite direction: starts from the (i
 \end{proof}
 
 As an example of such a family of functions we again propose floating-point numbers with multiplications:
-\begin{example}
+\begin{example}\label{ch4:ex:fp-numbers-global}
 	Take $C = \mathcal{F} \setminus \{ 0 \}$ the set of non-zero floating-point numbers with $t$ bits significants, one bit sign and arbitrary precision exponents, and
 	\[
 	F = \{ \lambda x . x \odot y \svert y \in \mathcal{F} \setminus \{ 0 \} \}

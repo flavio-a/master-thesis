@@ -16,52 +16,24 @@
 \usepackage{aliascnt}
 \usepackage{chngcntr}
 \usepackage{stmaryrd}
-%\usepackage{graphicx}
 \usepackage{subcaption}
+\usepackage{enumitem}
 
 \usepackage{tikz}
 \usetikzlibrary{positioning,arrows}
-\usepackage[citestyle=alphabetic,style=numeric]{biblatex}
-%\usepackage[nottoc]{tocbibind} for bibliography in the toc (??? TODO)
+\usepackage[style=alphabetic,sorting=ynt]{biblatex}
+\usepackage[toc]{appendix}
 %\usepackage{booktabs}   for better tables (TODO)
-%\usepackage{pdfpages} to include external pdf in the latex document
-%\usepackage{stackengine}
-%\stackMath
-
-\usepackage{enumitem}
-
-% TODO check all
-%\RequirePackage{faktor} for better fractions (eg num and denom doesn't get smaller)
-%\RequirePackage{wasysym} a font
-%\RequirePackage{fancyhdr} for things with header
-%\RequirePackage{lipsum} to get lorem ipsum
-%\RequirePackage{titlesec}for thing on section headers and titles
-%\RequirePackage{setspace} for spacing between lines (it works also without?)
-%\RequirePackage{mdframed} thinghs for framed, maybe needed by tikz
-%\RequirePackage{minted}
-%\RequirePackage{url}
-%\RequirePackage{xcolor} better color handling, maybe needed by code ?
-
-\usepackage{todonotes}
-% Epigraphs
-%\makeatletter
-%\newenvironment{epigraph}[2][2em]
-%{\setlength{\@tempdima}{#1}%
-%	\def\chapquote@author{#2}%
-%	\parshape 1 \@tempdima \dimexpr\textwidth-2\@tempdima\relax%
-%	\itshape}
-%{\par\normalfont\hfill--\ \chapquote@author\hspace*{\@tempdima}\par\bigskip}
-%\makeatother
 % ======================== Package for syntax highlight ===========================
 \usepackage{csquotes}
 \usepackage{minted}
 
+\usepackage{todonotes}
+
 \graphicspath{{images/}}
 \setlength{\parindent}{0.5cm}     % paragraph indentation
 \linespread{1.2}                % space between lines
-
 \addbibresource{bibliography/tot.bib}
-
 \hypersetup{linktocpage}
 
 % COMMANDS
@@ -81,7 +53,6 @@
 \newcommand{\poly}{\text{poly}}
 \newcommand{\drop}{\text{drop}}
 \newcommand{\concat}{\text{concat}}
-
 \newcommand{\macheps}{\textbf{u}}
 \newcommand{\fp}{\text{fp}}
 
@@ -141,6 +112,6 @@
 
 	\input{chapters/conclusions}
 
-	\printbibliography
 	\addcontentsline{toc}{chapter}{Bibliography}
+	\printbibliography
 \end{document}

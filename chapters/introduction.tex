@@ -1,5 +1,4 @@
 \chapter{Introduction}
-
 \section{Abstract interpretation}
 Static program analyses are a useful set of techniques to infer properties of programs directly from their source code, without executing them. Recently they became part of the software development, and are used in major companies like Facebook \cite{distefano-static-analysis-fb} and Google \cite{static-analysis-google} to catch bugs before they reach production.
 
@@ -25,19 +24,19 @@ for (int i = 0; i <= 5; ++i) {
 Abstract interpretation's generality allows it to be used within a broad variety of topics in computer science, for instance program transformations and security. We refer the reader to \cite{cousot-absint-survey} for a survey of applications.
 
 \section{Under-approximations}
-In the example above, the error of the analysis is of over-approximation: the result contains all the values that happens in the concrete execution, but also some more.
+In the example above, the error of the analysis is of over-approximation: the result contains all the values that appear in the concrete execution, but also some more.
 Nowadays, most static analyses focus on over-approximation in order to show absence of bugs: they compute a superset of all possible behaviours of a program, and if none of them exhibits a bug also all real behaviours, that are a subset, are correct. However, in principle there is a dual approach to static analysis, that is under-approximation: compute a subset of all possible behaviours, and if any of them exhibits a bug than that is a real bug and not an artifact of the analysis.
 
-Hoare logic \cite{hoare-logic} is perhaps the first example of formal static analysis, and indeed is an over-approximation one, that correctly fits its goal of proving the absence of errors. Maybe the influence of early works like this and the position of people like Dijkstra (``Testing shows the presence, not the absence of bugs") directed the focus toward over-approximation, and in fact very few studied formal under-approximation static analyses.
+Hoare logic \cite{hoare-logic} is perhaps the first example of formal static analysis, and indeed is an over-approximation one, that correctly fits its goal of proving the absence of errors. Maybe the influence of early works like this and the position of people like Dijkstra (``Testing shows the presence, not the absence of bugs") directed the focus toward over-approximation, and so very few studied formal under-approximation static analyses.
 Recently, O'Hearn \cite{ohearn-incorrectness-logic} advocated for a change of trend: while it would be ideal to have only provably correct programs, this clashes with both theoretical and practical issues. Program analysis is often undecidable, and in any case is computationally expensive and requires formal specifications, imposing an heavy burden on programmers, hence the need (also) for bug catching. In his work he proposes ``incorrectness logic", a dual version of Hoare logic thought from the ground up for under-approximation in order to find bugs, and propose to do the same for other over-approximation techniques.
 
 \section{Under-approximation abstract interpretation}
-In his paper, O'Hearn leaves as an open question whether abstract interpretation could ``eventually play a guiding and explanatory role for a wide range of static and dynamic under-approximate tools for bug catching, similar to what it already does for over-approximate analyses."
+In his paper, O'Hearn leaves as an open question whether abstract interpretation could ``eventually play a guiding and explanatory role for a wide range of static and dynamic under-approximate tools for bug catching, similar to what it already does for over-approximate analyses".
 In the works that first introduced abstract interpretation, the authors themselves hypothesized the possibility of using it for both over and under-approximation. However, there have been only sparse studies on it.
 Bourdoncle \cite{bourdoncle-abs-debugging} proposed abstract debugging using over-approximation domains, but acknowledged that under-approximation ones are better suited.
-Schmidt \cite{schmidt-higher-order-approx-2007} ``existentially quantifies" abstract properties, giving rise to an over-approximation of under-approximations in the context of transition systems.
 Lev-Ami et al. \cite{lev-backward-analysis-complement} propose to use complements of over-approximation domains to infer sufficient precondition.
-Miné \cite{mine-backward-underapprox-14} uses over-approximation domains for under-approximation for the same goal, giving up the best abstraction and handling the choice of a minimal one with heuristics.
+For the same goal, Miné \cite{mine-backward-underapprox-14} uses directly over-approximation domains, giving up the best abstraction and handling the choice of a minimal one with heuristics.
+Schmidt \cite{schmidt-higher-order-approx-2007} ``existentially quantifies" abstract properties, giving rise to an over-approximation of under-approximations in the context of transition systems.
 
 All these works study special cases of under-approximation abstract interpretation, and to the extent of our knowledge there are no abstract domains thought from the ground up for under-approximation. In this thesis, we try to determine some of the reasons that make under-approximation abstract domain design hard, and hence why it hasn't been studied as extensively as over-approximation.
 
