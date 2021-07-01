@@ -76,8 +76,8 @@ The main mathematical tool we use to study abstract interpretations are Galois c
 \end{definition}
 For our goals, we will call $C$ the \textit{concrete domain}, $A$ the \textit{abstract domain}, $\alpha$ the \textit{abstraction function} and $\gamma$ the \textit{concretization function}. The two functions $\alpha$ and $\gamma$ are also called \textit{adjoints}\footnote{The term ``adjoint" comes from Category Theory, since Galois connections are adjunctions between the two posets seen as categories. However such a discussion would be outside the scope of this thesis, and would also require a basic knowledge of category theory.}.
 
-In program analysis we give the following intuitive meaning to those. $C$ is the domain of concrete states, $A$ the set of abstract properties we're interested in. Partial orders on $C$ and $A$ represent a relation of ``more precise than": if $a \preceq a'$ for two abstract elements $a, a' \in A$, then the meaning is that the property $a$ is stronger than $a'$. Alternatively, we may say that $a$ describes less states than $a'$, or in logical terms that $a \Rightarrow a'$. This is less intuitive on the concrete domain $C$, but in the case when it's a power set and the ordering is set inclusion a ``stronger" concrete element is just a subset, that de facto describes less individual values.
-With this meaning for partial orders, $\alpha$ is the function that maps a concrete state in the most precise (ie. strongest or minimal) abstract property that describes it and $\gamma$ a function that maps an abstract property in the biggest (weakest or maximal) concrete state it describes.
+In program analysis we give the following intuitive meaning to those. $C$ is the domain of concrete states, $A$ the set of abstract properties we're interested in. Partial orders on $C$ and $A$ represent a relation of ``more precise than": if $a \preceq a'$ for two abstract elements $a, a' \in A$, then the meaning is that the property $a$ is stronger than $a'$. Alternatively, we may say that $a$ describes less states than $a'$, or in logical terms that $a \Rightarrow a'$. This is less intuitive on the concrete domain $C$, but in the case when it's a power set and the ordering is set inclusion a ``stronger" concrete element is just a subset, that de facto describes less individual values. With this interpretation, we can say that if an abstract point $a$ correctly describes the concrete $c$ and $a'$ is above $a$ (ie. $a \preceq a'$), then also $a'$ correctly describes $c$, even though it's less precise than $a$.
+With this meaning for partial orders, $\alpha$ is the function that maps a concrete state in the most precise (ie. strongest or minimal) abstract property that describes it and $\gamma$ a function that maps an abstract property in the biggest (weakest or maximal) concrete state it describes. In particular, since $\alpha(c)$ is the best, that is smallest, abstract property that describes $c$ we have that $a$ correctly describes $c$ if and only if $\alpha(c) \preceq a$. Dually, if $\gamma(a)$ is the biggest concrete element described by $a$ we have that $a$ correctly describes $c$ if and only if $c \preceq \gamma(a)$. The Galois connection relation requires exactly these two conditions to be equivalent, as naturally arise when we derive them this way.
 
 \todo{is this the figure I want?}
 \begin{figure}[ht]
@@ -196,7 +196,7 @@ The one proposed above isn't the standard definition of Galois insertion: more c
 	\end{enumerate}
 \end{prop}
 
-The interval domain presented above is an example of Galois insertion: since we required $n \le m$ in the interval $[n, m]$ no two intervals describe the same concrete set, and hence $\gamma$ is injective. However, as we've seen, composing two independent interval domains gives rise to a Galois connection that isn't an insertion. \todo{Why this sentence?}There are techniques to delete redundant elements of an abstract domain in order to make it a Galois insertion, but we're not interested in them for this thesis.
+The interval domain presented above is an example of Galois insertion: since we required $n \le m$ in the interval $[n, m]$ no two intervals describe the same concrete set, and hence $\gamma$ is injective. However not all Galois connections are insertions: as we've seen, composing two independent interval domains gives rise to a Galois connection that isn't an insertion.
 
 In a Galois insertion, since $\gamma$ is injective, we have a bijection between $A$ and $\gamma(A)$. By the definition of Galois insertion we have $\alpha \circ \gamma = \id_A$, hence $\alpha$ is the inverse of $\gamma$ when restricted to $\gamma(A)$. Since both functions are monotone this defines an isomorphism of poset between $A$ and $\gamma(A) \subseteq C$.
 
@@ -218,9 +218,9 @@ We recall here a  way to define a Galois insertion
 	Then $C(\alpha, \id_{\bar{A}}) \bar{A}$ is a Galois insertion.
 \end{prop}
 
-\subsection{Under-approximation Galois connections}
+\section{Under-approximation Galois connections}
 \todo{figure here, too?}
-The definition of Galois connection is not symmetric, in the sense that it puts $\gamma$ above and $\alpha$ below: in fact the two are also called upper and lower adjoints respectively. This asymmetry in the two adjoints favours one specific direction, that is over-approximations, and is not suited to describe under-approximations. For this reason we introduce the notion of
+The definition of Galois connection is not symmetric, in the sense that it puts $\gamma$ above and $\alpha$ below: in fact the two are also called upper and lower adjoints respectively. This asymmetry in the two adjoints favours one specific direction, that is over-approximations, and is not suited to describe under-approximations. It can be more easily seen from proposition \ref{ch2:th:gc-extensive-charact}, that says $\id_C \preceq \gamma \circ \alpha$, meaning that the abstraction of a concrete element $c$ is greater than (ie. an over-approximation of) $c$ itself. For this reason we introduce the notion of
 \begin{definition}[Under-approximation Galois connection]\label{ch2:def:under-gc}
 	Let $C$ and $A$ be two partially ordered sets, and $\alpha : C \rightarrow A$, $\gamma : A \rightarrow C$ be a pair of monotone functions between the two.
 
@@ -229,8 +229,7 @@ The definition of Galois connection is not symmetric, in the sense that it puts 
 	a \preceq \alpha(c) \iff \gamma(a) \preceq c
 	\]
 \end{definition}
-
-This definition is the same as that of Galois connection (\ref{ch2:def:gc}) except that here $\alpha$ is above and $\gamma$ below.
+This definition is the same as that of Galois connection (\ref{ch2:def:gc}) except that here $\alpha$ is above and $\gamma$ below. Since we are in an under-approximation setting, an abstract property correctly describes a concrete element if it is below it. Again, if $\alpha(c)$ is the best abstract property describing $c$, this is formalized as $a \preceq \alpha(c)$, or dually as $\gamma(c) \preceq c$, yielding the definition.
 \begin{example}\label{ch2:ex:intervals-0}
 	Consider the following example of under-approximation Galois insertion (we haven't given its definition yet, but we're confident the reader can anticipate it): the concrete domain is $\pow(\setZ)$, while the abstract domain is the set of all intervals (see example \ref{ch2:ex:intervals}) containing $0$, plus the empty interval:
 	\[
@@ -262,6 +261,7 @@ Instead of doing this explicitly, we just observe that an under-approximation Ga
 
 	Then $C (\alpha, \gamma) A$ is an under-approximation Galois connection if and only if both $\gamma \circ \alpha \preceq \id_C$ and $\id_A \preceq \alpha \circ \gamma$.
 \end{prop}
+From this proposition we have that $\gamma \circ \alpha \preceq \id_C$, that is the abstraction of an element $c$ is lower than (ie. an under-approximation of) $c$ itself.
 
 \begin{prop}\label{ch2:th:under-gc-adjoints-preserve-lub-glb}
 	Let $C (\alpha, \gamma) A$ be an under-approximation Galois connection. Then $\gamma$ preserves least upper bounds and $\alpha$ preserves greatest lower bounds.

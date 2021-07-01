@@ -124,7 +124,7 @@ The goal of this lemma is to use non emptying functions to get new representable
 We now apply this definition on integer domains in two different situations, on the infinite domain $\pow(\setZ)$ and on the finite $\pow([-N; N])$ of machine integers.
 
 \subsection{Infinite domain}
-In this subsection we focus on the infinite concrete domain $\pow(\setZ)$. We assume that an abstract domain $A$, to be feasible for analyses, must be at most countable.
+In this subsection we focus on the infinite concrete domain $\pow(\setZ)$. We assume that an abstract domain $A$, to be feasible for analyses, must be at most countable, that is the same size as $\setZ$. We do this assumption because we want to represent abstract elements with an amount of bits comparable with that of concrete \textit{values}, to have a complexity comparable with a single concrete execution of the program and not exponentially greater.
 
 We first present a simple cardinality estimate that will be useful in the proof of the following result. The goal of this lemma is to show that some sets must be ``small" (in some sense, in this case finite), so we can find a contradiction showing that one of these sets is actually ``big". We follow this line of reasoning in almost all of our proofs of non existence of abstract domain with some properties.
 
