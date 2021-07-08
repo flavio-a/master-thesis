@@ -1,17 +1,13 @@
 \chapter{Floating point numbers}\label{appA:fp-numbers}
-Computers must represent real numbers with a finite amount of bits. In order to do this, they use a fixed amount $t$ of bits for the significand, a fixed $e$ for exponents and one bit for sign. A comprehensive introduction to floating point numbers and arithmetic can be found in many textbooks, for instance \cite{overton-num-analysis-book}, in this appendix we only recall concepts related to the thesis subjects.
+Computers must represent real numbers with a finite amount of bits. In order to do this, they use a fixed amount of bits for the significand and the exponent, and one bit for sign. A comprehensive introduction to floating point numbers and arithmetic can be found in many textbooks, for instance \cite{overton-num-analysis-book}; in this appendix we only recall concepts related to the thesis subjects.
 
-Normal values are represented as a significand (or coefficient) $c$, determined by $t$ bits, an exponent $q$, determined by the $e$ bits, and the sign. In this thesis, we interpret the significand $c$ as the positive integer number whose binary representation is the sequence of $t$ bits multiplied by $2^{-t+1}$: this ensures that, if the binary representation of $c$ begins with a $1$ (as it is always the case for normal values), its value is always in the interval $[1, 2)$. We interpret the exponent $q$ as the signed integer whose binary representation is the sequence of $e$ bits, so that its range is $[-2^e, 2^e - 1]$.
+Normal values are represented as a significand (or coefficient) $c$, determined by $t$ bits, an exponent $q$, by $e$ bits, and the sign. In this thesis, we interpret the significand $c$ as the positive integer number whose binary representation is the sequence of $t$ bits multiplied by $2^{-t+1}$: this ensures that, if the binary representation of $c$ begins with a $1$ (as it is always the case for normal values), its value is always in the interval $[1, 2)$. We interpret the exponent $q$ as the signed integer whose binary representation is the sequence of $e$ bits, so that its range is $[-2^e, 2^e - 1]$.
 Special values as $0$, $-0$, $+\infty$ and $-\infty$ are defined by the standard as well and represented with special combination of bits, but we don't care about their exact representation.
 
-The significand $c$ of a floating point number can be interpreted as the binary representation of a non integer value with the decimal point right after the first digit, that is always $1$. For instance, if $t = 4$, the bit sequence
-\[
-1010
-\]
-is interpreted as the binary number $1.010$, that is $1.25$ in decimal. With this interpretation in mind, the first bit of the significand has value $2^0$ while the last $2^{1-t}$.
-This means for instance that $1$ is represented as $c = 1.00 \dots 00$ and $e = 0$, that the smallest floating point number greater than $1$ is $c = 1.00 \dots 01$ and $e = 0$, that is $1 + 2^{1-t}$. The greatest floating point number smaller than $1$ is instead represented as $1.11 \dots 11$ and $e = -1$, and is $1 - 2^{-t}$.
+The significand $c$ of a floating point number can be interpreted as the binary representation of a non integer value with the decimal point right after the first digit, that is always $1$. For instance, if $t = 4$, the bit sequence $1010$ is interpreted as the binary number $1.010$, that is $1.25$ in decimal. With this interpretation in mind, the first bit of the significand has value $2^0$ while the last $2^{1-t}$.
+This means for instance that $1$ is represented as $c = 1.00 \dots 00$ and $q = 0$, that the smallest floating point number greater than $1$ is $c = 1.00 \dots 01$ and $q = 0$, that is $1 + 2^{1-t}$. The greatest floating point number smaller than $1$ is instead represented as $1.11 \dots 11$ and $q = -1$, and is $1 - 2^{-t}$.
 
-Many real numbers can't be represented as floating points with $t + e$ bits, hence the need to approximate them. Without dwelling into details, we denote with $\fp(x)$ the floating point approximation of the real number $x$. The choice of representable numbers guarantee that, independently of $x$
+Many real numbers can't be represented as floating points with $t + e$ bits, hence the need to approximate them. Without dwelling into details, we denote with $\fp(x)$ the floating point approximation of the real number $x$, a common choice being rounding to nearest. The choice of representable numbers guarantee that, independently of $x$
 \[
 \left\lvert \frac{\fp(x) - x}{x} \right\rvert < \macheps
 \]
@@ -21,9 +17,9 @@ Moreover, floating point approximation $\fp$ preserves powers of $2$:
 \fp(x \cdot 2^q) = \fp(x) \cdot 2^q
 \]
 
-An arithmetic operation on a pair of floating point numbers may not be a floating point number. To solve this issue, the standard requires a floating point version of each operation, that we denote with a circle around the standard operator symbol, whose output is always a floating point number. The definition of those operations require that they are performed on their inputs as if in infinite precision, and then the result be approximated to a floating point numbers. In formula, if $\times$ is a generic binary operation, its floating point approximation $\otimes$ is defined as
+An arithmetic operation on a pair of floating point numbers may not be a floating point number. To solve this issue, the standard requires a floating point version of each operation, that we denote with a circle around the standard operator symbol, whose output is always a floating point number. The definition of those operations require that they are performed on their inputs as if in infinite precision, and then the result is approximated to a floating point number. In formula, if $\times$ is a generic binary operation, its floating point approximation $\otimes$ is defined as
 \[
-x \odot y = \fp(x \cdot y)
+x \otimes y = \fp(x \times y)
 \]
 Some of the properties of operations are kept by their floating point counterparts, while other are not. For instance, associativity is often lost because of approximation. On the other hand, if $\times$ is commutative, also $\otimes$ is because
 \[
@@ -43,8 +39,8 @@ Since $\fp$ preserves powers of $2$ we have that, for any two floating point num
 x \odot y = \fp((c \cdot 2^q) \cdot (c' \cdot 2^{q'})) = \fp(c \cdot c') \cdot 2^{q + q'} = (c \odot c') \cdot 2^{q + q'}
 \]
 
-The last property of multiplications we're interested in is the fact that they don't have fixpoints.
-\begin{prop}
+We now present some results on floating point multiplications that aren't classic from numerical analysis, so we also prove them.
+\begin{prop}\label{appA:th:mult-no-fixpoints}
 	Let $y$ be a floating point number different from $1$ and $0$. Then, if $t \ge 2$ and $\fp$ is rounding to nearest, for any floating point number $x \neq 0$ we have
 	\[
 	x \odot y \neq x
@@ -86,48 +82,70 @@ The last property of multiplications we're interested in is the fact that they d
 			& 1. & 1 & 0 & 0 & 0 & 0 & 1
 		\end{tabular}
 	\end{center}
-	so the result is represented (both with rounding and truncation) as $1.100$, that is different from $c = 1.011$.
+	so the result is represented as $1.100$, that is different from $c = 1.011$.
 
-	Lastly, if $q_0 = -1$ it must be the case that $y = c_0 \cdot 2^{-1} \le 1 - 2^{-t}$, that is $c_0 \le 2 - 2^{1-t}$.
-	If $c = 1$ then $c \odot (2 - 2^{1-t}) = (2 - 2^{1-t}) < 2 = 2 \odot c$. If $c > 1$ then
+	Lastly, if $q_0 = -1$ it must be the case that $y = c_0 \cdot 2^{-1} \le 1 - 2^{-t}$, that is $c_0 \le 2 - 2^{1-t}$. Suppose without loss of generality that $x = c \cdot 2^0$, if that is not the case just scale all computations by $2^q$.
+	If $c = 1$ then $x \odot y = c \odot (2 - 2^{1-t}) \cdot 2^{-1} = (2 - 2^{1-t}) \cdot 2^{-1} < 1 = c = x$. If $c > 1$ then
 	\begin{align*}
-		c \cdot c_0 &\le c \cdot (2 - 2^{1-t}) \\
-		&= 2 c - 2^{1-t} c \\
-		&< 2 c - 2^{1-t} = (c - 2^{-t}) \cdot 2
+		x \cdot y &= c \cdot c_0 \cdot 2^{-1} \\
+		&\le c \cdot (2 - 2^{1-t}) \cdot 2^{-1} \\
+		&= (2 c - 2^{1-t} c) \cdot 2^{-1} \\
+		&< (2 c - 2^{1-t}) \cdot 2^{-1} = c - 2^{-t}
 	\end{align*}
-	Since $2^{-t}$ is exactly half the value of the least significant bit of $c$, this means $c - 2^{-t}$ is exactly in the middle between $c$ and $c - 2^{1-t}$, that is the greatest floating point smaller than $c$. Do note that, since $c > 1$ we have $c \ge 1 + 2^{1-t}$, hence $c - 2^{1-t} \ge 1$. Given that $c \cdot c_0 < (c - 2^{-t}) \cdot 2$, if $\fp$ rounds to the nearest floating point we have that $c - 2^{1-t}$ is closer to $c \cdot c_0$ than $c$, hence
+	Since $2^{-t}$ is exactly half the value of the least significant bit of $c$, this means $c - 2^{-t}$ is exactly in the middle between $c$ and $c - 2^{1-t}$, that is the greatest floating point smaller than $c$. Do note that this is the case only because $c > 1$, because it implies $c \ge 1 + 2^{1-t}$, hence $c - 2^{1-t} \ge 1$.
+	\begin{center}
+	\begin{tikzpicture}
+		\tikzset{func/.style = {->,> = latex'}}
+
+		% number line
+		\draw[func] (-6, 0) to (6, 0);
+
+		% c-2^{-t}, c-2^{1-t} and c
+		\draw (0, 0.2) -- (0, -0.2);
+		\node[label=below:$c-2^{-t}$] at (0, 0){};
+		\draw (3, 0.2) -- (3, -0.2);
+		\node[label=below:$c$] at (3, 0){};
+		\draw (-3, 0.2) -- (-3, -0.2);
+		\node[label=below:$c-2^{1-t}$] at (-3, 0){};
+
+		% c \cdot c_0
+		\fill[red] (-1, 0) circle (2pt);
+		\node[label=above:$x \cdot y$] at (-1, 0){};
+	\end{tikzpicture}
+	\end{center}
+	As shown in the line number, given that $x \cdot y = c \cdot c_0 \cdot 2^{-1} < c - 2^{-t}$, if $\fp$ rounds to the nearest floating point we have that $c - 2^{1-t}$ is closer to $x \cdot y$ than $c$, hence
 	\[
-	c \odot c_0 = \fp(c \cdot c_0) \neq c
+	x \odot y = \fp(x \cdot y) \neq c = x
 	\]
 \end{proof}
 
-We remark that multiplication by a floating point is not injective. For instance both products
+We remark that multiplication by a floating point is not injective. For instance, if $t = 4$, both products
 \begin{center}
 	\parbox{0.45\textwidth}{\centering
 		\begin{tabular}{c@{\;}c@{\;}c@{\,}c@{\,}c@{\,}c@{\,}c@{\,}c@{\,}c}
-			& & & & & 1. & 1 & 0 & 0 \\
-			$\times$ & & & & & 1. & 1 & 0 & 0 \\
+			& & & & & 1. & 1 & 1 & 0 \\
+			$\times$ & & & & & 1. & 0 & 1 & 0 \\
 			\hline
-			& & 0. & 1 & 1 & 0 & 0 & 0 & 0\\
-			$+$ & & 1. & 1 & 0 & 0 & 0 & 0 & 0 \\
+			& & 0. & 0 & 1 & 1 & 1 & 0 & 0 \\
+			$+$ & & 1. & 1 & 1 & 0 & 0 & 0 & 0 \\
 			\hline
-			& 1 & 0. & 0 & 1 & 0 & 0 & 0 & 0
+			& 1 & 0. & 0 & 0 & 1 & 1 & 0 & 0
 	\end{tabular}}
 	\parbox{0.45\textwidth}{\centering
 		\begin{tabular}{c@{\;}c@{\;}c@{\,}c@{\,}c@{\,}c@{\,}c@{\,}c@{\,}c}
-			& & & & & 1. & 1 & 0 & 1 \\
-			$\times$ & & & & & 1. & 1 & 0 & 0 \\
+			& & & & & 1. & 1 & 1 & 1 \\
+			$\times$ & & & & & 1. & 0 & 1 & 0 \\
 			\hline
-			& & 0. & 1 & 1 & 0 & 1 & 0 & 0\\
-			$+$ & & 1. & 1 & 0 & 1 & 0 & 0 & 0 \\
+			& & 0. & 0 & 1 & 1 & 1 & 1 & 0\\
+			$+$ & & 1. & 1 & 1 & 1 & 0 & 0 & 0 \\
 			\hline
-			& 1 & 0. & 0 & 1 & 1 & 1 & 0 & 0
+			& 1 & 0. & 0 & 1 & 0 & 1 & 1 & 0
 	\end{tabular}}
 \end{center}
-are approximated by the same floating-point number $1.001 \cdot 2^1$ (assuming truncation) but their first arguments differ by the last bit.
+are approximated by the same floating-point number $1.001 \cdot 2^1$ (assuming rounding to nearest) but their first arguments differ by the last bit.
 
-\begin{prop}
-	If $t > 1$ and we assume a rounding to nearest, every floating point number $y = c \cdot 2^q$ such that $1 \le c \le 3/2$ and $q$ is from both the maximum and the minimum exponents has an inverse floating point, that is a floating point $y'$ such that $y \odot y' = 1$
+\begin{prop}\label{appA:th:fp-inverse}
+	If $t > 1$ and we assume a rounding to nearest, every floating point number $y = c \cdot 2^q$ such that $1 \le c < 3/2$ and $q$ is different from both the maximum and the minimum exponents has an inverse floating point, that is a floating point $y'$ such that $y \odot y' = 1$
 \end{prop}
 \begin{proof}
 	If $c = 1$ there is such $y'$, that is $1 \cdot 2^{-q}$. This is a floating point number since $q \neq -2^e$, hence $-q \in [-2^e, 2^e - 1]$. So assume $c \neq 1$. This in particular entails $c \ge 1 + 2^{1-t}$.
@@ -136,7 +154,7 @@ are approximated by the same floating-point number $1.001 \cdot 2^1$ (assuming t
 	\[
 	\frac{1}{1 + 2^{1-t}} < 1 - 2^{-t}
 	\]
-	where the inequality holds whenever $2^{-t} < 1/2$ or equivalently when $t > 1$, these two floating point numbers are in the range $[1/2, 1 - 2^{-t}]$, that means that they have exponent $-1$. Said $\overline{d}$ and $\underline{d}$ to be respectively the rounding up and down of $d = c^{-1}$, since they have both exponent $-1$ and their difference is exactly one least significant bit, we have
+	where the inequality holds whenever $2^{-t} < 1/2$, hence when $t > 1$, these two floating point numbers are in the range $[1/2, 1 - 2^{-t}]$, that means that they have exponent $-1$. Said $\overline{d}$ and $\underline{d}$ to be respectively the rounding up and down of $d = c^{-1}$, since they have both exponent $-1$ and their difference is exactly one least significant bit, we have
 	\[
 	\overline{d} - \underline{d} = 2^{1-t} \cdot 2^{-1} = 2^{-t}
 	\]
@@ -151,25 +169,25 @@ are approximated by the same floating-point number $1.001 \cdot 2^1$ (assuming t
 	\]
 	that, by the rounding to nearest approximation hypothesis, implies
 	\[
-	c \cdot \overline{d} > \frac{1 + (1 + 2^{1-t})}{2} = 1 + 2^{-t}
+	c \cdot \overline{d} \ge \frac{1 + (1 + 2^{1-t})}{2} = 1 + 2^{-t}
 	\]
 	Analogously, $c \odot \underline{d} < 1$ implies
 	\[
-	c \cdot \underline{d} < \frac{1 + (1 - 2^{-t})}{2} = 1 - 2^{-t-1}
+	c \cdot \underline{d} \le \frac{1 + (1 - 2^{-t})}{2} = 1 - 2^{-t-1}
 	\]
 	This means
 	\[
-	c \cdot \overline{d} - c \cdot \underline{d} > 1 + 2^{-t} - 1 + 2^{-t-1} = 3/2 \cdot 2^{-t}
+	c \cdot \overline{d} - c \cdot \underline{d} \ge 1 + 2^{-t} - 1 + 2^{-t-1} = 3/2 \cdot 2^{-t}
 	\]
 	But we also know
 	\[
 	c \cdot \overline{d} - c \cdot \underline{d} = c \cdot (\overline{d} - \underline{d}) = c \cdot 2^{-t}
 	\]
-	that yields the desired contradiction because $c \le 3/2$ and
+	that yields the desired contradiction because $c < 3/2$ and
 	\[
-	c \cdot 2^{-t} > 3 / 2 \cdot 2^{-t}
+	c \cdot 2^{-t} \ge 3 / 2 \cdot 2^{-t}
 	\]
-	To show the proof graphically, we marked on the number line $1$, the two floating point nearest to $1$ and the middle points of the two segments connecting these to $1$.
+	To show the proof graphically, we marked on the number line $1$, the two floating point nearest to $1$, the middle points of the two segments connecting these to $1$ and the two products $c \cdot \underline{d}$ and $c \cdot \overline{d}$.
 	\begin{center}
 	\begin{tikzpicture}
 		\tikzset{func/.style = {->,> = latex'}}
@@ -188,12 +206,18 @@ are approximated by the same floating-point number $1.001 \cdot 2^1$ (assuming t
 		% middle points
 		\draw (-1, 0.15) -- (-1, -0.15);
 		\draw (2, 0.15) -- (2, -0.15);
+
+		% c \cdot d^ and d_
+		\fill[red] (-1.2, 0) circle (2pt);
+		\node[label=above:$c \cdot \underline{d}$] at (-1.2, 0){};
+		\fill[red] (2.2, 0) circle (2pt);
+		\node[label=above:$c \cdot \overline{d}$] at (2.2, 0){};
 	\end{tikzpicture}
 	\end{center}
-	In order to have that $c \odot \overline{d} \ge 1 + 2^{1-t}$ we need the real result $c \cdot \overline{d}$ to to the right of the middle point of the segment. Analogously, to have $c \odot \underline{d}$ we need $c \cdot \underline{d}$ to be to the left of the other middle point. However, the distance between the two can't be more than that between the two middle points, that is exactly $3/2 \cdot 2^{-t} \le c \cdot 2^{-t}$, thus yielding the contradiction.
+	In order to have that $c \odot \overline{d} \ge 1 + 2^{1-t}$ we need the real result $c \cdot \overline{d}$ to the right of the middle point of the segment. Analogously, to have $c \odot \underline{d}$ we need $c \cdot \underline{d}$ to the left of the other middle point. However, the distance between the two can't be more than that between the two middle points, that is exactly $3/2 \cdot 2^{-t} \le c \cdot 2^{-t}$, thus yielding the contradiction.
 \end{proof}
 
-\begin{prop}
+\begin{prop}\label{appA:th:interval-number-elem}
 	If $t \ge 3$, given a floating point number $w$, the interval
 	\[
 	\left[ (1 - 2 \macheps) w, (1 + 2 \macheps) w \right]
@@ -205,5 +229,5 @@ are approximated by the same floating-point number $1.001 \cdot 2^1$ (assuming t
 	\[
 	2^{1-t} \cdot 2^{q-1} \le \macheps \cdot 2^{q-1} < \macheps \cdot c / 2 \cdot 2^{q} \cdot 2^{-1} = \frac{1}{4} w \cdot \macheps
 	\]
-	Since the length of the interval is $4\macheps \cdot w$ and two floating point in it are at least $\macheps \cdot w /4$ away, there are at most $17$ of them in it.
+	Since the length of the interval is $4\macheps \cdot w$ and two floating point in it have distance at least $\macheps \cdot w /4$, there are at most $17$ of them in it.
 \end{proof}

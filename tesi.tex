@@ -5,12 +5,13 @@
 \usepackage[inner=2cm,outer=2cm,top=3cm,bottom=3cm]{geometry}
 %\usepackage[inner=3cm,outer=3cm,twoside,top=3cm,bottom=3cm]{geometry}
 %\usepackage[inner=2cm,outer=3cm,twoside,top=3cm,bottom=3cm]{geometry}
-\usepackage[utf8]{inputenc}
+%\usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{mathtools}
 \usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{amsmath}
+\usepackage{thmtools}
 \usepackage[unicode]{hyperref}
 \usepackage{indentfirst}
 \usepackage{aliascnt}
@@ -18,11 +19,11 @@
 \usepackage{stmaryrd}
 \usepackage{subcaption}
 \usepackage{enumitem}
-
 \usepackage{tikz}
 \usetikzlibrary{positioning,arrows}
 \usepackage[style=alphabetic,sorting=ynt]{biblatex}
 \usepackage[toc]{appendix}
+%\usepackage[bottom]{footmisc}
 %\usepackage{booktabs}   for better tables (TODO)
 % ======================== Package for syntax highlight ===========================
 \usepackage{csquotes}
@@ -32,7 +33,7 @@
 
 \graphicspath{{images/}}
 \setlength{\parindent}{0.5cm}     % paragraph indentation
-\linespread{1.2}                % space between lines
+\linespread{1.15}                % space between lines
 \addbibresource{bibliography/tot.bib}
 \hypersetup{linktocpage}
 
@@ -44,6 +45,10 @@
 \newcommand{\setZ}{\mathbb{Z}}
 \newcommand{\svert}{\,\vert\,}
 \newcommand{\pow}{\mathcal{P}}
+\newcommand{\gc}[4]{\langle #1, (#2, #3), #4 \rangle}
+\newcommand{\ugc}[4]{\langle #1, (#2, #3), #4 \rangle}
+\newcommand{\ugi}[3]{\langle #1, (#2, \id_{#3}), #3 \rangle}
+% in the background chapter there is at least one occurence of over-approx GI
 \newcommand{\fix}{\text{fix}}
 \newcommand{\id}{\text{id}}
 \newcommand{\lfp}{\text{lfp}}
@@ -73,16 +78,8 @@
 \newtheorem{prop}[theorem]{Proposition}
 \providecommand*{\propautorefname}{Proposition}
 
-\theoremstyle{remark}
-\newtheorem{remark}[theorem]{Remark}
-\providecommand*{\remarkautorefname}{Remark}
-
-\newtheorem{example}[theorem]{Example}
-\providecommand*{\exampleautorefname}{Example}
-
-\theoremstyle{definition}
-\newtheorem{definition}[theorem]{Definition}
-\providecommand*{\definitionautorefname}{Definition}
+\declaretheorem[style=remark,qed=$\blacksquare$,sibling=theorem]{example}
+\declaretheorem[style=definition,sibling=theorem]{definition}
 
 \begin{document}
 	% macros (global)
@@ -95,6 +92,8 @@
 	\cleardoublepage
 
 	\input{front/abstract}
+	\newpage
+	\input{front/acknowledgments}
 
 	% table of contents
 	\tableofcontents

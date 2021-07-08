@@ -2,7 +2,7 @@
 \section{Abstract interpretation}
 Static program analyses are a useful set of techniques to infer properties of programs directly from their source code, without executing them. Recently they became part of the software development, and are used in major companies like Facebook \cite{distefano-static-analysis-fb} and Google \cite{static-analysis-google} to catch bugs before they reach production.
 
-Among those techniques, abstract interpretation \cite{cousot-77,cousot-79,cousot-92} (see chapter 4 of \cite{principles-of-program-analysis-book} for an introduction) is a general framework to define sound analyses based on constructive approximations that found its way through many aspects of modern Computer Science.
+Among those techniques, abstract interpretation \cite{cousot-77,cousot-79,cousot-92} (see chapter 4 of \cite{principles-of-program-analysis-book} for an introduction) is a general framework to define sound analyses based on constructive approximations that found its way through many aspects of modern computer science.
 The idea of abstract interpretation is to execute a program keeping track only of some properties that are valid of the current program state, abstracting from the complexity of concrete states. This introduces approximation errors, but make the analysis feasible. Differently from logic, the properties considered are fixed beforehand and define the \textit{abstract domain} of the analysis.
 
 \begin{example}[Intervals]\label{intr:ex:intervals}
@@ -32,7 +32,7 @@ Recently, O'Hearn \cite{ohearn-incorrectness-logic} advocated for a change of tr
 
 \section{Under-approximation abstract interpretation}
 In his paper, O'Hearn leaves as an open question whether abstract interpretation could ``eventually play a guiding and explanatory role for a wide range of static and dynamic under-approximate tools for bug catching, similar to what it already does for over-approximate analyses".
-In the works that first introduced abstract interpretation, the authors themselves hypothesized the possibility of using it for both over and under-approximation. However, there have been only sparse studies on it.
+In the works that first introduced abstract interpretation, the authors themselves considered the possibility of using it for both over and under-approximation. However, there have been only sparse studies on the latter.
 Bourdoncle \cite{bourdoncle-abs-debugging} proposed abstract debugging using over-approximation domains, but acknowledged that under-approximation ones are better suited.
 Lev-Ami et al. \cite{lev-backward-analysis-complement} propose to use complements of over-approximation domains to infer sufficient precondition.
 For the same goal, Miné \cite{mine-backward-underapprox-14} uses directly over-approximation domains, giving up the best abstraction and handling the choice of a minimal one with heuristics.
@@ -42,7 +42,7 @@ All these works design under-approximation domains starting from over-approximat
 
 \section{Overview}
 The second chapter lays out the background and the notation used in the thesis.
-In the third we present a comparison of over and under-approximation, investigating similarities and differences between the two. In particular we're interested in the role of basic transfer functions, the semantics of elementary constructs of the language, that in our opinion is fundamental since they are the main asymmetry between over and under-approximation.
-In the fourth we apply ideas from the previous chapter to the integer domain to show that, under some conditions, no under-approximation domain exists. To do this, we introduces the new definition of ``non emptying function", that describes the fact that such function doesn't tamper analysis, and show that no abstract domain makes all sums such.
+In the third we present a comparison of over and under-approximation, investigating similarities and differences between the two. In particular we're interested in the role of basic transfer functions, the semantics of elementary constructs of the language, that in our opinion are the main asymmetry between over and under-approximation.
+In the fourth we apply ideas from the previous chapter to integer domains to show that, under some conditions, no under-approximation domain exists. To do this, we introduces the new definition of ``non emptying function", that describes the fact that such function doesn't tamper analysis, and show that no abstract domain makes all sums such.
 In the fifth we try to generalize the result we obtained for integers to arbitrary concrete domains, obtaining conditions on the family of functions under which no abstract domain exists that makes them all non emptying. Then we study under which conditions there do exist abstract domains that make all functions in a certain family non emptying, effectively restricting applicability of approaches that uses this definition to show non existence of abstract domains.
 Lastly, the sixth chapter draws conclusions and propose some future research directions.
