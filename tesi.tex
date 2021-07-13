@@ -2,8 +2,7 @@
 \documentclass[12pt,a4paper]{book}
 
 % includes
-\usepackage[inner=2cm,outer=2cm,top=3cm,bottom=3cm]{geometry}
-%\usepackage[inner=3cm,outer=3cm,twoside,top=3cm,bottom=3cm]{geometry}
+\usepackage[inner=2.5cm,outer=2.5cm,top=3cm,bottom=3cm]{geometry}
 %\usepackage[inner=2cm,outer=3cm,twoside,top=3cm,bottom=3cm]{geometry}
 %\usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
@@ -24,10 +23,9 @@
 \usepackage[style=alphabetic,sorting=ynt]{biblatex}
 \usepackage[toc]{appendix}
 %\usepackage[bottom]{footmisc}
-%\usepackage{booktabs}   for better tables (TODO)
 % ======================== Package for syntax highlight ===========================
-\usepackage{csquotes}
 \usepackage{minted}
+\usepackage{csquotes}
 
 \usepackage{todonotes}
 
@@ -46,9 +44,9 @@
 \newcommand{\svert}{\,\vert\,}
 \newcommand{\pow}{\mathcal{P}}
 \newcommand{\gc}[4]{\langle #1, (#2, #3), #4 \rangle}
+\newcommand{\gi}[3]{\langle #1, (#2, \id_{#3}), #3 \rangle}
 \newcommand{\ugc}[4]{\langle #1, (#2, #3), #4 \rangle}
 \newcommand{\ugi}[3]{\langle #1, (#2, \id_{#3}), #3 \rangle}
-% in the background chapter there is at least one occurence of over-approx GI
 \newcommand{\fix}{\text{fix}}
 \newcommand{\id}{\text{id}}
 \newcommand{\lfp}{\text{lfp}}
@@ -92,16 +90,13 @@
 	\cleardoublepage
 
 	\input{front/abstract}
-	\newpage
+	\clearpage
 	\input{front/acknowledgments}
 
 	% table of contents
 	\tableofcontents
 
 	% chapters
-	\setcounter{page}{1}
-	\pagenumbering{arabic}
-
 	\input{chapters/introduction}
 	\input{chapters/background}
 
@@ -115,6 +110,6 @@
 		\input{chapters/appendixA}
 	\end{appendices}
 
-	\addcontentsline{toc}{chapter}{Bibliography}
 	\printbibliography
+	\addcontentsline{toc}{chapter}{Bibliography}
 \end{document}

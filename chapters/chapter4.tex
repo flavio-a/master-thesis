@@ -1,4 +1,4 @@
-\chapter{Arbitrary domains}
+\chapter{Arbitrary domains}\label{ch5:arbitrary-domains}
 In the previous chapter we focused on integer domains only. In this one, we would like to explore how much of the previous results can be generalized to arbitrary domains.
 
 In this chapter we assume a set $C$ of values and use as concrete domain $\pow(C)$. We also assume an under-approximation Galois insertion $\ugi{\pow(C)}{\alpha}{A}$, that is $\alpha \preceq \id_C$ and $A$ is closed by union (Propositions \ref{ch2:th:under-gc-extensive-charact} and \ref{ch2:th:under-gc-union-closure}.
@@ -59,7 +59,7 @@ If we consider and under-approximation non relational domain, we have to take in
 	}
 \end{figure}
 \begin{proof}
-	For the sake of simplicity, let us assume that the Galois connections $\ugc{\pow(C_x)}{\alpha_x}{\gamma_x}{A_x}$ for each variable $x$ are actually Galois insertions, and let us use the usual identification of $A_x$ and $\gamma(A_x) \subseteq \pow(C_x)$.
+	For simplicity, let us assume that all Galois connections $\ugc{\pow(C_x)}{\alpha_x}{\gamma_x}{A_x}$ for each variable $x$ are actually Galois insertions, and let us use the usual identification of $A_x$ and $\gamma(A_x) \subseteq \pow(C_x)$.
 	Moreover, let us assume that $\text{Vars}$ only contains two variables; the proof generalizes straightforwardly to an arbitrary set of variables, but it clutters notation a lot.
 
 	By way of contradiction, suppose that for both variables $y$ and $z$ domains $A_y$ and $A_z$ contains more than one element other than $\bot$: let $S_y, S'_y \in A_y$ and $S_z, S'_z \in A_z$.

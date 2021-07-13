@@ -1,11 +1,11 @@
-\chapter{Background}
+\chapter{Background}\label{ch2:background}
 This chapter gives background concepts and notation used in the rest of the thesis.
 
 \section{Partially ordered sets}
 This section recalls basic notions of order theory upon which (much of) the abstract interpretation framework is based. For a more comprehensive introduction to order theory, we refer the reader to a text book, such as for instance \cite{order-theory-book} or appendix A of \cite{principles-of-program-analysis-book}.
 
 \begin{definition}[Partial order]
-	Given a set $S$, a partial order $\preceq$ on $S$ is a relation on it that, for all $a$, $b$ and $c$ in $S$, satisfies
+	Given a set $S$, a partial order $\preceq$ on $S$ is a binary relation that, for all $a$, $b$ and $c$ in $S$, satisfies
 	\begin{itemize}
 		\labelitem{reflexivity} $a \preceq a$
 		\labelitem{antisymmetry} if both $a \preceq b$ and $b \preceq a$ then $a = b$
@@ -76,8 +76,8 @@ The main mathematical tool we use to study abstract interpretations are Galois c
 \end{definition}
 For our goals, we will call $C$ the \textit{concrete domain}, $A$ the \textit{abstract domain}, $\alpha$ the \textit{abstraction function} and $\gamma$ the \textit{concretization function}. The two functions $\alpha$ and $\gamma$ are also called \textit{adjoints}\footnote{The term ``adjoint" comes from Category Theory, since Galois connections are adjunctions between the two posets seen as categories. However such a discussion is outside the scope of this thesis.}.
 
-In program analysis we give the following intuitive meaning to those. $C$ is the domain of concrete states, $A$ the set of abstract properties we're interested in. Partial orders on $C$ and $A$ represent a relation of ``more precise than": if $a \preceq a'$ for two abstract elements $a, a' \in A$, then the meaning is that property $a$ describes less states than $a'$ (it is stronger or \textit{more precise}). In logical terms, $a \Rightarrow a'$. This is less intuitive on the concrete domain $C$, but in case it's a power set and the ordering is set inclusion a ``more precise" concrete element is just a subset, that actually describes less individual values. With this interpretation, we can say that if an abstract point $a$ correctly describes the concrete $c$ and $a'$ is above $a$ (ie. $a \preceq a'$), then also $a'$ correctly describes $c$, even though it's less precise than $a$.
-With this meaning for partial orders, $\alpha$ is the function that maps a concrete state in the most precise (ie. strongest or minimal) abstract property that describes it and $\gamma$ a function that maps an abstract property in the biggest (weakest or maximal) concrete state it describes. Since $\alpha(c)$ is the best (smallest) abstract property describing $c$ we have that a generic $a$ correctly describes $c$ if and only if $\alpha(c) \preceq a$. Dually, if $\gamma(a)$ is the biggest concrete element described by $a$ we have that $a$ correctly describes a generic $c$ if and only if $c \preceq \gamma(a)$. The Galois connection relation requires exactly these two conditions to be equivalent, as naturally arise when we derive them this way.
+In program analysis we give the following intuitive meaning to those. $C$ is the powerset of the domain of concrete states, $A$ the set of abstract properties we're interested in. Partial orders on $C$ and $A$ represent a relation of ``more precise than": if $a \preceq a'$ for two abstract elements $a, a' \in A$, then the meaning is that property $a$ describes less states than $a'$ (it is stronger or \textit{more precise}). In logical terms, $a \Rightarrow a'$. Analogously, since $C$ is a powerset and the ordering is set inclusion, a more precise concrete element is just a subset, that describes less individual values. With this interpretation, we can say that if an abstract point $a$ correctly describes the concrete $c$ and $a'$ is above $a$ (ie. $a \preceq a'$), then also $a'$ correctly describes $c$, even though it's less precise than $a$.
+With this meaning for partial orders, $\alpha$ is the function that maps a concrete state in the most precise (ie. strongest or minimal) abstract property that describes it and $\gamma$ a function that maps an abstract property in the largest (weakest or maximal) concrete state it describes. Since $\alpha(c)$ is the best (smallest) abstract property describing $c$ we have that a generic $a$ correctly describes $c$ if and only if $\alpha(c) \preceq a$. Dually, if $\gamma(a)$ is the largest concrete element described by $a$ we have that $a$ correctly describes a generic $c$ if and only if $c \preceq \gamma(a)$. The Galois connection relation requires exactly these two conditions to be equivalent, as naturally arise when we derive them this way.
 
 \begin{figure}[ht]
 	\centering
@@ -105,12 +105,12 @@ With this meaning for partial orders, $\alpha$ is the function that maps a concr
 	\label{ch2:fig:gc-sketch}
 \end{figure}
 Figure \ref{ch2:fig:gc-sketch} sketches a Galois connection: the lower adjoint $\alpha$ is bent down, and the upper adjoint $\gamma$ is bent up.
-In Figure \ref{ch2:fig:gc-sketch:relation} is represented the relation required by the Galois connection. Figure \ref{ch2:fig:gc-sketch:gamma-alpha-c} shows what happens when abstracting and then concretizing back and element (formalized in Proposition \ref{ch2:th:gc-extensive-charact}): the result is above the initial concrete element. This represent over-approximation: the biggest set described by the property $\alpha(c)$ must contains at least the whole $c$, because it's over-approximating it.
+Figure \ref{ch2:fig:gc-sketch:relation} represents the relation required by the Galois connection. Figure \ref{ch2:fig:gc-sketch:gamma-alpha-c} shows what happens when abstracting and then concretizing back and element (formalized in Proposition \ref{ch2:th:gc-extensive-charact}): the result is above the initial concrete element. This represent over-approximation: the biggest set described by the property $\alpha(c)$ must contains at least the whole $c$, because it's over-approximating it.
 
 To give an intuition of the role of Galois connections in program analysis, we present the following example.
 \begin{example}[Intervals]\label{ch2:ex:intervals}
-	We can now formalize the intuitive Example \ref{intr:ex:intervals} of intervals we introduced in the introduction.
-	$C$ is the set of possible values of a variable, for instance \code{i}. Since this is an integer value, elements of $C$ are subsets of $\setZ$, so $C = \pow(\setZ)$, with the ordering given by set inclusion. $A$ is the set of abstract properties we track in our analysis, so in our example the set of interval to which \code{i} may belongs. This means
+	We can now formalize the intuitive Example \ref{intr:ex:intervals} of intervals from the Introduction.
+	$C$ is the set of possible values of a variable, for instance \code{i}. Since this is an integer value, elements of $C$ are subsets of $\setZ$, so $C = \pow(\setZ)$, with the ordering given by set inclusion. $A$ is the set of abstract properties we track in our analysis, so in our example the set of intervals to which \code{i} may belong. This means
 	\[
 	A = \Int = \{ [n, m] \svert n \in \setZ \cup \{ -\infty \}, m \in \setZ \cup \{ +\infty \}, n \le m \} \cup \{ [+\infty, -\infty] \}
 	\]
@@ -124,7 +124,7 @@ To give an intuition of the role of Galois connections in program analysis, we p
 	\[
 	\gamma([n, m]) = \{ x \in \setZ \svert n \le x \le m \}
 	\]
-	The set $\{ x \in \setZ \svert n \le x \le m \}$ is exactly what is commonly represented with $[n; m]$: $\gamma$ is simply translating the formal writing (or, in our context, an abstract property) to a semantics set of values.
+	The set $\{ x \in \setZ \svert n \le x \le m \}$ is exactly what is commonly represented with $[n; m]$: $\gamma$ is simply translating the formal writing (or, in our context, an abstract property) to a semantic set of values.
 
 	The above definition of $\gamma$ is incomplete, missing cases for infinite ends:
 	\begin{align*}
@@ -192,7 +192,7 @@ The one proposed above isn't the standard definition of Galois insertion: more c
 
 The interval domain presented above is an example of Galois insertion: since we required $n \le m$ in $[n, m]$, no two intervals describe the same concrete set, and hence $\gamma$ is injective. However not all Galois connections are insertions: as we've seen, composing two independent interval domains gives rise to a Galois connection that isn't an insertion.
 
-In a Galois insertion, since $\gamma$ is injective, we have a bijection between $A$ and $\gamma(A)$. By the definition of Galois insertion we have $\alpha \circ \gamma = \id_A$, hence $\alpha$ is the inverse of $\gamma$ when restricted to $\gamma(A)$. Since both functions are monotone this defines an isomorphism of poset between $A$ and $\gamma(A) \subseteq C$.
+In a Galois insertion, since $\gamma$ is injective, we have a bijection between $A$ and $\gamma(A)$. By the definition of Galois insertion we have $\alpha \circ \gamma = \id_A$, hence $\alpha$ is the inverse of $\gamma$ when restricted to $\gamma(A)$. Since both functions are monotone this defines an isomorphism of posets between $A$ and $\gamma(A) \subseteq C$.
 
 Using this isomorphism, whenever we consider a Galois insertion we identify $A$ and its image, so that $A$ becomes a subset of $C$ and $\gamma = \id_A$. In this case, by Proposition \ref{ch2:th:gc-extensive-charact} we have $\id_C \preceq \gamma \circ \alpha = \alpha$, corresponding to the intuitive idea that $\alpha$ must abstract a set of states in something bigger in order to over-approximate it.
 
@@ -209,7 +209,7 @@ Lastly, we recall a constructive way to define a Galois insertion.
 	\[
 	\alpha(x) = \bigsqcap \{ a \in \bar{A} \svert x \preceq a \}
 	\]
-	Then $\gc{C}{\alpha}{\id_{\bar{A}}}{\bar{A}}$ is a Galois insertion.
+	Then $\gi{C}{\alpha}{\bar{A}}$ is a Galois insertion.
 \end{prop}
 
 \section{Under-approximation Galois connections}
@@ -249,7 +249,7 @@ This definition is the same as that of Galois connection (\ref{ch2:def:gc}) exce
 	\label{ch2:fig:ugc-sketch}
 \end{figure}
 
-Figure \ref{ch2:fig:ugc-sketch} shows an under-approximation Galois connection: $\alpha$, that in this case in the upper adjoint, is bent up and $\gamma$ is bent down. Figure \ref{ch2:fig:ugc-sketch:relation} sketches the relation required, dual to that of normal Galois connections, and in Figure \ref{ch2:fig:ugc-sketch:gamma-alpha-c} is shown what happens when abstracting and then concretizing back an element: the result her is below the initial concrete element, meaning under-approximation.
+Figure \ref{ch2:fig:ugc-sketch} shows an under-approximation Galois connection: $\alpha$, that in this case in the upper adjoint, is bent up and $\gamma$ is bent down. Figure \ref{ch2:fig:ugc-sketch:relation} sketches the relation required, dual to that of normal Galois connections, and Figure \ref{ch2:fig:ugc-sketch:gamma-alpha-c} shows what happens when abstracting and then concretizing back an element: the result her is below the initial concrete element, meaning under-approximation.
 \begin{example}\label{ch2:ex:intervals-0}
 	Consider the following example of under-approximation Galois insertion (we haven't given its definition yet, but we're confident the reader can anticipate it): the concrete domain is $\pow(\setZ)$, while the abstract domain is the set of all intervals (see Example \ref{ch2:ex:intervals}) containing $0$, plus the empty interval:
 	\[
@@ -274,7 +274,7 @@ Figure \ref{ch2:fig:ugc-sketch} shows an under-approximation Galois connection: 
 
 	For simplicity we neglected the case where the interval is $\bot$ and assumed both $n, m$ are non negative integers, but those cases are analogous to the one presented.
 \end{example}
-With this definition, we could easily prove results analogous to Propositions \ref{ch2:th:gc-extensive-charact}, \ref{ch2:th:gc-adjoints-preserve-glb-lub} and give an analogous definition of under-approximation Galois insertion.
+With this definition, we could easily prove results analogous to Propositions \ref{ch2:th:gc-extensive-charact} and \ref{ch2:th:gc-adjoints-preserve-glb-lub} and give an analogous definition of under-approximation Galois insertion.
 Instead of doing this explicitly, we just observe that an under-approximation Galois connection $\ugc{C}{\alpha}{\gamma}{A}$ is just a Galois connection between opposite domain $\gc{C^{\op}}{\alpha}{\gamma}{A^\op}$ to get those propositions just reversing inequalities:
 \begin{prop}\label{ch2:th:under-gc-extensive-charact}
 	Let $C$ and $A$ be two partially ordered sets, and $\alpha : C \rightarrow A$, $\gamma : A \rightarrow C$ be a pair of monotone functions between the two.
@@ -295,7 +295,7 @@ This second proposition has an interesting corollary for under-approximation Gal
 	\]
 \end{corollary}
 
-This corollary states that $A$ is closed under union: if we consider an under-approximation Galois insertion, where $\gamma = \id_A$, then for any pair of sets $S, S' \subseteq C$ that are in $A$ (ie. they are abstract properties) we have that also $S \cup S' \in A$.
+This corollary states that $A$ is closed under union: in an under-approximation Galois insertion, where $\gamma = \id_A$, for any pair of sets $S, S' \subseteq C$ that are in $A$ (ie. they are abstract properties) we have that also $S \cup S' \in A$.
 
 We can also get an under-approximation version of Proposition \ref{ch2:th:gi-moore-family} to define a Galois insertion from an opposite Moore family:
 \begin{prop}\label{ch2:th:under-gi-moore-family}
@@ -330,7 +330,7 @@ We can also get an under-approximation version of Proposition \ref{ch2:th:gi-moo
 \section{Abstracting functions}
 Only defining abstract domains is useless because we want to analyse \textit{programs}, dynamic entities that change the state. Hence the need for a way to abstract functions, used to represent the semantics of programs.
 
-Given a monotone function $f : C \rightarrow C$ on the concrete domain, we want a way to approximate its behaviour in abstract. In over approximation, we want to make sure the abstract version outputs at least an over-approximation of the concrete one to ensure soundness.
+Given a monotone function $f : C \rightarrow C$ on the concrete domain, we want a way to approximate its behaviour in the abstract. In over approximation, we want to make sure the abstract version outputs at least an over-approximation of the concrete one to ensure soundness.
 \begin{definition}[Correct abstraction]
 	A monotone function $f^{\sharp} : A \rightarrow A$ on the abstract domain is called a \textit{correct abstraction} of $f$ if
 	\[
@@ -342,7 +342,7 @@ Given a monotone function $f : C \rightarrow C$ on the concrete domain, we want 
 	\]
 	is called the best abstraction of $f$.
 \end{definition}
-The best abstraction takes it names from the fact that it's lower than all other correct abstractions of $f$. Intuitively, the best we can do to abstract a function $f$ is first to concretize the input in the optimal way with $\gamma$, then compute the concrete $f$ on it and lastly abstract again the result with $\alpha$.
+The best abstraction takes it names from the fact that it's lower than all other correct abstractions of $f$. Intuitively, the best we can do to soundly abstract a function $f$ is first to concretize the input in the optimal way with $\gamma$, then compute the concrete $f$ on it and lastly abstract again the result with $\alpha$.
 \begin{example}
 	Going back to the Example \ref{ch2:ex:intervals} of intervals, consider the program fragment
 \begin{minted}{C}
@@ -358,7 +358,7 @@ if (x < 0) {
 	\[
 	f^{\sharp}([n, m]) = [0, \max(\abs{n}, \abs{m})]
 	\]
-	because the interval $[0, \max(\abs{n}, \abs{m})]$ always contains the entire set $f(S)$ when $n = \min(S)$ and $m = \max(S)$. However this is not the best possible abstraction: for instance on $S = \{ 1 \}$ this yields $[0, 1]$ while $f(S) = \{ 1 \}$. Actually this is computed as
+	because the interval $[0, \max(\abs{n}, \abs{m})]$ always contains the entire set $f(S)$ when $n = \min(S)$ and $m = \max(S)$. However this is not the best possible abstraction: for instance on $S = \{ 1 \}$ this yields $[0, 1]$ while $f(S) = \{ 1 \}$. Actually the best correct abstraction $f^{\alpha}$ is computed as
 	\[
 	f^{\alpha}([n, m]) = \alpha \circ f \circ \gamma([n, m]) = \begin{cases*}
 		[0, \max(\abs{n}, \abs{m})] &if $n \le 0 \le m$ \\
@@ -368,48 +368,6 @@ if (x < 0) {
 	\]
 \end{example}
 In this example, we computed the semantics of the whole program fragment and then we proceeded to abstract it. However this process is not what happens in practice because, if we knew the concrete semantics of the program we wouldn't really need the abstraction. An analyser would instead know abstractions of basic transfer functions, the semantics of basic construct of the language, and compose them in order to get a \textit{correct} approximation, but with no guarantee to get the \textit{best} abstraction. In this thesis we won't concern ourselves with this issue because we focus on basic transfer functions; however the reason we're allowed to do so is exactly that those are the basic building blocks used to define the abstract semantics of complex programs.
-%\begin{example}
-%	Considering again the same program fragment of the previous example, we have that the semantics of the guard \code{x < 0} is
-%	\[
-%	f(S) = \{ x \svert x \in S, x < 0 \}
-%	\]
-%	and the semantics of \code{x = -x} is
-%	\[
-%	g(S) = \{ -x \svert x \in S \}
-%	\]
-%	The implicit else branch of the conditional does nothing, so it's semantics is the identity.
-%	The best abstractions of these three functions are
-%	\begin{align*}
-%		f^{\alpha}([n, m]) &= \begin{cases*}
-%			[n, 0] &if $n \le 0 \le m$ \\
-%			\bot &if $0 < n$ \\
-%			[n, m] &if $m < 0$ \\
-%		\end{cases*} \\
-%		\bar{f}^{\alpha}([n, m]) &= \begin{cases*}
-%			[0, m] &if $n \le 0 \le m$ \\
-%			[n, m] &if $0 < n$ \\
-%			\bot &if $m < 0$ \\
-%		\end{cases*} \\
-%		g^{\alpha}([n, m]) &= [-m, -n] \\
-%		\id_C^{\alpha} &= \id_A \\
-%	\end{align*}
-%	The concrete semantic of the conditional is obtained as
-%	\[
-%	\lambda S. g(f(S)) \cup \id_C(\bar{f}(S))
-%	\]
-%	and correspondingly one of its correct abstractions is
-%	\[
-%	\lambda [n, m]. g^{\alpha}(f^{\alpha}([n, m])) \sqcup \id_A(\bar{f}^{\alpha}([n, m]))
-%	\]
-%	that can be reduced to
-%	\[
-%	\lambda [n, m]. \begin{cases*}
-%		[0, -n] \sqcup [0, m] = [0, \max(\abs{n}, \abs{m})] &if $n \le 0 \le m$ \\
-%		\bot \sqcup [n, m] = [n, m] &if $0 < n$ \\
-%		[-m, -n] \sqcup \bot = [-m, -n] &if $m < 0$ \\
-%	\end{cases*}
-%	\]
-%\end{example}
 
 \begin{example}
 	Consider for instance
@@ -425,9 +383,9 @@ In this example, we computed the semantics of the whole program fragment and the
 		[0, 1] &otherwise
 	\end{cases*}
 	\]
-	and this introduces an error: for instance on $S = \{ 1, 3 \}$ we have
+	and this introduces a precision loss: for instance on $S = \{ 1, 3 \}$ we have
 	\[
-	[1, 1] = \alpha(f(S)) \prec f^{\sharp}(\alpha(S)) = f^{\sharp}([1, 3]) = [0, 1]
+	[1, 1] = \alpha(f(S)) \prec f^{\alpha}(\alpha(S)) = f^{\alpha}([1, 3]) = [0, 1]
 	\]
 \end{example}
 
@@ -444,7 +402,7 @@ In under-approximation, the definition of correct abstraction simply reverse ine
 	since it's always the case that $n \le 0 \le m$.
 \end{example}
 
-An important remark is that, with a Galois insertions (both over and under-approximation), we have
+It is important to remark that, both in over and under-approximation, with Galois insertions we have
 \[
 f^{\alpha} = \alpha \circ f \circ \gamma = \alpha \circ f \circ \id_A
 \]
