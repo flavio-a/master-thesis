@@ -27,11 +27,11 @@
 \usepackage{minted}
 \usepackage{csquotes}
 
-\usepackage{todonotes}
+%\usepackage{todonotes}
 
 \graphicspath{{images/}}
 \setlength{\parindent}{0.5cm}     % paragraph indentation
-\linespread{1.15}                % space between lines
+\linespread{1.15}                 % space between lines
 \addbibresource{bibliography/tot.bib}
 \hypersetup{linktocpage}
 
@@ -78,6 +78,7 @@
 
 \declaretheorem[style=remark,qed=$\blacksquare$,sibling=theorem]{example}
 \declaretheorem[style=definition,sibling=theorem]{definition}
+\declaretheorem[style=plain,numbered=no]{assumption}
 
 \begin{document}
 	% macros (global)

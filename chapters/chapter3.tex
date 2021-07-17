@@ -2,27 +2,26 @@
 In this chapter we focus on the domain of integers, and try to determine sufficient conditions for the non existence of under-approximation abstract domains.
 
 \section{Sum completeness}
-The concept of complete abstraction (Definition \ref{ch2:def:complete-abstr}) for a function is very important in over-approximation abstract interpretation because it correspond to analyses without false alarms. In general it's very hard that all the basic transfer functions of a program are complete, and in particular boolean guards are almost never so. However, it's not uncommon that \textit{some} of them are complete: for instance, in the interval domain sum is a complete operation.
+The concept of complete abstraction (Definition \ref{ch2:def:complete-abstr}) for a function is very important in over-approximation abstract interpretation because it correspond to analyses without false alarms. In general it's really rare that all the basic transfer functions of a program are complete, with boolean guards almost never being such. However, it's not uncommon that \textit{some} of them are complete: for instance, in the interval domain sum and multiplication by a constant are complete operations.
 
 In under-approximation, completeness is much harder to achieve: the reason is the fact that complete abstractions allow to ``distribute" $\alpha$ over the operation, so having even a single set that is abstracted to $\bot$ forces, by strictness of concrete operations, all concrete sets that can be obtained applying the operation to that specific set to be $\bot$ as well. This idea is more easily seen in the proof of the following proposition.
 \begin{prop}\label{ch3:th:sum-complete-trivial}
-	Let $\ugi{\pow(\setZ)}{\alpha}{A}$ be an under-approximating Galois insertion. If $A$ is complete for the concrete sum then it's trivial.
+	Let $\ugi{\pow(\setZ)}{\alpha}{A}$ be an under-approximating Galois insertion. If $A$ is complete for the concrete sum\footnote{In this proposition we're considering as usual the additive extension of $+$.} then it's trivial.
 \end{prop}
-In this proposition we're considering as usual the additive extension of $+$. An under-approximation abstract domain $A$ is said to be trivial if it is the concrete domain or it only contains $\bot$.
 \begin{proof}
 	Let $+^{\flat}$ be the complete abstraction of $+$.
-	Let us distinguish two cases.
+	Since all sound under-approximations for a singleton set are $\emptyset$ and the singleton itself, we can distinguish two cases.
 
 	If all singletons $\{ n \}$ are representable in $A$ then, by union closure (Proposition \ref{ch2:th:under-gc-union-closure}) we get that any $S \in \pow(\setZ)$ is also in $A$ since it's union of singletons. This in turn entails $A = \pow(\setZ)$, that is trivial.
 
 	Otherwise, there exists an integer $\bar{n}$ such that $\alpha(\{ \bar{n} \}) = \emptyset$. Consider then an arbitrary set of integers $S \subseteq \setZ$.
 	\begin{align*}
-		\alpha(S) &= \alpha(S - \{ \bar{n} \} + \{ \bar{n} \} ) \\
-		&= \alpha(S - \{ \bar{n} \}) +^{\flat} \alpha(\{ \bar{n} \}) \\
-		&= \alpha(S - \{ \bar{n} \}) +^{\flat} \emptyset \\
-		&\subseteq \alpha(S - \{ \bar{n} \}) + \emptyset = \emptyset
+		\alpha(S) &= \alpha(S - \{ \bar{n} \} + \{ \bar{n} \} )      &&[\text{concrete operation}] \\
+		&= \alpha(S - \{ \bar{n} \}) +^{\flat} \alpha(\{ \bar{n} \}) &&[\text{completeness of }+^{\flat}] \\
+		&= \alpha(S - \{ \bar{n} \}) +^{\flat} \emptyset             &&[\alpha(\{ \bar{n} \}) = \emptyset] \\
+		&\subseteq \alpha(S - \{ \bar{n} \}) + \emptyset = \emptyset &&[\text{correctness of }+^{\flat}]
 	\end{align*}
-	where the second line follows by completeness of $+^{\flat}$ and the last by its correctness. This means that any set $S$ is abstracted to $\emptyset$, so $A = \{ \emptyset \}$.
+	This means that any set $S$ is abstracted to $\emptyset$, so $A = \{ \emptyset \}$.
 \end{proof}
 
 In our opinion, the reason this doesn't happen in over-approximation is an instance of the asymmetry born of basic transfer functions. As we introduced in the previous chapter, many operations, defined as the additive extension of basic constructs, increase the output cardinality. For instance, the sum of two sets of integers have a cardinality that is at least the largest of the two inputs. This asymmetry allows to get many subsets of the concrete domain as the result of applying the function to a small set (for instance a singleton) but not to a big one.
@@ -30,7 +29,7 @@ Then in under-approximation small sets can be composed by union to make the abst
 
 Of course in general completeness is a very strong property to require, so in the next section we'll introduce a weaker notion and show that it is enough to prevent the existence of under-approximation abstract domains.
 
-\section{Non emptyingness}
+\section{Non emptying-ness}
 Completeness is a concept tailored to over-approximation: we use it to avoid false alarms while over-approximating the set of possible values. In bug catching, an alternative, weaker definition may be enough
 \begin{definition}[Non emptying]\label{ch3:def:non-emptying}
 	Let $\ugc{C}{\alpha}{\gamma}{A}$ be an under-approximation Galois connection, $f : C \rightarrow C$ a monotone function on $C$ and $f^{\flat} = \alpha \circ f \circ \gamma$ its best correct approximation in $A$.
@@ -40,9 +39,9 @@ Completeness is a concept tailored to over-approximation: we use it to avoid fal
 Unlike completeness, this definition doesn't mean that the analysis will find the best possible result the abstraction can, but just that if it starts from something ($\alpha(c) \neq \bot$) and it can find something ($\alpha(f(c)) \neq \bot$) then it will find at least one of the possible results ($f^{\flat}(\alpha(c)) \neq \bot$).
 The rationale behind it is that the analysis shouldn't get to $\bot$ because, as stated in the previous chapter, recovery from it is hard. The definition exactly prevents this when it's caused only by imprecision of the abstracted function.
 
-Clearly completeness implies non emptyingness since $f^{\flat}(\alpha(c)) = \alpha(f(c)) \neq \bot$, but the converse is not true, as shown in the following example.
+Clearly completeness implies non emptying-ness since $f^{\flat}(\alpha(c)) = \alpha(f(c)) \neq \bot$, but the converse is not true, as shown in the following example.
 \begin{example}\label{ch3:ex:ne-not-complete}
-	Consider the under-approximation domain $\Int_0$ of intervals containing $0$ (Example \ref{ch2:ex:intervals-0}). Do note that in this example we write intervals to denote subsets of $\setZ$, following the identification given by the Galois insertion, as well as use both $\bot$ and $\emptyset$ to refer to the same object (the empty subset of $\setZ$).
+	Consider the under-approximation domain $\Int_0$ of intervals containing $0$ (Example \ref{ch2:ex:intervals-0}). Note that in this example we write intervals to denote subsets of $\setZ$, following the identification given by the Galois insertion, as well as use both $\bot$ and $\emptyset$ to refer to the same object (the empty subset of $\setZ$).
 
 	Consider the additive extension of the function $f(x) = x + 1$. This function is not complete in the abstract domain since, for instance on the concrete element $S = \{ -1 \}$, we have
 	\begin{align*}
@@ -124,7 +123,11 @@ The goal of this lemma is to use non emptying functions to get new representable
 We now apply this definition on integer domains in two different situations, on the infinite domain $\pow(\setZ)$ and on the finite $\pow([-N; N])$ of machine integers.
 
 \subsection{Infinite domain}
-In this subsection we focus on the infinite concrete domain $\pow(\setZ)$. We assume that an abstract domain $A$, to be feasible for analyses, must be at most countable, that is the same size as $\setZ$. We do this assumption because we want to represent abstract elements with an amount of bits comparable with that of concrete \textit{values}, to have a complexity comparable with a single concrete execution of the program and not exponentially greater.
+In this subsection we focus on the infinite concrete domain $\pow(\setZ)$.
+\begin{assumption}
+	We assume that an abstract domain $A$, to be feasible for analyses, must be at most countable.
+\end{assumption}
+We do this assumption because we want to represent abstract elements with an amount of bits comparable with that of concrete \textit{values}, to have a complexity comparable with a single concrete execution of the program and not exponentially greater. Thus, we require the size of the abstract domain to be that of $\setZ$, the set of values handled by the program, and not the concrete domain $\pow(\setZ)$.
 
 We first present a simple cardinality estimate that will be useful in the proof of the following result. The goal of this lemma is to show that some sets must be ``small" (in some sense, in this case finite), so we can find a contradiction showing that one of these sets is actually ``big". We follow this line of reasoning in almost all of our proofs of non existence of abstract domain with some properties.
 
@@ -173,7 +176,10 @@ We believe the assumption that there exists an initial representable value is no
 
 \subsection{Finite domain}
 Now we move to a slightly different setting: we assume as concrete domain $\pow([-N, N])$, the power set of a finite, symmetric interval for some large integer value $N$, and we assume all operations are performed ``in machine arithmetic", that is whenever the result is greater than $N$ it wraps back to $-N$ because of overflows. This correspond to work modulo $2N + 1$ taking the unique representative of each congruence class in the interval $[-N, N]$ of interest.
-Again, we make an assumption on the size of the abstract domain for the analysis to be feasible: we require the size of $A$ to be polynomial in $N$. This means the number of bits required to represent an abstract element is linear in that for concrete elements.
+\begin{assumption}
+	We assume that an abstract domain $A$, to be feasible, must have cardinality polynomial in $N$.
+\end{assumption}
+This assumption guarantees that the number of bits required to represent an abstract element is linear in that for concrete elements.
 
 In this section we'll use asymptotic notation for some quantities. For this to be completely formal we should define a sequence of abstract domain $A_N$, each one for the concrete domain $\pow([-N, N])$, then define a sequence of values for each quantity we want to estimate, and take the limit of this sequence for $N$ going to infinity. However we do believe all these formal details would clutter both statements and proofs, making hard to get insight. For this reason, we avoid all this, just (ab)using the intuitive meaning associated with the notation.
 
@@ -213,3 +219,10 @@ The following proposition uses the same proof line as Proposition \ref{ch3:th:ne
 	\frac{N}{\log(N)} = \omega( \log(N) )
 	\]
 \end{proof}
+
+\subsection{Consequences}
+The previous two Propositions \ref{ch3:th:ne-sum-nonexsistence-inf} and \ref{ch3:th:ne-sum-nonexsistence-fin} show how requiring some functions to be non emptying prevents the existence of under-approximation abstract domains. We considered sums, some of the most common basic transfer functions over integers, and proved that no abstract domain small enough makes them all non-emptying, both for the infinite domain of all integers $\setZ$ and for a finite, machine representable subset $[-N; N]$.
+
+We presented the notion of non-emptying function motivated by observations of Chapter \ref{ch3:comparison}. We can define correct under-approximation domains, for instance by taking complements of known over-approximation ones (see Example \ref{ch2-5:ex:complement-intervals}), but the point is that these are not useful for real analyses. Requiring a domain to be non-emptying for some basic transfer functions is an attempt to force that usefulness, and we showed no domain satisfies this condition for integers.
+
+Of course this is not definitive evidence, since there may exist practical domains that doesn't make all sums non-emptying, or big domains (that is, not satisfying the assumption of having cardinality comparable with the set of values and not its power set) that can be represented efficiently, but we believe this to be nevertheless an interesting clue about the difficulty of designing under-approximation abstract domains.

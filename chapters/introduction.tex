@@ -20,7 +20,7 @@ for (int i = 0; i <= 5; ++i) {
 }
 	\end{minted}
 	could be analysed to determine that within the loop the variable \code{i} belongs to the interval $[0, 5]$. From this, after the assignment \code{j = i * 2} the analyser can derive that \code{j} belongs to $[0, 5] * 2 = [0, 10]$, and so that the array access to \code{a} may happen out of bounds.
-	Do note that the interval $[0, 5]$ to which \code{i} belongs is exact, that is the variable actually has all the possible values during the loop, while $[0, 10]$ for \code{j} is not: it will never be the case that \code{j} is $3$.
+	Note that the interval $[0, 5]$ to which \code{i} belongs is exact, that is the variable actually has all the possible values during the loop, while $[0, 10]$ for \code{j} is not: it will never be the case that \code{j} is $3$.
 \end{example}
 
 Abstract interpretation's generality allows it to be used within a broad variety of topics in computer science, for instance program transformations and security. We refer the reader to \cite{cousot-absint-survey} for a survey of applications.

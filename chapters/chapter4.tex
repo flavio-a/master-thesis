@@ -17,12 +17,12 @@ An important notion for abstract domains is that of being or not relational. Int
 \end{example}
 There exists extensions of the intervals domain that are relational, for instance octagons \cite{mine-octagons} and polyhedrons \cite{cousot-polyhedrons}. In general, non relational domains are less precise but also computationally less expensive.
 
-The concept of non relational domain is frequently referred to in the literature, but not so often formalized. We stick to a slight variation of the one proposed in \cite{giacobazzi-analyzing-analyses}, section $5.2$.
-Given a set of variables $\text{Vars}$ and, for each one of these variables $x$, a concrete domain $C_x$, a concrete domain for the set of variables is the power set of
+The concept of non relational domain is frequently referred to in the literature, but not so often formalized. We stick to a slight variation of the one proposed in \cite{giacobazzi-analyzing-analyses}, Section $5.2$.
+Given a finite set of variables $\text{Vars}$ and, for each one of these variables $x$, a concrete domain $C_x$, a concrete domain for the set of variables is the power set of
 \[
 C = \prod\limits_{x \in \text{Vars}} C_x
 \]
-An element of the cartesian product $C$ is a function that maps each variable $x$ into a value in its domain $C_x$ (a tuple of elements, one for each variable $x$ and taken from $C_x$), so it's exactly one of the possible states a program that operates on the set of variables $\text{Vars}$ can be in. The power set of that product is hence a concrete domain whose elements are set of possible states of such a program.
+An element of the Cartesian product $C$ is a ``store", a function that maps each variable $x$ into a value in its domain $C_x$ (a tuple of elements, one for each variable $x$ and taken from $C_x$), so it's exactly one of the possible states a program that operates on the set of variables $\text{Vars}$ can be in. The power set of that product is hence a concrete domain whose elements are set of possible states of such a program.
 
 \begin{definition}[Non relational domain]
 	An abstract domain $A$ for the concrete domain $\pow(C)$ is \textit{non relational} if it can be decomposed as
@@ -32,15 +32,15 @@ An element of the cartesian product $C$ is a function that maps each variable $x
 	that is a product of one abstract domain for each variable, where for each variable $x$ there is a Galois connection $\gc{\pow(C_x)}{\alpha_x}{\gamma_x}{A_x}$ between the concrete domain for that variable and $A_x$, and the Galois connection $\gc{\pow(C)}{\alpha}{\gamma}{A}$ is defined by
 	\begin{align*}
 		\alpha(S) &= (\alpha_x(\pi_x(S)), \alpha_y(\pi_y(S)), \dots) \\
-		\gamma(a) &= \gamma_x(a_x) \times \gamma_y(a_y) \times \dots
+		\gamma(a) &= \gamma_x(\pi_x(a)) \times \gamma_y(\pi_y(a)) \times \dots
 	\end{align*}
-	where $\pi_x$ denotes the additive extension of the projection $C \rightarrow C_x$ and $a_x$ is the $x$-component of tuple $a \in \prod\limits_{x \in \text{Vars}} A_x$.
+	where $\pi_x$ denotes the additive extension of both projections $C \rightarrow C_x$ and $A \rightarrow A_x$.
 \end{definition}
 
 A non relational abstract domain is a tuple of elements, one for each variable $x$, and describes the set of concrete states where each variable belongs to the values in it's abstract coordinate. The abstraction is performed on each variable independently, projecting all states in $S$ on that variable and then abstracting the resulting set. The concretization is performed on each variable independently, and then results are multiplied in all possible ways to get concrete values.
 This separate handling of different variables prevent expressing relations. When abstracting, we lose all informations on possible relations since we project on each variable before abstracting. Conversely, when concretizing an abstract tuple, each element is concretized independently and hence the result is a Cartesian product of sets of possible values for each variable.
 
-If we consider and under-approximation non relational domain, we have to take into account both the fact that abstract elements are concretized in Cartesian product of set of values for each variable, and the fact that the domain is closed under union. Unfortunately, these two properties are incompatible.
+If we consider an under-approximation non relational domain, we have to take into account both the fact that abstract elements are concretized in Cartesian product of set of values for each variable, and the fact that the domain is closed under union. Unfortunately, these two properties are incompatible.
 \begin{prop}\label{ch4:th:underapprox-non-rel}
 	Let $\ugc{\pow(C)}{\alpha}{\gamma}{A}$ be an under-approximating Galois connection, and assume $A$ is non relational. Then, for all but one variables (let it be $y$), the abstract domain $A_x$ is \textit{almost} trivial, that is it contains at most one value $a_x$ other than $\bot$:
 	\[
@@ -86,17 +86,17 @@ If we consider and under-approximation non relational domain, we have to take in
 Again this result is an abstract interpretation way to rephrase O'Hearn's sentence \cite{ohearn-incorrectness-logic} ``For incorrectness reasoning, you must remember information as you go along a path [...]".
 The need to remember informations along a path implies exactly that the analysis can't forget which were the values of other variables that get each of the results, that is it can't forget relations between variables.
 
-\section{Non emptyingness}
-In the previous chapter we introduced the Definition \ref{ch3:def:non-emptying} of non emptying function when talking about integers, but this notion is fully general with respect to the concrete domain: we already applied it to both the infinite set of integers $\setZ$ and the finite interval $[-N, N]$, so we want now to work with an arbitrary concrete domain $\pow(C)$.
-We remark that also Definition \ref{ch3:def:repr-with-set} of elements representable with a set and Lemma \ref{ch3:th:f-non-repr-pair} are fully general and doesn't depend on the specific integer domain we used in the previous chapter, as well as Lemma \ref{ch3:th:R-S-bound-integer-inf} if we assume $C$ to be infinite. Hence we start from these to build results independent of the concrete domain.
+\section{Non emptying-ness}
+In the previous chapter we introduced the notion of non emptying function (see Definition \ref{ch3:def:non-emptying}) when dealing with integers, but this concept is fully general: we already applied it to both the infinite set of integers $\setZ$ and the finite interval $[-N, N]$, so we want now to work with an arbitrary concrete domain $\pow(C)$.
+We remark that also Definition \ref{ch3:def:repr-with-set} about elements representable with a set and Lemma \ref{ch3:th:f-non-repr-pair} are fully general and don't depend on the specific integer domain we used in the previous chapter, as well as Lemma \ref{ch3:th:R-S-bound-integer-inf} when $C$ is infinite and $A$ at most countable. Hence we start from these to prove results independent of the concrete domain.
 
-In our results for integers, we showed that an under-approximation abstract domain can't be non emptying for all functions in a given family (in that case, adding a constant). Now we would like to generalize those results, investigating which conditions \textit{on the family of functions} are sufficient to ensure that no abstract domain can be non emptying for all of them. The reason of this is that first we fix a function family, corresponding to a program, and then we look for a domain well suited to analyse the specific family (ie. program) at hand.
+For integers, we showed that an under-approximation abstract domain can't be non emptying for all functions in a given family (in that case, adding a constant). Now we would like to generalize those results, investigating which conditions \textit{on the family of functions} are sufficient to ensure that no abstract domain can be non emptying for all of them. The reason of this is that first we fix a function family, corresponding to a program, and then we look for a domain well suited to analyse the specific family (ie. program) at hand.
 
-In the following sections, we present two impossibility results. They share the same general structure: we fix a function family $F$ with some properties, assume that they are all non emptying in the abstract domain and that $R$ isn't empty. We need this last assumption in order to use Lemma \ref{ch3:th:f-non-repr-pair}: if $R$ is empty we can't prove $f(\bar{c}) \in R$.
+In the following sections, we present two impossibility results. They share the same general structure: we fix a function family $F$ with some properties, assume that they are all non emptying in the abstract domain and that $R$ isn't empty. We need this last assumption in order to apply Lemma \ref{ch3:th:f-non-repr-pair}: if $R$ is empty we can't prove $f(\bar{c}) \in R$.
 Both results require the function family to satisfy a specific condition: that of being highly surjective.
 
 \begin{definition}[Highly surjective function family]\label{ch4:def:highly-onto-func-family}
-	Given a family $F$ of functions from $C$ in itself and an element $c \in C$, let
+	Given a family $F$ of functions from $C$ to itself and an element $c \in C$, let
 	\[
 	P(c) = \{ d \in C \svert \exists f_d \in F .\ f_d(d) = c \}
 	\]
@@ -105,22 +105,14 @@ Both results require the function family to satisfy a specific condition: that o
 	We say that the family $F$ is \textit{highly surjective} (or \textit{highly onto}) if $P(c)$ is infinite for any possible choice of $c \in C$.
 \end{definition}
 
-Clearly the family of functions that add a constant is highly surjective, and actually satisfies a stronger property: for any $c$ \textit{all} possible choices of $d$ (that are infinitely many) have a function $f_d(x) = x + c - d$ such that $f_d(d) = c$, that is $P(c) = \setZ$. We used this property in the proof in order to apply Lemma \ref{ch3:th:f-non-repr-pair}: we took an element $\bar{n}$ not representable with $n_0$ and used said function in order to get $f(\bar{n}) = n_0 \in R$, hence being able to apply the lemma to get $f(n_0) \in R$. The point is that at the beginning the only representable element we know of is $n_0$, so our only hope to show $f(\bar{n}) \in R$ is to show that $f(\bar{n}) = n_0$, hence the need for function a mapping $\bar{n}$ in $n_0$.
+Clearly the family of functions that add a constant is highly surjective, and actually satisfies a stronger property: for any $c$ \textit{all} possible choices of $d$ (that are infinitely many) have a function $f_d(x) = x + c - d$ such that $f_d(d) = c$, that is $P(c) = \setZ$. We used this property in the proof in order to apply Lemma \ref{ch3:th:f-non-repr-pair}: we took an element $\bar{n}$ not representable with $n_0$ and used said function in order to get $f(\bar{n}) = n_0 \in R$, hence being able to apply the lemma to get $f(n_0) \in R$. The point is that at the beginning the only representable element we know of is $n_0$, so our only hope to show $f(\bar{n}) \in R$ is to show that $f(\bar{n}) = n_0$, hence the need for function a mapping $\bar{n}$ to $n_0$.
 
-The next two sections present the two impossibility results, the following discuss limits of approaches based on non emptyingness and the last one of the chapter contains considerations on finite domains.
+The next two sections present the two impossibility requirements, then Section \ref{ch5:sec:limitations} discusses limits of approaches based on non emptying-ness and the last section of the chapter contains some considerations on finite domains.
 
-\section{Local result}
-This first result is somehow more ``local", in the sense that we require functions in $F$ to satisfy properties independently from each other. In its basic formulation, we require each function in $F$ to be injective.
+\section{Local requirement for impossibility}
+This first result is somehow more ``local", in the sense that we require functions in $F$ to satisfy properties independently from each other. In its basic formulation, we require each function in $F$ to be injective (see Theorem \ref{ch4:th:non-empt-res-local-basic}).
 
-\begin{theorem}\label{ch4:th:non-empt-res-local-basic}
-	Let $F$ be a family of functions from $C$ in itself such that
-	\begin{itemize}
-		\item $F$ is highly surjective
-		\item all functions $f \in F$ are injective
-	\end{itemize}
-	Assume also that $R$ isn't empty. Then $A$ can't be non emptying for all $f \in F$.
-\end{theorem}
-The proof of this theorem is quite involved. It starts from $c_0 \in R$, that exists because $R$ is not empty, and iteratively creates a sequence $c_n$ of representable elements. This yields a contradiction since $R$ should be finite.
+The proof of this theorem is quite involved. It starts from $c_0 \in R$, that exists because $R$ is not empty, and iteratively creates an infinite sequence $\{ c_n \}_{n \in \setN}$ of representable elements. This yields a contradiction since $R$ should be finite.
 
 \begin{figure*}[ht]
 	\centering
@@ -164,6 +156,14 @@ The issue with this idea is that we don't have enough information on the sequenc
 
 Actually, instead of directly consider functions, we represent them with elements $\bar{c}$ of $C$. Each element represent a function $f_{\bar{c}}$ that satisfies $f_{\bar{c}}(\bar{c}) = c_0$. Note that this function exists for ``enough" (that is, infinitely many) $\bar{c}$ because of the high surjectivity hypothesis. We call $E_n$ the set of $\bar{c}$ that represent functions that are ``valid" for the prefix up to $n$, ie. they map $c_{i}$ to $c_{i+1}$ for $0 \le i \le n - 1$. The core of the proof is an induction that proves that $E_n$ always contains infinitely many elements and that the newly chosen $c_n$ is different from all the others.
 
+\begin{theorem}\label{ch4:th:non-empt-res-local-basic}
+	Let $F$ be a family of functions from $C$ in itself such that
+	\begin{itemize}
+		\item $F$ is highly surjective
+		\item all functions $f \in F$ are injective
+	\end{itemize}
+	Assume also that $R$ isn't empty. Then $A$ can't be non emptying for all $f \in F$.
+\end{theorem}
 \begin{proof}
 	Assume by contradiction that $A$ is non emptying for all $f \in F$. By hypothesis, $R$ isn't empty and thus we can take a $c_0 \in R$. We then define recursively a sequence of representable elements $c_n$.
 
@@ -173,7 +173,7 @@ Actually, instead of directly consider functions, we represent them with element
 	\]
 	be the set of elements that are \textit{not} representable with it.
 
-	To ease presentation, we define here $E_n$, a set of element of $C$ that depends on the sequence $c_n$ we'll construct in the proof. Do note that the definition of $E_n$ only depends on elements of the sequence up to $c_n$.
+	To ease presentation, we define here $E_n$, a set of elements of $C$ that depends on the sequence $c_n$ we'll construct in the proof. Note that the definition of $E_n$ only depends on elements of the sequence up to $c_n$.
 	\begin{align*}
 		E_n = \{\bar{c} \in C \svert & \forall\ 0 \le i \le n \ .\ \bar{c} \in NR(c_i), \\
 		& f_{\bar{c}}(\bar{c}) = c_0, \\
@@ -220,7 +220,7 @@ Actually, instead of directly consider functions, we represent them with element
 	By the induction above we have that all $c_n$, that are an infinite amount, are elements of $R$ and are all distinct. This yields the desired contradiction because $R$ is finite.
 \end{proof}
 
-Intuitively, if we were able to find the ``final" $f$ from the beginning, it would look like Figure \ref{ch4:fig:final-f-sketch}: some $\bar{c}$, those for which that $f$ is $f_{\bar{c}}$, are mapped to $c_0$, and from there it just maps each $c_n$ to $c_{n+1}$. Do note that this is just an intuitive description: in fact, such an $f$ may not even exists (this correspond to the limit of $E_n$ being empty), but is indeed useful to visualize the proof.
+Intuitively, if we were able to find the ``final" $f$ from the beginning, it would look like Figure \ref{ch4:fig:final-f-sketch}: some $\bar{c}$, those for which that $f$ is $f_{\bar{c}}$, are mapped to $c_0$, and from there it just maps each $c_n$ to $c_{n+1}$. Note that this is just an intuitive description: in fact, such an $f$ may not even exists (this correspond to the limit of $E_n$ being empty), but is indeed useful to visualize the proof.
 
 A simple example of such a function family are constant sums over integers.
 \begin{example}
@@ -231,7 +231,7 @@ A simple example of such a function family are constant sums over integers.
 	The family is highly surjective (actually $P(c) = \setZ$ for all $c$) and all these functions are injective, so it meets the hypothesis of the theorem.
 \end{example}
 
-Even though we've already proved that no abstract domain can be non emptying for all functions in this family $F$ in Proposition \ref{ch3:th:ne-sum-nonexsistence-inf} in the previous chapter, it's important to note that this proof isn't a generalization of the proof of that proposition. In this proof, we iterate a single $f$ to build the entire sequence, while in that one we change the function every time, mapping the non representable $\bar{n}$ to the newly found representable $n_0 + t d$ to get that the image of $n_0$ through that function is representable too, as sketched in Figure \ref{ch4:fig:ne-sum-inf-sketch}.
+Even though we've already proved that no abstract domain can be non emptying for all functions in this family $F$ in Proposition \ref{ch3:th:ne-sum-nonexsistence-inf} (see the previous Chapter), it's important to note that this proof isn't a generalization of the proof of that proposition. In this proof, we iterate a single $f$ to build the entire sequence, while in that one we change the function every time, mapping the non representable $\bar{n}$ to the newly found representable $n_0 + t d$ to get that the image of $n_0$ through that function is representable too, as sketched in Figure \ref{ch4:fig:ne-sum-inf-sketch}.
 
 \begin{figure*}[ht]
 	\centering
@@ -288,7 +288,7 @@ Even though we've already proved that no abstract domain can be non emptying for
 	\label{ch4:fig:ne-sum-inf-sketch}
 \end{figure*}
 
-Another example are rational or real numbers, with sums or products, as shown for instance in this example
+Another example are rational or real numbers, with sums or products
 \begin{example}
 	Take $C = \mathbb{Q} \setminus \{ 0 \}$ and
 	\[
@@ -311,8 +311,8 @@ If $f$ is acyclic the theorem holds: if for some $0 \le j \le n$ it were $c_{n+1
 f(c_j) = c_{j+1}, \dots, f(c_n) = c_{n+1} = c_j
 \]
 
-However acyclicness is quite restrictive because it also considers sequences of length $1$, that means that $f$ can't have fixpoints. Almost acyclicness is useful exactly for this, but it's not enough on its own.
-In particular, we can require almost acyclicness to functions in $F$ if we're also able to guarantee that $f(c_n) = c_{n+1} \neq c_n$, because for $0 \le j \le n - 1$ the same proof as above is still correct. A possible condition to enforce this is
+However acyclicity is quite restrictive because it also considers sequences of length $1$, that means that $f$ can't have fixpoints. Almost acyclicity is useful exactly for this, but it's not enough on its own.
+In particular, we can require almost acyclicity to functions in $F$ if we're also able to guarantee that $f(c_n) = c_{n+1} \neq c_n$, because for $0 \le j \le n - 1$ the same proof as above is still correct. A possible condition to enforce this is
 \[
 \forall c \in C.\ f(c) \neq c \implies f(f(c)) \neq f(c)
 \]
@@ -321,7 +321,7 @@ This condition could be equivalently restated as any non-fixpoint of $f$ can't b
 \[
 f(C \setminus \fix(f)) \subseteq C \setminus \fix(f)
 \]
-This condition is still restrictive, but is less so than acyclicness, that prevents fixpoints to exist at all.
+This condition is still restrictive, but is less so than acyclicity, that prevents fixpoints to exist at all.
 Theorem \ref{ch4:th:non-empt-res-local-basic} could hence be generalized as
 \begin{theorem}\label{ch4:th:non-empt-res-local}
 	Let $F$ be an highly surjective function family from $C$ in itself such that all functions $f \in F$ satisfies at least one of the following conditions:
@@ -363,8 +363,12 @@ As an example of this more general version, we propose floating-point numbers an
 	Observe that Theorem \ref{ch4:th:non-empt-res-local-basic} wasn't enough to prove this result, since in general multiplication by a constant are not injective because of approximations.
 \end{example}
 
-\section{Global result}
-The second result we propose is instead more ``global", in the sense that it requires conditions on $F$ as a whole, and not on each $f$ independently.
+\section{Global requirement for impossibility}
+The second result we propose is based on a more ``global" requirement, in the sense that it requires conditions on $F$ as a whole, and not on each $f$ independently.
+
+The theorem requires some sets to be finite. The idea of the proof is that all those finiteness requirements makes it impossible to build enough $\bar{c}$ for which there exists $f_{\bar{c}}$ that maps them into $c_0$ (ie. $\bar{c} \in P(c_0)$), contradicting the hypothesis that $F$ is highly surjective. This may seem a little contradictory on its own since all these conditions are required by the hypothesis of theorem, but actually it is not because the proof also involves finiteness of $R$ and $R(c_0)$, that are enforced by the abstract domain.
+
+The actual proof follows this idea in the opposite direction: it starts from the (infinite) set $P(c_0)$ of $\bar{c}$ and propagates its infiniteness down to $R$.
 
 \begin{theorem}\label{ch4:th:non-empt-res-global}
 	Let $F$ be a family of functions from $C$ in itself such that
@@ -375,11 +379,6 @@ The second result we propose is instead more ``global", in the sense that it req
 	\end{itemize}
 	Assume also that $R$ isn't empty. Then $A$ can't be non emptying for all $f \in F$.
 \end{theorem}
-
-The idea of the proof is that all these finiteness requirements makes it impossible to build enough $\bar{c}$ for which there exists $f_{\bar{c}}$ that maps them into $c_0$ (ie. $\bar{c} \in P(c_0)$), contradicting the hypothesis that $F$ is highly surjective. This may seem a little contradictory on its own since all these conditions are required by the hypothesis of theorem already, but actually it is not because the proof also involves finiteness of $R$ and $R(c_0)$, that are enforced by the abstract domain.
-
-The actual proof follows this idea in the opposite direction: it starts from the (infinite) set $P(c_0)$ of $\bar{c}$ and propagates its infiniteness down to $R$.
-
 \begin{proof}
 	Assume by contradiction that $A$ is non emptying for all $f \in F$. By hypothesis, $R$ isn't empty and thus we can take a $c_0 \in R$.
 
@@ -453,7 +452,7 @@ As an example of such a family of functions we again propose floating-point numb
 	So, by means of Theorem \ref{ch4:th:non-empt-res-global} above, we proved again that no abstract domain on floating-point numbers can be non emptying for all multiplications.
 \end{example}
 
-\section{Limitations}
+\section{Limitations}\label{ch5:sec:limitations}
 In this chapter, we began from Theorem \ref{ch4:th:non-empt-res-local-basic}, that required all functions in $F$ to be injective, and then we tried to relax that requirement, either asking other properties on each individual function or adding conditions on $F$ as a whole.
 A natural question at this point is then what can be done to weaken the high surjectivity hypothesis. The answer is nothing.
 
@@ -461,7 +460,7 @@ The requirement that the function family $F$ is highly surjective is somewhat gl
 We use this condition in the proofs to apply Lemma \ref{ch3:th:f-non-repr-pair} and get that some elements can be mapped to the only known representable element. We need this condition for all possible choices of $c$ because first we fix the function family we want to analyse, then we can pick the abstract domain, so the ``initial" representable element $c$.
 Thinking of this as a game, player one fixes the function family $F$ and wants to show that no abstract domain is able to analyse it, so player two thinks of a counterexample \textit{with $F$ in mind}, that is they can carefully craft it around the specific choice of $F$. This leads to universal quantifiers over elements of $C$: in fact, if there is even a single $c_0$ for which the condition doesn't hold, player two can actually construct such counterexample, starting from that specific value.
 \begin{prop}\label{ch4:th:no-higly-onto-domain-construction}
-	For any fixed family $F$ of functions from $C$ in itself that is not highly surjective, there exists an abstract domain $A_F$ such that
+	For any fixed family $F$ of functions from $C$ to itself that is not highly surjective, there exists an abstract domain $A_F$ such that
 	\begin{itemize}
 		\item $A_F$ is finite
 		\item all functions $f \in F$ are non emptying in $A_F$
@@ -496,12 +495,12 @@ Thinking of this as a game, player one fixes the function family $F$ and wants t
 	These two assumptions are equivalent to $c_0 \in S$ and $c_0 \in f(S)$ respectively, and the latter can be rewritten as $\exists d \in S\ .\ f(d) = c_0$. But by definition of $A_F$ we know this is equivalent to $d \in P(c_0) = R(c_0)$.
 	Hence
 	\begin{align*}
-		&S \supseteq \{ c_0, d \} \\
-		\implies& \alpha(S) \supseteq \alpha(\{ c_0, d \}) = \{ c_0, d \} \\
-		\implies& f(\alpha(S)) \supseteq f(\{ c_0, d \}) \supseteq \{ f(d) \} = \{ c_0 \} \\
-		\implies& f^{\flat}(\alpha(S)) = \alpha(f(\alpha(S))) \supseteq \alpha(\{ c_0 \}) = \{ c_0 \}
+		&S \supseteq \{ c_0, d \} && \\
+		\implies& \alpha(S) \supseteq \alpha(\{ c_0, d \}) = \{ c_0, d \} && [d \in R(c_0)] \\
+		\implies& f(\alpha(S)) \supseteq f(\{ c_0, d \}) \supseteq \{ f(d) \} = \{ c_0 \} && [f(d) = c_0] \\
+		\implies& f^{\flat}(\alpha(S)) = \alpha(f(\alpha(S))) \supseteq \alpha(\{ c_0 \}) = \{ c_0 \} && [c_0 \in R]
 	\end{align*}
-	where in the second line we used that $\alpha(\{ c_0, d \}) = \{ c_0, d \}$ because $d \in R(c_0)$ and in the third the fact that $f(d) = c_0$.
+	where in the second line $d \in R(c_0)$ entails $\alpha(\{ c_0, d \}) = \{ c_0, d \}$.
 	The last line implies $f^{\flat}(\alpha(S)) \neq \emptyset$, so $f$ is non emptying in $A_F$.
 \end{proof}
 
@@ -532,7 +531,7 @@ Definition of preimages of an element (see Definition \ref{ch4:def:highly-onto-f
 \[
 P(S) = \{ T \subseteq C \svert \exists f \in F. f(T) = S \}
 \]
-Do note that in this definition we require that a single function $f$ maps the whole $T$ to $S$.
+Note that in this definition we require that a single function $f$ maps the whole $T$ to $S$.
 \begin{prop}\label{ch4:th:existence-finte-backward}
 	Let $F$ be a family of functions from $C$ in itself, and assume there is a set $S_0 \subseteq C$ such that $P(S_0)$ is finite (computed with respect to the additive extensions of functions in $F$). Then there exists a finite abstract domain $A_F$ such that all functions $f \in F$ are non emptying in $A_F$.
 \end{prop}
@@ -559,10 +558,10 @@ Do note that in this definition we require that a single function $f$ maps the w
 
 	Again we observe that a subset $T \subseteq C$ is such that $\alpha(T) \neq \emptyset$ if and only if $S_0 \subseteq T$ because all elements of the abstract domain but the empty set contains $S_0$. Then the proof proceeds as above: fix $f \in F$ and $T \subseteq C$ such that $\alpha(T) \neq \emptyset$ and $\alpha(f(T)) \neq \emptyset$, that in turn are equivalent to $S_0 \subseteq T$ and $\exists S \subseteq T. f(S) = S_0$. Then by definition of $A_F$ this means $S_0 \cup S \in A_F$, so
 	\begin{align*}
-		&T \supseteq S_0 \cup S \\
-		\implies& \alpha(T) \supseteq \alpha(S_0 \cup S) = S_0 \cup S \\
-		\implies& f(\alpha(T)) \supseteq f(S_0 \cup S) \supseteq f(S) = S_0 \\
-		\implies& f^{\flat}(\alpha(T)) = \alpha(f(\alpha(T))) \supseteq \alpha(S_0) = S_0
+		&T \supseteq S_0 \cup S && \\
+		\implies& \alpha(T) \supseteq \alpha(S_0 \cup S) = S_0 \cup S && [S_0 \cup S \in A_F] \\
+		\implies& f(\alpha(T)) \supseteq f(S_0 \cup S) \supseteq f(S) = S_0 && [f(S) = S_0] \\
+		\implies& f^{\flat}(\alpha(T)) = \alpha(f(\alpha(T))) \supseteq \alpha(S_0) = S_0 && [S_0 \in A_F]
 	\end{align*}
 	that is $f$ is non emptying.
 \end{proof}
@@ -643,7 +642,7 @@ Another important observation is that we didn't use the hypothesis that $\alpha(
 \end{example}
 
 It is interesting to note that the very same abstract domain is a counterexample for both family of functions. This domain is a power set of elements of $C$, and in particular it contains the ``boundary" of $C$. Here boundary must be intended with respect to the function family at hand: either a set in which you can't enter (the ``initial boundary", as in the example of $\concat_{\alpha}$) or a set from which you can't exit (the ``final boundary", as in the example of $\drop_n$).
-This line of reasoning is actually quite general: every time a concrete domain has some sort of boundary, it is often the case that natural operations on that domain goes either towards or away from that boundary, so that any element has a finite ``distance" (in terms of functions applications) from it, making one of these two proposition applicable.
+This line of reasoning is actually quite general: every time a concrete domain has some sort of boundary, it is often the case that natural operations on that domain goes either towards or away from that boundary, so that any element has a finite ``distance" (in terms of functions applications) from it, making one of these two propositions applicable.
 For instance, consider positive integers with multiplications and divisions (rounded down). In this case the boundary is $0$: multiplications go away from it while divisions go towards it. It's easy to observe that multiplications satisfy Proposition \ref{ch4:th:existence-finte-backward} because any number has a finite amount of preimages, while divisions satisfy Proposition \ref{ch4:th:existence-finte-forward} because any number has finite amount of images.
 
 A possible solution to this could be to consider \textit{together} functions that goes toward and away from the boundary: for instance, put together $\drop_n$ and $\concat_{\alpha}$. However, this doesn't solve the issue.
@@ -658,7 +657,7 @@ A possible solution to this could be to consider \textit{together} functions tha
 	\]
 	Then all functions in $F$ are non emptying in $A_F$.
 
-	The proof is carried over separately for the two sets, and proceeds as in Proposition \ref{ch4:th:existence-finte-backward} for $\concat_{\alpha}$ and as in \ref{ch4:th:existence-finte-forward} for $\drop_n$.
+	The proof is carried over separately for the two sets, and proceeds as in Proposition \ref{ch4:th:existence-finte-backward} for $\concat_{\alpha}$ and as in Proposition \ref{ch4:th:existence-finte-forward} for $\drop_n$.
 \end{example}
 In general, we can partition functions in $F$ in those that enter the boundary and those that exit, and apply separately the two propositions to get that the abstract domain is non emptying for all of them. So we need a single function that is able to both enter and exit the boundary at the same time, and this should be true for all possible finite boundaries.
 
@@ -706,7 +705,7 @@ In this example, we can partition the set of infinite lists $\Gamma^{\setN}$ dep
 \section{Finite domains}
 All the discussion in this chapter but Proposition \ref{ch4:th:underapprox-non-rel} about non relational domains require $C$ to be infinite. An interesting question is whether the two results presented can be reproduced when it's finite instead, but this doesn't seem likely.
 
-For the local result \ref{ch4:th:non-empt-res-local}, we prove non existence of the abstract domain defining an infinite sequence of representable elements. To do this with a finite $C$, if $N = \abs{C}$, we would like to resort to Lemma \ref{ch3:th:R-S-bound-integer-fin} to say that $\abs{R} = O(\log(N))$ and show that the sequence has length $\omega(\log(N))$. However, the straightforward generalization of the proof doesn't yield this result. It proceed as follows: we consider the initial $NR(c_0)$ of size
+For the local requirement \ref{ch4:th:non-empt-res-local}, we prove non existence of the abstract domain defining an infinite sequence of representable elements. To do this with a finite $C$, if $N = \abs{C}$, we would like to resort to Lemma \ref{ch3:th:R-S-bound-integer-fin} to say that $\abs{R} = O(\log(N))$ and show that the sequence has length $\omega(\log(N))$. However, the straightforward generalization of the proof doesn't yield this result. It proceed as follows: we consider the initial $NR(c_0)$ of size
 \[
 \abs{NR(c_0)} = \abs{C} - \abs{R(c_0)} = N - O(\log(N)) = \Theta(N)
 \]
@@ -721,7 +720,7 @@ Since there are at most $\abs{R} = O(\log(N))$ possible choices for $c_{n+1}$, t
 since each new element of the sequence chops a logarithmic factor off of the cardinality of $E_n$, and $\abs{E_0} = \Theta(\abs{NR(c_0)}) = \Theta(N)$. But this relation holds for $m = O(\log(N)) = O(\abs{R})$, so there is no contradiction.
 Other possible generalizations incur in the same issue, that basically boils down to the fact that arbitrary combinations of finite numbers is finite while arbitrary combinations of logarithmic factors is not $O(N)$.
 
-For the global result \ref{ch4:th:non-empt-res-global} there isn't a single way to restate it for a finite domain. We could constrain both the number of functions $f$ that maps a given $c$ to a given $d$ and the number of $d$ that are mapped by a given $f$ to a given $c$ to be logarithmic, but again this is not enough because it would end up with
+For the global requirement \ref{ch4:th:non-empt-res-global} there isn't a single way to restate it for a finite domain. We could constrain both the number of functions $f$ that maps a given $c$ to a given $d$ and the number of $d$ that are mapped by a given $f$ to a given $c$ to be logarithmic, but again this is not enough because it would end up with
 \[
 O(\log(N))^{O(\log(N))} = \Omega(N)
 \]
@@ -733,7 +732,9 @@ Even with all these theoretical considerations against a rephrasing of the theor
 First, this domain has a metric structure on it. Every time we get a new representable element, we do so with a function $f$ such that $f(\bar{n}) = n_i$ and $f(n_0) = n_{i+1}$. Combining this with the fact that $f$ preserves distances, we got that all the representable elements were not so far apart with respect to the diameter of the concrete domain, thus giving us a mean to prove that $R$ was too big.
 Second, the domain is circular and hence has no boundaries. If the domain does have them we can apply propositions of the previous section to build an abstract domain around the function family. This was not the case for integers because additions overflow, so the domain has no boundaries near $-N$ and $N$.
 
-Building on the latter of those two considerations, we present a version of the global result \ref{ch4:th:non-empt-res-global} for finite domains. To overcome the limitation of boundaries, we constrain the initial representable element $c_0$. As we did in the specific case of the integer domain $[-N; N]$, we use asymptotic notation appealing to the intuition it gives rather than its formal meaning.
+Building on the latter of those two considerations, we present a version of the global requirement \ref{ch4:th:non-empt-res-global} for finite domains. To overcome the limitation of boundaries, we constrain the initial representable element $c_0$. As we did in the specific case of the integer domain $[-N; N]$, we assume the size of $A$ to be polynomial in $N$ and use asymptotic notation appealing to the intuition it gives rather than its formal meaning.
+
+The idea of this proof is the same as in the infinite case: $c_0$ is the initial representable element, but in the finite setting we write hypothesis around it instead of have them global and requiring the existence of a generic representable element. The first two conditions correspond to those of the infinite case result, simply rewritten with $c_0$ in mind. The last condition binds together the two bounds $k_1$ and $k_2$ on cardinalities with the number of preimages of $c_0$, and correspond to the infinite hypothesis of high surjectivity: it only constraints the value $c_0$ because we know this is the representable value from which the proof begins. The precise relation is chosen to get the contradiction in the proof.
 \begin{theorem}\label{ch4:th:non-empt-res-finite-global}
 	Let $C$ be a finite set of size $N$, and let $F$ be a family of functions from $C$ in itself. Assume there exists a concrete element $c_0 \in C$ that is representable (ie. $c_0 \in R$) and two bound functions $k_1, k_2 : \setN \rightarrow \setN_{>0}$ such that
 	\begin{itemize}
@@ -743,7 +744,6 @@ Building on the latter of those two considerations, we present a version of the 
 	\end{itemize}
 	Then $A$ can't be non emptying for all $f \in F$.
 \end{theorem}
-The idea of this proof is the same as in the infinite case. $c_0$ is the initial representable element, but in the finite setting we write hypothesis around it instead of have them global and requiring the existence of a generic representable element. The first two conditions correspond to those of the infinite case result, simply rewritten with $c_0$ in mind. The last condition binds together the two bounds $k_1$ and $k_2$ on cardinalities with the number of preimages of $c_0$, and correspond to the infinite hypothesis of high surjectivity: it only constraints the value $c_0$ because we know this is the representable value from which the proof begins. The precise relation is chosen to get the contradiction in the proof.
 \begin{proof}
 	By way of contradiction assume that $A$ is non emptying for all $f \in F$.
 
@@ -857,3 +857,13 @@ The example of integers has the nice property of not having boundaries, but this
 	\]
 	Hence, by mean of Theorem \ref{ch4:th:non-empt-res-finite-global}, no under-approximation abstract domain is non emptying for all multiplications.
 \end{example}
+
+\section{Summary}
+In the previous chapter, using the notion of non emptying function, we showed that under some conditions no under-approximation domain exists for concrete integer domains. This chapter draws ideas from it and generalizes to arbitrary concrete domains.
+
+For infinite domains, we showed conditions under which no under-approximation domain exists, and we applied them on integers, getting results akin to that of the previous chapter, and on floating point numbers.
+The main new concept we introduced is that of highly surjective function family: all set of conditions we proposed included it. In Section \ref{ch5:sec:limitations} we showed that this condition is tight, because in its absence we can define an under-approximation domain around the function family that makes it non emptying.
+More in general, we discussed the problem presented by boundaries in the concrete domain: in their presence, we can perform similar constructions to define an abstract domain around the function family that makes it non emptying. We believe this to roughly outline limits of approaches that uses the concept of non emptying function in order to show that no under-approximation domain exists for a given concrete domain.
+Lastly, as we did for integers, we considered finite domains, discussing some differences with the infinite case and reasons that prevent direct translation of the conditions of this chapter to the finite case. However, building on the result for integers, we proposed a set of requirements, more specific than those for infinite domains, that allows to prove absence of an under-approximation abstract domain, then we applied it to a finite set of floating point numbers.
+
+Summing up, this chapter both generalizes ideas from the previous one and draws limits for these generalizations, showing that parts of the results presented can't be improved.

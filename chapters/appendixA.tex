@@ -61,7 +61,7 @@ We now present some results on floating point multiplications that aren't classi
 	\begin{align*}
 		x \odot y &\le (c \odot 2) \cdot 2^{q + q_0} \\
 		&\le (c \odot 1) \cdot 2^{q + q_0 + 1} \\
-		&= c \cdot 2^{q} \cdot 2^{q_0 + 1} \le x / 2 < x\\
+		&= c \cdot 2^{q} \cdot 2^{q_0 + 1} \le x / 2 < x
 	\end{align*}
 
 	If $q_0 = 0$, since $y \neq 1$, it must be the case that $c \neq 1$ too, hence $c \ge 1 + 2^{1-t}$. From this it follows
@@ -92,7 +92,7 @@ We now present some results on floating point multiplications that aren't classi
 		&= (2 c - 2^{1-t} c) \cdot 2^{-1} \\
 		&< (2 c - 2^{1-t}) \cdot 2^{-1} = c - 2^{-t}
 	\end{align*}
-	Since $2^{-t}$ is exactly half the value of the least significant bit of $c$, this means $c - 2^{-t}$ is exactly in the middle between $c$ and $c - 2^{1-t}$, that is the greatest floating point smaller than $c$. Do note that this is the case only because $c > 1$, because it implies $c \ge 1 + 2^{1-t}$, hence $c - 2^{1-t} \ge 1$.
+	Since $2^{-t}$ is exactly half the value of the least significant bit of $c$, this means $c - 2^{-t}$ is exactly in the middle between $c$ and $c - 2^{1-t}$, that is the greatest floating point smaller than $c$. Note that this is the case only because $c > 1$, because it implies $c \ge 1 + 2^{1-t}$, hence $c - 2^{1-t} \ge 1$.
 	\begin{center}
 	\begin{tikzpicture}
 		\tikzset{func/.style = {->,> = latex'}}

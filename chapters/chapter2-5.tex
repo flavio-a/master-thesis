@@ -26,7 +26,7 @@ Conversely, an initialization assignment like \code{x := 10} has an output cardi
 
 The ``direction" of functions influences abstract domains design because they must be able to ``follow" concrete functions, possibly simplifying the result in the direction they are allowed to (that is, enlarging it in over-approximation and reducing it in under) in order to keep the number of abstract properties small.
 If we didn't consider functions, we could just define an under-approximation domain from any over-approximation one taking complements, as done in \cite{lev-backward-analysis-complement}.
-\begin{example}
+\begin{example}\label{ch2-5:ex:complement-intervals}
 	Intervals (see Example \ref{ch2:ex:intervals}) can be made an under-approximation domain by taking as meaning of an abstract element (ie. image through $\gamma$) the complement of the set it represents as an over-approximation.
 	For instance, the interval $[n, m]$ would represent the set of elements \textit{not} in the interval, that is $\{ x \in \setZ \svert x < n \lor x > m \}$.
 
